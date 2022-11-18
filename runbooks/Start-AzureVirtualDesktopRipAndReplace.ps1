@@ -211,7 +211,7 @@ foreach ($SessionHost in $SessionHosts)
         Remove-AzVM -ResourceGroupName $resourceGroupName -Name $vmName -Force -WarningAction SilentlyContinue -Verbose
     }
     # Remove OS Diks
-    if ($osDiskName)
+    if($osDiskName)
     {
         Get-AzDisk -ResourceGroupName $resourceGroupName -DiskName $osDiskName| Remove-AzDisk -Force -Verbose
     }
