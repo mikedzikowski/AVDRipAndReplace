@@ -40,6 +40,9 @@ Connect-AzAccount `
     -Tenant $TenantId
 
 # Get the host pool's info
+# Test
+$HostPoolName = 'hp-fs-peo-va-d-01'
+
 $HostPool = Get-AzResource -ResourceType 'Microsoft.DesktopVirtualization/hostpools' | Where-Object {$_.Name -eq $HostPoolName}
 $HostPoolResourceGroup = $HostPool.ResourceGroupName
 $HostPoolInfo = Get-AzWvdHostPool -ResourceGroupName $HostPoolResourceGroup -Name $HostPoolName
@@ -176,9 +179,72 @@ foreach($SessionHost in $SessionHosts)
     Write-Verbose "Removing session host $($SessionHost) from the pool $($HostPoolName)"
 }
 
-Remove-AzResourceGroup `
-	-Name $SessionHostsResourceGroup `
-	-Force
+# Programmatically clean up resources in session host resource group
+$asList = @()
+foreach ($SessionHost in $SessionHosts)
+{
+    $SessionHostsName = $SessionHost.Id.Split('/')[-1]
+    $vmName = $SessionHostsName.Split('.')[0]
+    $virtualMachine = (Get-AzVM | Where-Object {$_.Name -eq $vmName})
+    $networkInterfaces = $virtualMachine.NetworkProfile
+    $vmNics = foreach($nic in $networkInterfaces.NetworkInterfaces.id) {(Get-AzResource -ResourceId $nic | Get-AzNetworkInterface)}
+    $publicIps = foreach($nic in $vmNics) {(Get-AzPublicIpAddress | Where-Object {$_.id -eq $nic.ipconfigurations.publicIpAddress.id})}
+    $resourceGroupName = $virtualMachine.ResourceGroupName
+    $storageProfile = $virtualMachine.StorageProfile
+    $dataDiskName = $storageProfile.DataDisks.Name
+    $osDiskName = $storageProfile.OsDisk.Name
+    if($virtualMachine.AvailabilitySetReference)
+    {
+        Write-host $($virtualMachine.name)
+        Write-Host $($virtualMachine.AvailabilitySetReference.id)
+        $availabilitySet = Get-AzAvailabilitySet -Name $virtualMachine.AvailabilitySetReference.Id.Split('/')[-1]
+        $asList += $availabilitySet.Name
+    }
+
+    #Remove Data Disk from VM
+    if($dataDiskName)
+    {
+        foreach($diskName in $dataDiskName)
+        {
+            Get-AzVM -Name $vmName -ResourceGroupName $resourceGroupName | Remove-AzVMDataDisk -DataDiskNames $diskName | Update-AzVM -Verbose
+            Remove-AzDisk -DiskName $diskName -ResourceGroupName $resourceGroupName -Force -Verbose
+        }
+    }
+    #Remove Virutal Machine
+    if($virtualMachine)
+    {
+        Remove-AzVM -ResourceGroupName $resourceGroupName -Name $vmName -Force -WarningAction SilentlyContinue -Verbose
+    }
+    #Remove OS Diks
+    if ($osDiskName)
+    {
+        Get-AzDisk -ResourceGroupName $resourceGroupName -DiskName $osDiskName| Remove-AzDisk -Force -Verbose
+    }
+    #Remove Network Interfaces
+    if($vmNics)
+    {
+        foreach($vmNic in $vmNics)
+        {
+            Get-AzNetworkInterface -Name $vmNic.name -ResourceGroupName $vmNic.ResourceGroupName | Remove-AzNetworkInterface  -Force -Verbose
+        }
+    }
+    #Remove Public Ip Addresses
+    if($publicIps)
+    {
+        foreach($publicIp in $publicIps)
+        {
+            Remove-AzPublicIpAddress -Name $publicIp.Name -ResourceGroupName $publicIp.ResourceGroupName -Force -Verbose
+        }
+    }
+}
+
+# Remove Availability Sets
+$availabilitySetsToRemove = $asList | Select-Object -Unique
+foreach($availabilitySet in $availabilitySetsToRemove)
+{
+    $as = Get-AzAvailabilitySet -Name $availabilitySet
+    Remove-AzAvailabilitySet -Name $availabilitySet -ResourceGroupName $as.ResourceGroupName -Force 
+}
 
 Write-Verbose "Deploying new session hosts to the pool $($HostPoolName)"
 # Deploy new session hosts to the host pool
