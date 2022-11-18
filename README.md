@@ -1,2 +1,2 @@
 # AVDRipAndReplace
-A solution to rip and replace and AVD environment 
+A solution to rip and replace an AVD environment 
