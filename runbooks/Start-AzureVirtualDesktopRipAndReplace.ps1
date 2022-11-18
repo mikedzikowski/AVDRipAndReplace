@@ -195,8 +195,6 @@ foreach ($SessionHost in $SessionHosts)
     $osDiskName = $storageProfile.OsDisk.Name
     if($virtualMachine.AvailabilitySetReference)
     {
-        Write-host $($virtualMachine.name)
-        Write-Host $($virtualMachine.AvailabilitySetReference.id)
         $availabilitySet = Get-AzAvailabilitySet -Name $virtualMachine.AvailabilitySetReference.Id.Split('/')[-1]
         $asList += $availabilitySet.Name
     }
