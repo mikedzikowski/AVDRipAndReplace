@@ -40,9 +40,6 @@ Connect-AzAccount `
     -Tenant $TenantId
 
 # Get the host pool's info
-# Test
-$HostPoolName = 'hp-fs-peo-va-d-01'
-
 $HostPool = Get-AzResource -ResourceType 'Microsoft.DesktopVirtualization/hostpools' | Where-Object {$_.Name -eq $HostPoolName}
 $HostPoolResourceGroup = $HostPool.ResourceGroupName
 $HostPoolInfo = Get-AzWvdHostPool -ResourceGroupName $HostPoolResourceGroup -Name $HostPoolName
@@ -199,7 +196,7 @@ foreach ($SessionHost in $SessionHosts)
         $asList += $availabilitySet.Name
     }
 
-    #Remove Data Disk from VM
+    # Remove Data Disk from VM
     if($dataDiskName)
     {
         foreach($diskName in $dataDiskName)
@@ -208,17 +205,17 @@ foreach ($SessionHost in $SessionHosts)
             Remove-AzDisk -DiskName $diskName -ResourceGroupName $resourceGroupName -Force -Verbose
         }
     }
-    #Remove Virutal Machine
+    # Remove Virutal Machine
     if($virtualMachine)
     {
         Remove-AzVM -ResourceGroupName $resourceGroupName -Name $vmName -Force -WarningAction SilentlyContinue -Verbose
     }
-    #Remove OS Diks
+    # Remove OS Diks
     if ($osDiskName)
     {
         Get-AzDisk -ResourceGroupName $resourceGroupName -DiskName $osDiskName| Remove-AzDisk -Force -Verbose
     }
-    #Remove Network Interfaces
+    # Remove Network Interfaces
     if($vmNics)
     {
         foreach($vmNic in $vmNics)
@@ -226,7 +223,7 @@ foreach ($SessionHost in $SessionHosts)
             Get-AzNetworkInterface -Name $vmNic.name -ResourceGroupName $vmNic.ResourceGroupName | Remove-AzNetworkInterface  -Force -Verbose
         }
     }
-    #Remove Public Ip Addresses
+    # Remove Public Ip Addresses
     if($publicIps)
     {
         foreach($publicIp in $publicIps)
@@ -241,7 +238,7 @@ $availabilitySetsToRemove = $asList | Select-Object -Unique
 foreach($availabilitySet in $availabilitySetsToRemove)
 {
     $as = Get-AzAvailabilitySet -Name $availabilitySet
-    Remove-AzAvailabilitySet -Name $availabilitySet -ResourceGroupName $as.ResourceGroupName -Force 
+    Remove-AzAvailabilitySet -Name $availabilitySet -ResourceGroupName $as.ResourceGroupName -Force
 }
 
 Write-Verbose "Deploying new session hosts to the pool $($HostPoolName)"
