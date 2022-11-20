@@ -137,16 +137,16 @@ try
     {
         $Template.parameters.HostPoolFriendlyName.defaultValue = $HostPool.FriendlyName
     }
-    $Template.parameters.HostPoolLoadBalancerType.defaultValue = $HostPool.LoadBalancerType
+    $Template.parameters.HostPoolLoadBalancerType.defaultValue = $HostPool.LoadBalancerType.ToString()
     $Template.parameters.HostPoolLocation.defaultValue = $HostPool.Location
     $Template.parameters.HostPoolMaxSessionLimit.defaultValue = $HostPool.MaxSessionLimit
     $Template.parameters.HostPoolName.defaultValue = $HostPool.Name
-    $Template.parameters.HostPoolPersonalDesktopAssignmentType.defaultValue = $HostPool.PersonalDesktopAssignmentType
-    $Template.parameters.HostPoolPreferredAppGroupType.defaultValue = $HostPool.PreferredAppGroupType
+    $Template.parameters.HostPoolPersonalDesktopAssignmentType.defaultValue = $HostPool.PersonalDesktopAssignmentType.ToString()
+    $Template.parameters.HostPoolPreferredAppGroupType.defaultValue = $HostPool.PreferredAppGroupType.ToString()
     $Template.parameters.HostPoolResourceGroupName.defaultValue = $HostPool.Id.Split('/')[4]
     $Template.parameters.HostPoolStartVmOnConnect.defaultValue = $HostPool.StartVMOnConnect
     $Template.parameters.HostPoolTags.defaultValue = $HostPool.Tag
-    $Template.parameters.HostPoolType.defaultValue = $HostPool.HostPoolType
+    $Template.parameters.HostPoolType.defaultValue = $HostPool.HostPoolType.ToString()
     $Template.parameters.HostPoolValidationEnvironment.defaultValue = $HostPool.ValidationEnvironment
     $Template.parameters.HostPoolVmTemplate.defaultValue = $HostPool.VMTemplate
     $Template.parameters.ImageOffer.defaultValue = $VirtualMachine.StorageProfile.ImageReference.Offer
