@@ -118,7 +118,7 @@ resource customScriptExtension 'Microsoft.Compute/virtualMachines/extensions@202
     autoUpgradeMinorVersion: true
     settings: {
       fileUris: [
-        ''
+        'https://raw.githubusercontent.com/mikedzikowski/AVDRipAndReplace/main/templateSpec/scripts/Set-SessionHostConfiguration.ps1'
       ]
       timestamp: Timestamp
     }
