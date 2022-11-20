@@ -17,6 +17,9 @@ param(
     [string]$HostPoolResourceGroupName,
 
     [parameter(Mandatory)]
+    [string]$KeyVaultResourceId,
+
+    [parameter(Mandatory)]
     [string]$NetworkInterfaceNamePrefix,
 
     [parameter(Mandatory)]
@@ -126,8 +129,14 @@ try
     }
     $Template.parameters.DomainServices.defaultValue = $DomainServices
     $Template.parameters.HostPoolCustomRdpProperty.defaultValue = $HostPool.CustomRdpProperty
-    $Template.parameters.HostPoolDescription.defaultValue = $HostPool.Description
-    $Template.parameters.HostPoolFriendlyName.defaultValue = $HostPool.FriendlyName
+    if($HostPool.Description)
+    {
+        $Template.parameters.HostPoolDescription.defaultValue = $HostPool.Description
+    }
+    if($HostPool.FriendlyName)
+    {
+        $Template.parameters.HostPoolFriendlyName.defaultValue = $HostPool.FriendlyName
+    }
     $Template.parameters.HostPoolLoadBalancerType.defaultValue = $HostPool.LoadBalancerType
     $Template.parameters.HostPoolLocation.defaultValue = $HostPool.Location
     $Template.parameters.HostPoolMaxSessionLimit.defaultValue = $HostPool.MaxSessionLimit
@@ -137,7 +146,7 @@ try
     $Template.parameters.HostPoolResourceGroupName.defaultValue = $HostPool.Id.Split('/')[4]
     $Template.parameters.HostPoolStartVmOnConnect.defaultValue = $HostPool.StartVMOnConnect
     $Template.parameters.HostPoolTags.defaultValue = $HostPool.Tag
-    $Template.parameters.HostPoolType.defaultValue = $HostPool.Type
+    $Template.parameters.HostPoolType.defaultValue = $HostPool.HostPoolType
     $Template.parameters.HostPoolValidationEnvironment.defaultValue = $HostPool.ValidationEnvironment
     $Template.parameters.HostPoolVmTemplate.defaultValue = $HostPool.VMTemplate
     $Template.parameters.ImageOffer.defaultValue = $VirtualMachine.StorageProfile.ImageReference.Offer
