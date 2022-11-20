@@ -141,11 +141,10 @@ try
     $Template.parameters.HostPoolLocation.defaultValue = $HostPool.Location
     $Template.parameters.HostPoolMaxSessionLimit.defaultValue = $HostPool.MaxSessionLimit
     $Template.parameters.HostPoolName.defaultValue = $HostPool.Name
-    $Template.parameters.HostPoolPersonalDesktopAssignmentType.defaultValue = $HostPool.PersonalDesktopAssignmentType.ToString()
     $Template.parameters.HostPoolPreferredAppGroupType.defaultValue = $HostPool.PreferredAppGroupType.ToString()
     $Template.parameters.HostPoolResourceGroupName.defaultValue = $HostPool.Id.Split('/')[4]
     $Template.parameters.HostPoolStartVmOnConnect.defaultValue = $HostPool.StartVMOnConnect
-    $Template.parameters.HostPoolTags.defaultValue = $HostPool.Tag
+    $Template.parameters.HostPoolTags.defaultValue = (Get-AzResource -ResourceId $HostPool.Id).Tags
     $Template.parameters.HostPoolType.defaultValue = $HostPool.HostPoolType.ToString()
     $Template.parameters.HostPoolValidationEnvironment.defaultValue = $HostPool.ValidationEnvironment
     $Template.parameters.HostPoolVmTemplate.defaultValue = $HostPool.VMTemplate
