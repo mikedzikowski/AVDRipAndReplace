@@ -7,7 +7,7 @@ param(
     [string]$DiskNamePrefix,    
 
     [parameter(Mandatory)]
-    [ValidationSet('AzureCloud','AzureUSGovernment', 'AzureChinaCloud', 'AzureGermanCloud')]
+    [ValidateSet('AzureCloud','AzureUSGovernment', 'AzureChinaCloud', 'AzureGermanCloud')]
     [string]$Environment,
 
     [parameter(Mandatory)]
