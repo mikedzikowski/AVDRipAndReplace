@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.12.40.16777",
-      "templateHash": "15411074838284729750"
+      "templateHash": "688743139881969887"
     }
   },
   "parameters": {
@@ -440,7 +440,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.12.40.16777",
-              "templateHash": "3413825787213891258"
+              "templateHash": "3092952389248483204"
             }
           },
           "parameters": {
@@ -592,7 +592,7 @@
                 "autoUpgradeMinorVersion": true,
                 "settings": {
                   "fileUris": [
-                    ""
+                    "https://raw.githubusercontent.com/mikedzikowski/AVDRipAndReplace/main/templateSpec/scripts/Set-SessionHostConfiguration.ps1"
                   ],
                   "timestamp": "[parameters('Timestamp')]"
                 },
