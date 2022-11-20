@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.12.40.16777",
-      "templateHash": "688743139881969887"
+      "templateHash": "12916590939933733865"
     }
   },
   "parameters": {
@@ -72,10 +72,6 @@
       "defaultValue": 1
     },
     "HostPoolName": {
-      "type": "string",
-      "defaultValue": ""
-    },
-    "HostPoolPersonalDesktopAssignmentType": {
       "type": "string",
       "defaultValue": ""
     },
@@ -225,9 +221,6 @@
           "MaxSessionLimit": {
             "value": "[parameters('HostPoolMaxSessionLimit')]"
           },
-          "PersonalDesktopAssignmentType": {
-            "value": "[parameters('HostPoolPersonalDesktopAssignmentType')]"
-          },
           "PreferredAppGroupType": {
             "value": "[parameters('HostPoolPreferredAppGroupType')]"
           },
@@ -251,7 +244,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.12.40.16777",
-              "templateHash": "17127124325704051312"
+              "templateHash": "17364571363319644937"
             }
           },
           "parameters": {
@@ -278,9 +271,6 @@
             },
             "MaxSessionLimit": {
               "type": "int"
-            },
-            "PersonalDesktopAssignmentType": {
-              "type": "string"
             },
             "PreferredAppGroupType": {
               "type": "string"
@@ -316,7 +306,7 @@
                 "hostPoolType": "[parameters('HostPoolType')]",
                 "loadBalancerType": "[parameters('LoadBalancerType')]",
                 "maxSessionLimit": "[parameters('MaxSessionLimit')]",
-                "personalDesktopAssignmentType": "[parameters('PersonalDesktopAssignmentType')]",
+                "personalDesktopAssignmentType": null,
                 "preferredAppGroupType": "[parameters('PreferredAppGroupType')]",
                 "registrationInfo": {
                   "expirationTime": "[dateTimeAdd(parameters('Timestamp'), 'PT2H')]",

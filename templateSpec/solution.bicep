@@ -25,7 +25,6 @@ param HostPoolLoadBalancerType string = ''
 param HostPoolLocation string = deployment().location
 param HostPoolMaxSessionLimit int = 1
 param HostPoolName string = ''
-param HostPoolPersonalDesktopAssignmentType string = ''
 param HostPoolPreferredAppGroupType string = ''
 param HostPoolResourceGroupName string = ''
 param HostPoolStartVmOnConnect bool = false
@@ -86,7 +85,6 @@ module hostPool 'modules/hostPool.bicep' = {
     LoadBalancerType: HostPoolLoadBalancerType
     Location: HostPoolLocation
     MaxSessionLimit: HostPoolMaxSessionLimit
-    PersonalDesktopAssignmentType: HostPoolPersonalDesktopAssignmentType
     PreferredAppGroupType: HostPoolPreferredAppGroupType
     StartVmOnConnect: HostPoolStartVmOnConnect
     Tags: HostPoolTags

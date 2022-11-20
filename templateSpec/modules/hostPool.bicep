@@ -6,7 +6,6 @@ param HostPoolType string
 param LoadBalancerType string
 param Location string
 param MaxSessionLimit int
-param PersonalDesktopAssignmentType string
 param PreferredAppGroupType string
 param StartVmOnConnect bool
 param Tags object
@@ -26,7 +25,7 @@ resource hostPool 'Microsoft.DesktopVirtualization/hostPools@2022-04-01-preview'
     hostPoolType: HostPoolType
     loadBalancerType: LoadBalancerType
     maxSessionLimit: MaxSessionLimit
-    personalDesktopAssignmentType: PersonalDesktopAssignmentType
+    personalDesktopAssignmentType: null
     preferredAppGroupType: PreferredAppGroupType
     registrationInfo: {
       expirationTime: dateTimeAdd(Timestamp, 'PT2H')
