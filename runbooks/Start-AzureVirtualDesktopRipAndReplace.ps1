@@ -7,9 +7,6 @@ Param (
     [string]$HostPoolName,
 
     [Parameter(Mandatory)]
-    [string]$KeyVault,
-
-    [Parameter(Mandatory)]
     [string]$SubscriptionId,
 
     [Parameter(Mandatory)]
@@ -42,12 +39,7 @@ Connect-AzAccount `
 # Get the host pool's info
 $HostPool = Get-AzResource -ResourceType 'Microsoft.DesktopVirtualization/hostpools' | Where-Object {$_.Name -eq $HostPoolName}
 $HostPoolResourceGroup = $HostPool.ResourceGroupName
-$HostPoolInfo = Get-AzWvdHostPool -ResourceGroupName $HostPoolResourceGroup -Name $HostPoolName
-$AppGroupResourceId = $HostPoolInfo.ApplicationGroupReference[-1]
-$SecurityPrincipalIds = @(Get-AzRoleAssignment -Scope $AppGroupResourceId -RoleDefinitionName 'Desktop Virtualization User').ObjectId
 $HostPoolTags = $HostPool.Tags
-$Configuration = $HostPoolTags.AvdConfiguration | ConvertFrom-Json
-$SoftwareSettings = $HostPoolTags.AvdSoftware | ConvertFrom-Json
 $TimeStamp = (Get-Date -Format 'yyyyMMddhhmmss')
 
 # Get all session hosts
@@ -57,59 +49,13 @@ $SessionHosts = Get-AzWvdSessionHost `
 
 $SessionHostsCount = $SessionHosts.count
 
-# Get Virtal Network and Subnet
-$sessionHostName = $SessionHosts[0].Name.split('/')[-1]
-$vmName = $sessionHostName.split('.')[0]
-$vM = Get-AzVm -Name $vmName
-$nic = $vM.NetworkProfile.NetworkInterfaces
-$networkInterface = ($nic.id -split '/')[-1]
-$nicDetails = Get-AzNetworkInterface -Name $networkInterface
-
-# Need to add keyvault to build and setting secrets to build
-$SasToken = (Get-AzKeyVaultSecret -VaultName $KeyVault -Name "SasToken").SecretValue
-$DomainJoinUser= (Get-AzKeyVaultSecret -VaultName $KeyVault -Name "DomainJoinUserPrincipalName" -AsPlainText)
-$DomainJoinPassword =  (Get-AzKeyVaultSecret -VaultName $KeyVault -Name "DomainJoinPassword").SecretValue
-$vmUser =  (Get-AzKeyVaultSecret -VaultName $KeyVault -Name "VmUsername" -AsPlainText)
-$vmPassword =  (Get-AzKeyVaultSecret -VaultName $KeyVault -Name "VmPassword").SecretValue
-
 # Get details for deployment params
 $Params = @{
-    AddOrReplaceSessionHosts = $true
-    DeployAip = $SoftwareSettings.DeployAip
-    DeployAppMaskingRules = $SoftwareSettings.DeployAppMaskingRules
-    DeployProjectVisio = $SoftwareSettings.DeployProjectVisio
-    DisaStigCompliance = $SoftwareSettings.DisaStigCompliance
-    DiskSku = $Configuration.DiskSku
-    DomainName = $Configuration.DomainName
-    DomainServices = $Configuration.DomainServices
-    Environment = $HostPoolName.Split('-')[4]
-    HostPoolType = $HostPoolInfo.HostPoolType.ToString() + ' ' + $HostPoolInfo.LoadBalancerType.ToString()
-    ImageOffer = $Configuration.Image.Split(':')[1]
-    ImagePublisher = $Configuration.Image.Split(':')[0]
-    ImageSku = $Configuration.Image.Split(':')[2]
     ImageVersion = 'latest'
-    LogAnalyticsWorkspaceId = $HostPoolTags.AvdMonitoring
-    MissionOwnerShortName = $HostPoolName.Split('-')[2]
-    RecoveryServices = $Configuration.RecoveryServices
-    ScreenCaptureProtection = $SoftwareSettings.ScreenCaptureProtection
-    ScriptContainerUri = $HostPoolTags.AvdContainer
-    SecurityPrincipalIds = @($SecurityPrincipalIds)
-    SessionHostOuPath = $HostPoolTags.AvdOuPath
-    StampIndex = $HostPoolName.Split('-')[5].ToInt32($null)
-    TenantShortName = $HostPoolName.Split('-')[1]
-    VmSize = $Configuration.VmSize
     SessionHostCount = $SessionHostsCount
-    VirtualNetwork = ($nicdetails.IpConfigurations.subnet.Id -split '/')[-3]
-    VirtualNetworkResourceGroup = ($nicdetails.IpConfigurations.subnet.Id -split '/')[-7]
-    Subnet = ($nicdetails.IpConfigurations.subnet.Id -split '/')[-1]
     Timestamp = $TimeStamp
-    ValidationEnvironment = $true
-    ScriptContainerSasToken = $SasToken
-    DomainJoinPassword = $DomainJoinPassword
-    DomainJoinUserPrincipalName = $DomainJoinUser
-    VmPassword = $vmPassword
-    VmUserName =  $vmUser
 }
+
 
 # Put all session hosts in drain mode
 foreach($SessionHost in $SessionHosts)
