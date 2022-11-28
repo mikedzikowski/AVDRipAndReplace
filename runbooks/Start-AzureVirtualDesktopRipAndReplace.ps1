@@ -125,9 +125,9 @@ foreach($SessionHost in $SessionHosts)
 
 # Programmatically clean up resources in session host resource group
 $asList = @()
-foreach ($SessionHost in $SessionHosts)
+$SessionHosts | ForEach-Object -parallel
 {
-    $SessionHostsName = $SessionHost.Id.Split('/')[-1]
+    $SessionHostsName = $_.Id.Split('/')[-1]
     $vmName = $SessionHostsName.Split('.')[0]
     $virtualMachine = (Get-AzVM | Where-Object {$_.Name -eq $vmName})
     $networkInterfaces = $virtualMachine.NetworkProfile
@@ -169,7 +169,7 @@ foreach ($SessionHost in $SessionHosts)
     # Remove Network Interfaces | Running an extra check incase NIC was deleted with VM
     if($vmNics)
     {
-        $nicCheck = Get-AzNetworkInterface -Name $vmNic.name -ResourceGroupName $vmNic.ResourceGroupName -ErrorAction SilentlyContinue
+        $nicCheck = Get-AzNetworkInterface -Name $vmNics.name -ResourceGroupName $vmNics.ResourceGroupName -ErrorAction SilentlyContinue
         if($nicCheck)
         {
             foreach($vmNic in $vmNics)
