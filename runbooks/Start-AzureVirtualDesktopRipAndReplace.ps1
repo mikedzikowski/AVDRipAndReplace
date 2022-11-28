@@ -125,8 +125,7 @@ foreach($SessionHost in $SessionHosts)
 
 # Programmatically clean up resources in session host resource group
 $asList = @()
-$SessionHosts | ForEach-Object -parallel
-{
+$SessionHosts | ForEach-Object -parallel {
     $SessionHostsName = $_.Id.Split('/')[-1]
     $vmName = $SessionHostsName.Split('.')[0]
     $virtualMachine = (Get-AzVM | Where-Object {$_.Name -eq $vmName})
