@@ -79,6 +79,7 @@ $Sessions = Get-AzWvdUserSession `
 
 # Send a message to any user with an active session
 $Time = (Get-Date).ToUniversalTime().AddMinutes(15)
+
 foreach($Session in $Sessions)
 {
     $SessionHost = $Session.Id.split('/')[-3]
@@ -156,17 +157,25 @@ foreach ($SessionHost in $SessionHosts)
     {
         Remove-AzVM -ResourceGroupName $resourceGroupName -Name $vmName -Force -WarningAction SilentlyContinue -Verbose
     }
-    # Remove OS Diks
+    # Remove OS Diks | Running an extra check incase OSDisk was deleted with VM
     if($osDiskName)
     {
-        Get-AzDisk -ResourceGroupName $resourceGroupName -DiskName $osDiskName| Remove-AzDisk -Force -Verbose
+        $diskCheck = Get-AzDisk -ResourceGroupName $resourceGroupName -DiskName $osDiskName -ErrorAction SilentlyContinue
+        if($diskCheck)
+        {
+            Get-AzDisk -ResourceGroupName $resourceGroupName -DiskName $osDiskName | Remove-AzDisk -Force -Verbose
+        }
     }
-    # Remove Network Interfaces
+    # Remove Network Interfaces | Running an extra check incase NIC was deleted with VM
     if($vmNics)
     {
-        foreach($vmNic in $vmNics)
+        $nicCheck = Get-AzNetworkInterface -Name $vmNic.name -ResourceGroupName $vmNic.ResourceGroupName -ErrorAction SilentlyContinue
+        if($nicCheck)
         {
-            Get-AzNetworkInterface -Name $vmNic.name -ResourceGroupName $vmNic.ResourceGroupName | Remove-AzNetworkInterface  -Force -Verbose
+            foreach($vmNic in $vmNics)
+            {
+                Get-AzNetworkInterface -Name $vmNic.name -ResourceGroupName $vmNic.ResourceGroupName | Remove-AzNetworkInterface  -Force -Verbose
+            }
         }
     }
     # Remove Public Ip Addresses

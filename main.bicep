@@ -152,6 +152,14 @@ var runbooks = [
   }
 ]
 
+var runbooksPwsh7 = [
+  {
+    name: 'Start-AzureVirtualDesktopRipAndReplace'
+    uri: 'https://raw.githubusercontent.com/mikedzikowski/logicapps/main/runbooks/Start-AzureVirtualDesktopRipAndReplace.ps1'
+  }
+]
+
+
 var LocationShortNames = {
   australiacentral: 'ac'
   australiacentral2: 'ac2'
@@ -262,6 +270,7 @@ module automationAccount 'modules/automationAccount.bicep' = {
     automationAccountName: automationAccountNameValue
     location: location
     runbookNames: runbooks
+    pwsh7RunbookNames: runbooksPwsh7
   }
   dependsOn: [
     resourceGroups
@@ -411,7 +420,6 @@ module getImageVersionlogicApp 'modules/logicappGetImageVersion.bicep' = {
     waitForRunBook: waitForRunBook
     hostPoolName: hostPoolName
     identityType: identityType
-    keyVaultName: keyVaultName
   }
   dependsOn: [
     blobConnection

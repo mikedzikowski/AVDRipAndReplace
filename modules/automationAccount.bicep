@@ -1,6 +1,7 @@
 param location string
 param automationAccountName string
 param runbookNames array
+param pwsh7RunbookNames array
 
 resource automationAccount 'Microsoft.Automation/automationAccounts@2021-06-22' = {
   //name: uniqueString(automationAccountName, resourceGroup().id)
@@ -26,6 +27,21 @@ resource runbookDeployment 'Microsoft.Automation/automationAccounts/runbooks@201
   location: location
   properties: {
     runbookType: 'PowerShell'
+    logProgress: true
+    logVerbose: true
+    publishContentLink: {
+      uri: runbook.uri
+      version: '1.0.0.0'
+    }
+  }
+}]
+
+resource pwsh7runbookDeployment 'Microsoft.Automation/automationAccounts/runbooks@2019-06-01' = [for (runbook, i) in pwsh7RunbookNames: {
+  name: runbook.name
+  parent: automationAccount
+  location: location
+  properties: {
+    runbookType: 'PowerShell7'
     logProgress: true
     logVerbose: true
     publishContentLink: {
