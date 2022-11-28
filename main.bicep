@@ -1,23 +1,5 @@
 targetScope = 'subscription'
 
-@description('The UPN of the privileged account to domain join the AVD session hosts to your domain. This should be an account the resides within the domain you are joining.')
-param DomainJoinUserPrincipalName string
-
-@secure()
-@description('The password of the privileged account to domain join the AVD session hosts to your domain')
-param DomainJoinPassword string
-
-@description('The Local Administrator Username for the Session Hosts')
-param VmUsername string
-
-@secure()
-@description('Local administrator password for the AVD session hosts')
-param VmPassword string
-
-@secure()
-@description('SAS Token for storage account')
-param SasToken string
-
 @description('The location for the resources deployed in this solution.')
 param location string = deployment().location
 
@@ -103,9 +85,6 @@ param startTime string = '23:00'
 // Get BlobUpdate Logic App Parameters
 param container string
 
-@description('The name of the key vault where secrets will be stored and consumed by runbooks. If deploying a new key vault, this value must be globally unique.')
-param keyVaultName string
-
 // Variables
 var cloud = environment().name
 var tenantId = tenant().tenantId
@@ -132,26 +111,26 @@ var runbookMarketPlaceImageVersion = 'Get-MarketPlaceImageVersion'
 var runbooks = [
   {
     name: 'Get-RunBookSchedule'
-    uri: 'https://raw.githubusercontent.com/mikedzikowski/logicapps/main/runbooks/Get-RunBookSchedule.ps1'
+    uri: 'https://raw.githubusercontent.com/mikedzikowski/AVDRipAndReplace/main/runbooks/Get-RunBookSchedule.ps1'
   }
   {
     name: 'Get-MarketPlaceImageVersion'
-    uri: 'https://raw.githubusercontent.com/mikedzikowski/logicapps/main/runbooks/Get-MarketPlaceImageVersion.ps1'
+    uri: 'https://raw.githubusercontent.com/mikedzikowski/AVDRipAndReplace/main/runbooks/Get-MarketPlaceImageVersion.ps1'
   }
   {
     name: 'Get-SessionHostVirtualMachine'
-    uri: 'https://raw.githubusercontent.com/mikedzikowski/logicapps/main/runbooks/Get-SessionHostVirtualMachine.ps1'
+    uri: 'https://raw.githubusercontent.com/mikedzikowski/AVDRipAndReplace/main/runbooks/Get-SessionHostVirtualMachine.ps1'
   }
   {
     name: 'New-AutomationSchedule'
-    uri: 'https://raw.githubusercontent.com/mikedzikowski/logicapps/main/runbooks/New-AutomationSchedule.ps1'
+    uri: 'https://raw.githubusercontent.com/mikedzikowski/AVDRipAndReplace/main/runbooks/New-AutomationSchedule.ps1'
   }
 ]
 
 var runbooksPwsh7 = [
   {
     name: 'Start-AzureVirtualDesktopRipAndReplace'
-    uri: 'https://raw.githubusercontent.com/mikedzikowski/logicapps/main/runbooks/Start-AzureVirtualDesktopRipAndReplace.ps1'
+    uri: 'https://raw.githubusercontent.com/mikedzikowski/AVDRipAndReplace/main/runbooks/Start-AzureVirtualDesktopRipAndReplace.ps1'
   }
 ]
 
@@ -420,7 +399,6 @@ module getImageVersionlogicApp 'modules/logicappGetImageVersion.bicep' = {
   dependsOn: [
     blobConnection
     o365Connection
-    keyVault
   ]
 }
 
@@ -456,25 +434,6 @@ module getBlobUpdateLogicApp 'modules/logicAppGetBlobUpdate.bicep' = {
   ]
 }
 
-module keyVault 'modules/keyVault.bicep' = {
-  name: 'kv-deployment-${deploymentNameSuffix}'
-  scope: resourceGroup(subscriptionId, rg[1])
-  params:{
-    SasToken: SasToken
-    DomainJoinPassword: DomainJoinPassword
-    DomainJoinUserPrincipalName: DomainJoinUserPrincipalName
-    VmUsername: VmUsername
-    VmPassword: VmPassword
-    location: location
-    keyvaultName: keyVaultName
-    aaIdentityId: automationAccount.outputs.aaIdentityId
-  }
-  dependsOn: [
-    resourceGroups
-  ]
-}
-
 output automationAccountName string = automationAccountNameValue
 output storageAccountName string = storageAccount.outputs.storageAccountName
 output ResourceGroups array = array(concat(automationAccountRgVar,logicAppRgVar,storageAccountRgVar))
-output keyVaultName string = keyVault.outputs.keyVaultName
