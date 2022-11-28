@@ -143,10 +143,6 @@ var runbooks = [
     uri: 'https://raw.githubusercontent.com/mikedzikowski/logicapps/main/runbooks/Get-SessionHostVirtualMachine.ps1'
   }
   {
-    name: 'Start-AzureVirtualDesktopRipAndReplace'
-    uri: 'https://raw.githubusercontent.com/mikedzikowski/logicapps/main/runbooks/Start-AzureVirtualDesktopRipAndReplace.ps1'
-  }
-  {
     name: 'New-AutomationSchedule'
     uri: 'https://raw.githubusercontent.com/mikedzikowski/logicapps/main/runbooks/New-AutomationSchedule.ps1'
   }
