@@ -24,7 +24,6 @@ param tenantId string
 param subscriptionId string
 param hostPoolName string
 param templateSpecId string
-// param keyVaultName string
 
 resource workflows_GetImageVersion_name_resource 'Microsoft.Logic/workflows@2017-07-01' = {
   name: workflows_GetImageVersion_name
@@ -115,7 +114,6 @@ resource workflows_GetImageVersion_name_resource 'Microsoft.Logic/workflows@2017
                           TenantId: tenantId
                           TemplateSpecId: templateSpecId
                           SubscriptionId: subscriptionId
-                          // KeyVault: keyVaultName
                         }
                       }
                     }
