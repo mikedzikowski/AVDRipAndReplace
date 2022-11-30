@@ -4,12 +4,12 @@ targetScope = 'subscription'
 param location string = deployment().location
 
 @description('The Template Spec version ID that will be used to by the rip and replace AVD solution.')
-param templateSpecId string = ''
+param templateSpecId string
 
 @description('Set the following values if there are exisiting resource groups, automation accounts, or storage account that should be targeted. If values are not set a default naming convention will be used by resources created.')
-param exisitingAutomationAccount string = ''
-param existingAutomationAccountRg string = ''
-param existingLogicAppRg string = ''
+param exisitingAutomationAccount string
+param existingAutomationAccountRg string
+param existingLogicAppRg string
 
 // Start Blob Check Params
 @description('To be used with AVD solutions that deploy post configuration software. Set the following values if there is a storage account that should be targeted. If values are not set a default naming convention will be used by resources created.')

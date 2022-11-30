@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.7.4.23292",
-      "templateHash": "8203719758132026648"
+      "templateHash": "16283184021043118421"
     }
   },
   "parameters": {
@@ -18,25 +18,21 @@
     },
     "templateSpecId": {
       "type": "string",
-      "defaultValue": "",
       "metadata": {
         "description": "The Template Spec version ID that will be used to by the rip and replace AVD solution."
       }
     },
     "exisitingAutomationAccount": {
       "type": "string",
-      "defaultValue": "",
       "metadata": {
         "description": "Set the following values if there are exisiting resource groups, automation accounts, or storage account that should be targeted. If values are not set a default naming convention will be used by resources created."
       }
     },
     "existingAutomationAccountRg": {
-      "type": "string",
-      "defaultValue": ""
+      "type": "string"
     },
     "existingLogicAppRg": {
-      "type": "string",
-      "defaultValue": ""
+      "type": "string"
     },
     "deployBlobUpdateLogicApp": {
       "type": "bool",
