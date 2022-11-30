@@ -5,40 +5,10 @@
     "_generator": {
       "name": "bicep",
       "version": "0.7.4.23292",
-      "templateHash": "1381477024217239332"
+      "templateHash": "13490250271323387237"
     }
   },
   "parameters": {
-    "DomainJoinUserPrincipalName": {
-      "type": "string",
-      "metadata": {
-        "description": "The UPN of the privileged account to domain join the AVD session hosts to your domain. This should be an account the resides within the domain you are joining."
-      }
-    },
-    "DomainJoinPassword": {
-      "type": "secureString",
-      "metadata": {
-        "description": "The password of the privileged account to domain join the AVD session hosts to your domain"
-      }
-    },
-    "VmUsername": {
-      "type": "string",
-      "metadata": {
-        "description": "The Local Administrator Username for the Session Hosts"
-      }
-    },
-    "VmPassword": {
-      "type": "secureString",
-      "metadata": {
-        "description": "Local administrator password for the AVD session hosts"
-      }
-    },
-    "SasToken": {
-      "type": "secureString",
-      "metadata": {
-        "description": "SAS Token for storage account"
-      }
-    },
     "location": {
       "type": "string",
       "defaultValue": "[deployment().location]",
@@ -190,12 +160,6 @@
     },
     "container": {
       "type": "string"
-    },
-    "keyVaultName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the key vault where secrets will be stored and consumed by runbooks. If deploying a new key vault, this value must be globally unique."
-      }
     }
   },
   "variables": {
@@ -224,23 +188,25 @@
     "runbooks": [
       {
         "name": "Get-RunBookSchedule",
-        "uri": "https://raw.githubusercontent.com/mikedzikowski/logicapps/main/runbooks/Get-RunBookSchedule.ps1"
+        "uri": "https://raw.githubusercontent.com/mikedzikowski/AVDRipAndReplace/main/runbooks/Get-RunBookSchedule.ps1"
       },
       {
         "name": "Get-MarketPlaceImageVersion",
-        "uri": "https://raw.githubusercontent.com/mikedzikowski/logicapps/main/runbooks/Get-MarketPlaceImageVersion.ps1"
+        "uri": "https://raw.githubusercontent.com/mikedzikowski/AVDRipAndReplace/main/runbooks/Get-MarketPlaceImageVersion.ps1"
       },
       {
         "name": "Get-SessionHostVirtualMachine",
-        "uri": "https://raw.githubusercontent.com/mikedzikowski/logicapps/main/runbooks/Get-SessionHostVirtualMachine.ps1"
-      },
-      {
-        "name": "Start-AzureVirtualDesktopRipAndReplace",
-        "uri": "https://raw.githubusercontent.com/mikedzikowski/logicapps/main/runbooks/Start-AzureVirtualDesktopRipAndReplace.ps1"
+        "uri": "https://raw.githubusercontent.com/mikedzikowski/AVDRipAndReplace/main/runbooks/Get-SessionHostVirtualMachine.ps1"
       },
       {
         "name": "New-AutomationSchedule",
-        "uri": "https://raw.githubusercontent.com/mikedzikowski/logicapps/main/runbooks/New-AutomationSchedule.ps1"
+        "uri": "https://raw.githubusercontent.com/mikedzikowski/AVDRipAndReplace/main/runbooks/New-AutomationSchedule.ps1"
+      }
+    ],
+    "runbooksPwsh7": [
+      {
+        "name": "Start-AzureVirtualDesktopRipAndReplace",
+        "uri": "https://raw.githubusercontent.com/mikedzikowski/AVDRipAndReplace/main/runbooks/Start-AzureVirtualDesktopRipAndReplace.ps1"
       }
     ],
     "LocationShortNames": {
@@ -398,6 +364,9 @@
           },
           "runbookNames": {
             "value": "[variables('runbooks')]"
+          },
+          "pwsh7RunbookNames": {
+            "value": "[variables('runbooksPwsh7')]"
           }
         },
         "template": {
@@ -407,7 +376,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.7.4.23292",
-              "templateHash": "7528834214838154962"
+              "templateHash": "7872186581058726938"
             }
           },
           "parameters": {
@@ -418,6 +387,9 @@
               "type": "string"
             },
             "runbookNames": {
+              "type": "array"
+            },
+            "pwsh7RunbookNames": {
               "type": "array"
             }
           },
@@ -455,6 +427,28 @@
                 "logVerbose": true,
                 "publishContentLink": {
                   "uri": "[parameters('runbookNames')[copyIndex()].uri]",
+                  "version": "1.0.0.0"
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Automation/automationAccounts', parameters('automationAccountName'))]"
+              ]
+            },
+            {
+              "copy": {
+                "name": "pwsh7runbookDeployment",
+                "count": "[length(parameters('pwsh7RunbookNames'))]"
+              },
+              "type": "Microsoft.Automation/automationAccounts/runbooks",
+              "apiVersion": "2019-06-01",
+              "name": "[format('{0}/{1}', parameters('automationAccountName'), parameters('pwsh7RunbookNames')[copyIndex()].name)]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "runbookType": "PowerShell7",
+                "logProgress": true,
+                "logVerbose": true,
+                "publishContentLink": {
+                  "uri": "[parameters('pwsh7RunbookNames')[copyIndex()].uri]",
                   "version": "1.0.0.0"
                 }
               },
@@ -1183,9 +1177,6 @@
           },
           "identityType": {
             "value": "[variables('identityType')]"
-          },
-          "keyVaultName": {
-            "value": "[parameters('keyVaultName')]"
           }
         },
         "template": {
@@ -1195,7 +1186,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.7.4.23292",
-              "templateHash": "15260178295620183937"
+              "templateHash": "2428345447760185474"
             }
           },
           "parameters": {
@@ -1275,9 +1266,6 @@
               "type": "string"
             },
             "templateSpecId": {
-              "type": "string"
-            },
-            "keyVaultName": {
               "type": "string"
             }
           },
@@ -1370,8 +1358,7 @@
                                       "HostPoolName": "[parameters('hostPoolName')]",
                                       "TenantId": "[parameters('tenantId')]",
                                       "TemplateSpecId": "[parameters('templateSpecId')]",
-                                      "SubscriptionId": "[parameters('subscriptionId')]",
-                                      "KeyVault": "[parameters('keyVaultName')]"
+                                      "SubscriptionId": "[parameters('subscriptionId')]"
                                     }
                                   }
                                 },
@@ -1698,7 +1685,6 @@
       "dependsOn": [
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), variables('rg')[0]), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix')))]",
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), variables('rg')[1]), 'Microsoft.Resources/deployments', format('blobConnection-deployment-{0}', parameters('deploymentNameSuffix')))]",
-        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), variables('rg')[1]), 'Microsoft.Resources/deployments', format('kv-deployment-{0}', parameters('deploymentNameSuffix')))]",
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), variables('rg')[1]), 'Microsoft.Resources/deployments', format('o365Connection-deployment-{0}', parameters('deploymentNameSuffix')))]"
       ]
     },
@@ -2136,182 +2122,6 @@
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), variables('rg')[1]), 'Microsoft.Resources/deployments', format('blobConnection-deployment-{0}', parameters('deploymentNameSuffix')))]",
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), variables('rg')[2]), 'Microsoft.Resources/deployments', format('sa-deployment-{0}', parameters('deploymentNameSuffix')))]"
       ]
-    },
-    {
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-10-01",
-      "name": "[format('kv-deployment-{0}', parameters('deploymentNameSuffix'))]",
-      "subscriptionId": "[variables('subscriptionId')]",
-      "resourceGroup": "[variables('rg')[1]]",
-      "properties": {
-        "expressionEvaluationOptions": {
-          "scope": "inner"
-        },
-        "mode": "Incremental",
-        "parameters": {
-          "SasToken": {
-            "value": "[parameters('SasToken')]"
-          },
-          "DomainJoinPassword": {
-            "value": "[parameters('DomainJoinPassword')]"
-          },
-          "DomainJoinUserPrincipalName": {
-            "value": "[parameters('DomainJoinUserPrincipalName')]"
-          },
-          "VmUsername": {
-            "value": "[parameters('VmUsername')]"
-          },
-          "VmPassword": {
-            "value": "[parameters('VmPassword')]"
-          },
-          "location": {
-            "value": "[parameters('location')]"
-          },
-          "keyvaultName": {
-            "value": "[parameters('keyVaultName')]"
-          },
-          "aaIdentityId": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), variables('rg')[0]), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix')))).outputs.aaIdentityId.value]"
-          }
-        },
-        "template": {
-          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-          "contentVersion": "1.0.0.0",
-          "metadata": {
-            "_generator": {
-              "name": "bicep",
-              "version": "0.7.4.23292",
-              "templateHash": "12922343719092365025"
-            }
-          },
-          "parameters": {
-            "location": {
-              "type": "string",
-              "defaultValue": "[resourceGroup().location]",
-              "metadata": {
-                "description": "The Azure Region to deploy the resources into"
-              }
-            },
-            "tags": {
-              "type": "object",
-              "defaultValue": {},
-              "metadata": {
-                "description": "Tags to apply to the Key Vault Instance"
-              }
-            },
-            "keyvaultName": {
-              "type": "string",
-              "metadata": {
-                "description": "The name of the Key Vault"
-              }
-            },
-            "aaIdentityId": {
-              "type": "string",
-              "metadata": {
-                "description": "The id of the automation account"
-              }
-            },
-            "VmPassword": {
-              "type": "secureString"
-            },
-            "DomainJoinPassword": {
-              "type": "secureString"
-            },
-            "DomainJoinUserPrincipalName": {
-              "type": "secureString"
-            },
-            "SasToken": {
-              "type": "secureString"
-            },
-            "VmUsername": {
-              "type": "secureString"
-            }
-          },
-          "variables": {
-            "Secrets": [
-              {
-                "name": "VmPassword",
-                "value": "[parameters('VmPassword')]"
-              },
-              {
-                "name": "VmUsername",
-                "value": "[parameters('VmUsername')]"
-              },
-              {
-                "name": "DomainJoinPassword",
-                "value": "[parameters('DomainJoinPassword')]"
-              },
-              {
-                "name": "DomainJoinUserPrincipalName",
-                "value": "[parameters('DomainJoinUserPrincipalName')]"
-              },
-              {
-                "name": "SasToken",
-                "value": "[parameters('SasToken')]"
-              }
-            ]
-          },
-          "resources": [
-            {
-              "type": "Microsoft.KeyVault/vaults",
-              "apiVersion": "2021-10-01",
-              "name": "[parameters('keyvaultName')]",
-              "location": "[parameters('location')]",
-              "tags": "[parameters('tags')]",
-              "properties": {
-                "createMode": "default",
-                "enabledForDeployment": true,
-                "enabledForDiskEncryption": false,
-                "enabledForTemplateDeployment": true,
-                "enableRbacAuthorization": true,
-                "networkAcls": {
-                  "bypass": "AzureServices"
-                },
-                "sku": {
-                  "family": "A",
-                  "name": "standard"
-                },
-                "tenantId": "[subscription().tenantId]"
-              }
-            },
-            {
-              "type": "Microsoft.Authorization/roleAssignments",
-              "apiVersion": "2020-04-01-preview",
-              "name": "[guid(parameters('aaIdentityId'), subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '4633458b-17de-408a-b874-0445c86b69e6'), parameters('keyvaultName'))]",
-              "properties": {
-                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '4633458b-17de-408a-b874-0445c86b69e6')]",
-                "principalId": "[parameters('aaIdentityId')]",
-                "principalType": "ServicePrincipal"
-              }
-            },
-            {
-              "copy": {
-                "name": "secrets",
-                "count": "[length(variables('Secrets'))]"
-              },
-              "type": "Microsoft.KeyVault/vaults/secrets",
-              "apiVersion": "2022-07-01",
-              "name": "[format('{0}/{1}', parameters('keyvaultName'), variables('Secrets')[copyIndex()].name)]",
-              "properties": {
-                "value": "[variables('Secrets')[copyIndex()].value]"
-              },
-              "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', parameters('keyvaultName'))]"
-              ]
-            }
-          ],
-          "outputs": {
-            "keyVaultName": {
-              "type": "string",
-              "value": "[parameters('keyvaultName')]"
-            }
-          }
-        }
-      },
-      "dependsOn": [
-        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), variables('rg')[0]), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix')))]",
-        "resourceGroups"
-      ]
     }
   ],
   "outputs": {
@@ -2326,10 +2136,6 @@
     "ResourceGroups": {
       "type": "array",
       "value": "[array(concat(variables('automationAccountRgVar'), variables('logicAppRgVar'), variables('storageAccountRgVar')))]"
-    },
-    "keyVaultName": {
-      "type": "string",
-      "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), variables('rg')[1]), 'Microsoft.Resources/deployments', format('kv-deployment-{0}', parameters('deploymentNameSuffix')))).outputs.keyVaultName.value]"
     }
   }
 }
