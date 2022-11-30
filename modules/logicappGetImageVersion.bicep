@@ -245,7 +245,7 @@ resource workflows_GetImageVersion_name_resource 'Microsoft.Logic/workflows@2017
               }
             }
             method: 'put'
-            path: '/subscriptions/@{encodeURIComponent(\'f4972a61-1083-4904-a4e2-a790107320bf\')}/resourceGroups/@{encodeURIComponent(\'rg-fs-peo-va-d-management-01\')}/providers/Microsoft.Automation/automationAccounts/@{encodeURIComponent(\'aa-fs-peo-va-d-00-rar\')}/jobs'
+            path: '/subscriptions/@{encodeURIComponent(\'${subscriptionId}\')}/resourceGroups/@{encodeURIComponent(\'${automationAccountResourceGroup}\')}/providers/Microsoft.Automation/automationAccounts/@{encodeURIComponent(\'${automationAccountName}\')}/jobs'
             queries: {
               runbookName: getGetMarketPlaceImageVersion
               wait: true
