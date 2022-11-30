@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.7.4.23292",
-      "templateHash": "16283184021043118421"
+      "templateHash": "11786122226600073546"
     }
   },
   "parameters": {
@@ -945,7 +945,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.7.4.23292",
-              "templateHash": "2428345447760185474"
+              "templateHash": "18137247910267632474"
             }
           },
           "parameters": {
@@ -1246,7 +1246,7 @@
                           }
                         },
                         "method": "put",
-                        "path": "/subscriptions/@{encodeURIComponent('f4972a61-1083-4904-a4e2-a790107320bf')}/resourceGroups/@{encodeURIComponent('rg-fs-peo-va-d-management-01')}/providers/Microsoft.Automation/automationAccounts/@{encodeURIComponent('aa-fs-peo-va-d-00-rar')}/jobs",
+                        "path": "[format('/subscriptions/@{{encodeURIComponent(''{0}'')}}/resourceGroups/@{{encodeURIComponent(''{1}'')}}/providers/Microsoft.Automation/automationAccounts/@{{encodeURIComponent(''{2}'')}}/jobs', parameters('subscriptionId'), parameters('automationAccountResourceGroup'), parameters('automationAccountName'))]",
                         "queries": {
                           "runbookName": "[parameters('getGetMarketPlaceImageVersion')]",
                           "wait": true,
