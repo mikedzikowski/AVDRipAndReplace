@@ -10,8 +10,27 @@ param templateSpecId string = ''
 param exisitingAutomationAccount string = ''
 param existingAutomationAccountRg string = ''
 param existingLogicAppRg string = ''
+
+// Start Blob Check Params
+@description('To be used with AVD solutions that deploy post configuration software. Set the following values if there is a storage account that should be targeted. If values are not set a default naming convention will be used by resources created.')
+param deployBlobUpdateLogicApp bool = false
 param exisitingStorageAccount string = ''
 param existingStorageAccountRg string = ''
+param container string = ''
+@allowed([
+  'Month'
+  'Week'
+  'Day'
+  'Hour'
+  'Minute'
+  'Second'
+])
+@description('Frequency of logic app trigger for Blob Check Logic App.')
+param triggerFrequency string = 'Day'
+
+@description('Interval of logic app trigger for Blob Check Logic App.')
+param triggerInterval int = 1
+// End Blob Check Params
 
 @description('Host pool name to target.')
 param hostPoolName string
@@ -42,20 +61,6 @@ param recurrenceInterval int = 1
 @description('E-mail contact or group used by logic app approval workflow.')
 param emailContact string
 
-@allowed([
-  'Month'
-  'Week'
-  'Day'
-  'Hour'
-  'Minute'
-  'Second'
-])
-@description('Frequency of logic app trigger for Blob Check Logic App.')
-param triggerFrequency string = 'Day'
-
-@description('Interval of logic app trigger for Blob Check Logic App.')
-param triggerInterval int = 1
-
 // Maintence Window
 @allowed([
   'Monday'
@@ -81,9 +86,6 @@ param dayOfWeekOccurrence string = 'First'
 
 @description('The target maintenance window start time for AVD')
 param startTime string = '23:00'
-
-// Get BlobUpdate Logic App Parameters
-param container string
 
 // Variables
 var cloud = environment().name
@@ -133,7 +135,6 @@ var runbooksPwsh7 = [
     uri: 'https://raw.githubusercontent.com/mikedzikowski/AVDRipAndReplace/main/runbooks/Start-AzureVirtualDesktopRipAndReplace.ps1'
   }
 ]
-
 
 var LocationShortNames = {
   australiacentral: 'ac'
@@ -191,23 +192,23 @@ var LocationShortNames = {
 var LocationShortName = LocationShortNames[location]
 var NamingStandard = '${LocationShortName}'
 
-var automationAccountRgVar = ((!empty(existingAutomationAccountRg )) ? [
-  existingAutomationAccountRg
-]: [
-  'rg-${NamingStandard}-aa'
-])
+// var automationAccountRgVar = ((!empty(existingAutomationAccountRg )) ? [
+//   existingAutomationAccountRg
+// ]: [
+//   'rg-${NamingStandard}-aa'
+// ])
 
-var logicAppRgVar = ((!empty(existingLogicAppRg)) ? [
-  existingLogicAppRg
-]: [
-  'rg-${NamingStandard}-la'
-])
+// var logicAppRgVar = ((!empty(existingLogicAppRg)) ? [
+//   existingLogicAppRg
+// ]: [
+//   'rg-${NamingStandard}-la'
+// ])
 
-var storageAccountRgVar = ((!empty(existingStorageAccountRg)) ? [
-  existingStorageAccountRg
-]: [
-  'rg-${NamingStandard}-stg'
-])
+// var storageAccountRgVar = ((!empty(existingStorageAccountRg)) ? [
+//   existingStorageAccountRg
+// ]: [
+//   'rg-${NamingStandard}-stg'
+// ])
 
 var automationAccountNameVar = ((!empty(exisitingAutomationAccount)) ? [
   exisitingAutomationAccount
@@ -215,46 +216,40 @@ var automationAccountNameVar = ((!empty(exisitingAutomationAccount)) ? [
   replace('aa-${NamingStandard}', 'aa', uniqueString(NamingStandard))
 ])
 
-var rg = (array(concat(automationAccountRgVar,logicAppRgVar,storageAccountRgVar)))
-var rgVals = (array(concat(automationAccountRgVar,logicAppRgVar,storageAccountRgVar)))
-var ResourceGroups = union(rg, rgVals)
+// var rg = (array(concat(automationAccountRgVar,logicAppRgVar,storageAccountRgVar)))
+// var rgVals = (array(concat(automationAccountRgVar,logicAppRgVar,storageAccountRgVar)))
+// var ResourceGroups = union(rg, rgVals)
 var automationAccountNameValue = first(automationAccountNameVar)
 
-// Resource Groups needed for the solution
-resource resourceGroups 'Microsoft.Resources/resourceGroups@2020-10-01' = [for i in range(0, length((ResourceGroups))): {
-  name: ResourceGroups[i]
-  location: location
-}]
+// // Resource Groups needed for the solution
+// resource resourceGroups 'Microsoft.Resources/resourceGroups@2020-10-01' = [for i in range(0, length((ResourceGroups))): {
+//   name: ResourceGroups[i]
+//   location: location
+// }]
 
-module storageAccount 'modules/storageAccount.bicep' = {
+module storageAccount 'modules/storageAccount.bicep' = if (deployBlobUpdateLogicApp) {
   name: 'sa-deployment-${deploymentNameSuffix}'
-  scope: resourceGroup(subscriptionId, rg[2])
+  scope: resourceGroup(subscriptionId, existingStorageAccountRg)
   params: {
     storageAccountName: exisitingStorageAccount
     containerName: container
   }
-  dependsOn: [
-    resourceGroups
-  ]
 }
 
 module automationAccount 'modules/automationAccount.bicep' = {
   name: 'aa-deployment-${deploymentNameSuffix}'
-  scope: resourceGroup(subscriptionId, rg[0])
+  scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
   params: {
     automationAccountName: automationAccountNameValue
     location: location
     runbookNames: runbooks
     pwsh7RunbookNames: runbooksPwsh7
   }
-  dependsOn: [
-    resourceGroups
-  ]
 }
 
 module automationAccountConnection 'modules/automationAccountConnection.bicep' = {
   name: 'automationAccountConnection-deployment-${deploymentNameSuffix}'
-  scope: resourceGroup(subscriptionId, rg[1])
+  scope: resourceGroup(subscriptionId, existingLogicAppRg)
   params: {
     location: location
     connection_azureautomation_name: automationAccountConnectionName
@@ -263,29 +258,12 @@ module automationAccountConnection 'modules/automationAccountConnection.bicep' =
   }
   dependsOn: [
     automationAccount
-    resourceGroups
-  ]
-}
-
-module blobConnection 'modules/blobConnection.bicep' = {
-  name: 'blobConnection-deployment-${deploymentNameSuffix}'
-  scope: resourceGroup(subscriptionId, rg[1])
-  params: {
-    location: location
-    storageName: storageAccount.outputs.storageAccountName
-    name: blobConnectionName
-    saResourceGroup: rg[2]
-    subscriptionId: subscriptionId
-  }
-  dependsOn: [
-    automationAccount
-    automationAccountConnection
   ]
 }
 
 module o365Connection 'modules/officeConnection.bicep' = {
   name: 'o365Connection-deployment-${deploymentNameSuffix}'
-  scope: resourceGroup(subscriptionId, rg[1])
+  scope: resourceGroup(subscriptionId, existingLogicAppRg)
   params: {
     displayName: officeConnectionName
     location: location
@@ -300,7 +278,7 @@ module o365Connection 'modules/officeConnection.bicep' = {
 
 module rbacPermissionAzureAutomationConnector 'modules/rbacPermissions.bicep' = {
   name: 'rbac-aaConnector-deployment-${deploymentNameSuffix}'
-  scope: resourceGroup(subscriptionId, rg[0])
+  scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
   params: {
     principalId: getImageVersionlogicApp.outputs.imagePrincipalId
     roleId: roleId
@@ -309,21 +287,19 @@ module rbacPermissionAzureAutomationConnector 'modules/rbacPermissions.bicep' = 
   dependsOn: [
     automationAccount
     automationAccountConnection
-    blobConnection
   ]
 }
 
-module rbacBlobPermissionConnector 'modules/rbacPermissions.bicep' = {
+module rbacBlobPermissionConnector 'modules/rbacPermissions.bicep' = if (deployBlobUpdateLogicApp) {
   name: 'rbac-blobConnector-deployment-${deploymentNameSuffix}'
-  scope: resourceGroup(subscriptionId, rg[0])
+  scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
   params: {
-    principalId: getBlobUpdateLogicApp.outputs.blobPrincipalId
+    principalId: deployBlobUpdateLogicApp ? getBlobUpdateLogicApp.outputs.blobPrincipalId : 'None'
     roleId: roleId
   }
   dependsOn: [
     automationAccount
     automationAccountConnection
-    blobConnection
   ]
 }
 
@@ -367,7 +343,7 @@ module rbacPermissionAzureAutomationAccountRg 'modules/rbacPermissionsSubscripti
 
 module getImageVersionlogicApp 'modules/logicappGetImageVersion.bicep' = {
   name: 'getImageVersionlogicApp-deployment-${deploymentNameSuffix}'
-  scope: resourceGroup(subscriptionId, rg[1])
+  scope: resourceGroup(subscriptionId, existingLogicAppRg)
   params: {
     dayOfWeek: dayOfWeek
     startTime: startTime
@@ -387,7 +363,7 @@ module getImageVersionlogicApp 'modules/logicappGetImageVersion.bicep' = {
     recurrenceInterval: recurrenceInterval
     automationAccountName: automationAccountNameValue
     automationAccountLocation: automationAccount.outputs.aaLocation
-    automationAccountResourceGroup: rg[0]
+    automationAccountResourceGroup: existingAutomationAccountRg
     runbookNewHostPoolRipAndReplace: runbookNewHostPoolRipAndReplace
     getRunbookScheduleRunbookName: runbookScheduleRunbookName
     getRunbookGetSessionHostVm: runbookGetSessionHostVm
@@ -397,20 +373,35 @@ module getImageVersionlogicApp 'modules/logicappGetImageVersion.bicep' = {
     identityType: identityType
   }
   dependsOn: [
-    blobConnection
     o365Connection
   ]
 }
 
-module getBlobUpdateLogicApp 'modules/logicAppGetBlobUpdate.bicep' = {
+module blobConnection 'modules/blobConnection.bicep' = if (deployBlobUpdateLogicApp) {
+  name: 'blobConnection-deployment-${deploymentNameSuffix}'
+  scope: resourceGroup(subscriptionId, existingLogicAppRg)
+  params: {
+    location: location
+    storageName: deployBlobUpdateLogicApp ? exisitingStorageAccount : 'None'
+    name: blobConnectionName
+    saResourceGroup: existingStorageAccountRg
+    subscriptionId: subscriptionId
+  }
+  dependsOn: [
+    automationAccount
+    automationAccountConnection
+  ]
+}
+
+module getBlobUpdateLogicApp 'modules/logicAppGetBlobUpdate.bicep' = if (deployBlobUpdateLogicApp)  {
   name: 'getBlobUpdateLogicApp-deployment-${deploymentNameSuffix}'
-  scope: resourceGroup(subscriptionId, rg[1])
+  scope: resourceGroup(subscriptionId, existingLogicAppRg)
   params: {
     location: location
     workflows_GetBlobUpdate_name: workflows_GetBlobUpdate_name
     automationAccountConnectionName: automationAccountConnectionName
     automationAccountName: automationAccountNameValue
-    automationAccountResourceGroup: rg[0]
+    automationAccountResourceGroup: existingAutomationAccountRg
     blobConnectionName: blobConnectionName
     identityType: identityType
     state: state
@@ -419,8 +410,8 @@ module getBlobUpdateLogicApp 'modules/logicAppGetBlobUpdate.bicep' = {
     connectionType: connectionType
     triggerFrequency: triggerFrequency
     triggerInterval: triggerInterval
-    storageAccountName: storageAccount.outputs.storageAccountName
-    container: container
+    storageAccountName: deployBlobUpdateLogicApp ? exisitingStorageAccount: 'None'
+    container: deployBlobUpdateLogicApp ? container : 'None'
     hostPoolName: hostPoolName
     checkBothCreatedAndModifiedDateTime: checkBothCreatedAndModifiedDateTime
     maxFileCount: maxFileCount
@@ -435,5 +426,4 @@ module getBlobUpdateLogicApp 'modules/logicAppGetBlobUpdate.bicep' = {
 }
 
 output automationAccountName string = automationAccountNameValue
-output storageAccountName string = storageAccount.outputs.storageAccountName
-output ResourceGroups array = array(concat(automationAccountRgVar,logicAppRgVar,storageAccountRgVar))
+
