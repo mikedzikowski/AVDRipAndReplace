@@ -11,6 +11,7 @@ resource rbac 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
     description: description
     principalId: principalId
     roleDefinitionId:  resourceId('Microsoft.Authorization/roleDefinitions', roleId)
+    principalType: 'ServicePrincipal'
   }
 }
 
