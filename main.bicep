@@ -399,4 +399,3 @@ module getBlobUpdateLogicApp 'modules/logicAppGetBlobUpdate.bicep' = if (deployB
 }
 
 output automationAccountName string = automationAccountNameValue
-
