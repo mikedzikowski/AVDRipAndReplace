@@ -192,40 +192,13 @@ var LocationShortNames = {
 var LocationShortName = LocationShortNames[location]
 var NamingStandard = '${LocationShortName}'
 
-// var automationAccountRgVar = ((!empty(existingAutomationAccountRg )) ? [
-//   existingAutomationAccountRg
-// ]: [
-//   'rg-${NamingStandard}-aa'
-// ])
-
-// var logicAppRgVar = ((!empty(existingLogicAppRg)) ? [
-//   existingLogicAppRg
-// ]: [
-//   'rg-${NamingStandard}-la'
-// ])
-
-// var storageAccountRgVar = ((!empty(existingStorageAccountRg)) ? [
-//   existingStorageAccountRg
-// ]: [
-//   'rg-${NamingStandard}-stg'
-// ])
-
 var automationAccountNameVar = ((!empty(exisitingAutomationAccount)) ? [
   exisitingAutomationAccount
 ]: [
   replace('aa-${NamingStandard}', 'aa', uniqueString(NamingStandard))
 ])
 
-// var rg = (array(concat(automationAccountRgVar,logicAppRgVar,storageAccountRgVar)))
-// var rgVals = (array(concat(automationAccountRgVar,logicAppRgVar,storageAccountRgVar)))
-// var ResourceGroups = union(rg, rgVals)
 var automationAccountNameValue = first(automationAccountNameVar)
-
-// // Resource Groups needed for the solution
-// resource resourceGroups 'Microsoft.Resources/resourceGroups@2020-10-01' = [for i in range(0, length((ResourceGroups))): {
-//   name: ResourceGroups[i]
-//   location: location
-// }]
 
 module storageAccount 'modules/storageAccount.bicep' = if (deployBlobUpdateLogicApp) {
   name: 'sa-deployment-${deploymentNameSuffix}'
