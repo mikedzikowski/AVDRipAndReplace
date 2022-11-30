@@ -200,15 +200,6 @@ var automationAccountNameVar = ((!empty(exisitingAutomationAccount)) ? [
 
 var automationAccountNameValue = first(automationAccountNameVar)
 
-module storageAccount 'modules/storageAccount.bicep' = if (deployBlobUpdateLogicApp) {
-  name: 'sa-deployment-${deploymentNameSuffix}'
-  scope: resourceGroup(subscriptionId, existingStorageAccountRg)
-  params: {
-    storageAccountName: exisitingStorageAccount
-    containerName: container
-  }
-}
-
 module automationAccount 'modules/automationAccount.bicep' = {
   name: 'aa-deployment-${deploymentNameSuffix}'
   scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
@@ -256,19 +247,6 @@ module rbacPermissionAzureAutomationConnector 'modules/rbacPermissions.bicep' = 
     principalId: getImageVersionlogicApp.outputs.imagePrincipalId
     roleId: roleId
     scope: 'resourceGroup().id'
-  }
-  dependsOn: [
-    automationAccount
-    automationAccountConnection
-  ]
-}
-
-module rbacBlobPermissionConnector 'modules/rbacPermissions.bicep' = if (deployBlobUpdateLogicApp) {
-  name: 'rbac-blobConnector-deployment-${deploymentNameSuffix}'
-  scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
-  params: {
-    principalId: deployBlobUpdateLogicApp ? getBlobUpdateLogicApp.outputs.blobPrincipalId : 'None'
-    roleId: roleId
   }
   dependsOn: [
     automationAccount
@@ -347,6 +325,27 @@ module getImageVersionlogicApp 'modules/logicappGetImageVersion.bicep' = {
   }
   dependsOn: [
     o365Connection
+  ]
+}
+module storageAccount 'modules/storageAccount.bicep' = if (deployBlobUpdateLogicApp) {
+  name: 'sa-deployment-${deploymentNameSuffix}'
+  scope: resourceGroup(subscriptionId, existingStorageAccountRg)
+  params: {
+    storageAccountName: exisitingStorageAccount
+    containerName: container
+  }
+}
+
+module rbacBlobPermissionConnector 'modules/rbacPermissions.bicep' = if (deployBlobUpdateLogicApp) {
+  name: 'rbac-blobConnector-deployment-${deploymentNameSuffix}'
+  scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
+  params: {
+    principalId: deployBlobUpdateLogicApp ? getBlobUpdateLogicApp.outputs.blobPrincipalId : 'None'
+    roleId: roleId
+  }
+  dependsOn: [
+    automationAccount
+    automationAccountConnection
   ]
 }
 
