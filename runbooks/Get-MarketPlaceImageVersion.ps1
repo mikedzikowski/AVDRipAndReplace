@@ -1,4 +1,3 @@
-
 [CmdletBinding()]
 param (
     [parameter(mandatory = $true)]$VmName,
@@ -21,11 +20,20 @@ $AzureContext = Set-AzContext -SubscriptionName $AzureContext.Subscription -Defa
 
 $hostpoolVm = Get-AzVM -ResourceGroupName $ResourceGroupName -Name $VmName
 
-$versions = (Get-AzVMImage -Location $hostpoolVm.Location -PublisherName $hostpoolVm.StorageProfile.ImageReference.Publisher -Offer $hostpoolVm.StorageProfile.ImageReference.Offer -Sku $hostpoolVm.StorageProfile.ImageReference.Sku | Select-Object -Last 1).version
+$Versions = (Get-AzVMImage -Location $location -PublisherName $publisher -Offer $offer -Skus $sku).Version
 
-foreach ($version in $versions) {
+$VersionDates = @()
+foreach($Version in $Versions)
+{
+    $VersionDates += $Version.Split('.')[-1]
+}
 
-    if ($version -gt $hostpoolVm.StorageProfile.ImageReference.ExactVersion)
+$LatestVersionDate = $VersionDates | Sort-Object -Descending | Select-Object -First 1
+
+$LatestVersion = $Versions -like "*$LatestVersionDate"
+
+
+    if ($LatestVersion.Split('.')[-1] -gt $hostpoolVm.StorageProfile.ImageReference.ExactVersion.Split('.')[-1])
     {
         $newImageFound = $true
     }
@@ -33,11 +41,10 @@ foreach ($version in $versions) {
     {
         $newImageFound = $false
     }
-}
 
 $objOut = [PSCustomObject]@{
     NewImageFound = $newImageFound
-    ImageVersion = $versions
+    ImageVersion = $LatestVersion
 }
 
 Write-Output ( $objOut | ConvertTo-Json)
