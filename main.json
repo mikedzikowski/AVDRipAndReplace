@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.12.40.16777",
-      "templateHash": "5629467452353992186"
+      "templateHash": "2114452834124731903"
     }
   },
   "parameters": {
@@ -173,7 +173,7 @@
     "cloud": "[environment().name]",
     "tenantId": "[tenant().tenantId]",
     "subscriptionId": "[subscription().subscriptionId]",
-    "actionGroupName": "[format('ag-{0}', variables('NamingStandard'))]",
+    "actionGroupName": "[format('ag-{0}-avd-rar', variables('NamingStandard'))]",
     "workflows_GetImageVersion_name": "[format('la-{0}-avd-imageVersion', parameters('hostPoolName'))]",
     "workflows_GetBlobUpdate_name": "[format('la-{0}-avd-blobUpdate', parameters('hostPoolName'))]",
     "recurrenceType": "Recurrence",
