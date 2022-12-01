@@ -25,7 +25,7 @@ $versions = (Get-AzVMImage -Location $hostpoolVm.Location -PublisherName $hostpo
 
 foreach ($version in $versions) {
 
-    if ($version -gt $hostpoolVm.StorageProfile.ImageReference.ExactVersion)
+    if ($version.Split('.')[-1] -gt $hostpoolVm.StorageProfile.ImageReference.ExactVersion.Split('.')[-1])
     {
         $newImageFound = $true
     }
