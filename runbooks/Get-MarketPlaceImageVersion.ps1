@@ -20,7 +20,7 @@ $AzureContext = Set-AzContext -SubscriptionName $AzureContext.Subscription -Defa
 
 $hostpoolVm = Get-AzVM -ResourceGroupName $ResourceGroupName -Name $VmName
 
-$Versions = (Get-AzVMImage -Location $location -PublisherName $publisher -Offer $offer -Skus $sku).Version
+$Versions = (Get-AzVMImage -Location $hostpoolVm.Location -PublisherName $hostpoolVm.StorageProfile.ImageReference.Publisher -Offer $hostpoolVm.StorageProfile.ImageReference.Offer -Sku $hostpoolVm.StorageProfile.ImageReference.Sku).Version
 
 $VersionDates = @()
 foreach($Version in $Versions)
@@ -30,17 +30,16 @@ foreach($Version in $Versions)
 
 $LatestVersionDate = $VersionDates | Sort-Object -Descending | Select-Object -First 1
 
-$LatestVersion = $Versions -like "*$LatestVersionDate"
+[string]$LatestVersion = $Versions -like "*$LatestVersionDate"
 
-
-    if ($LatestVersion.Split('.')[-1] -gt $hostpoolVm.StorageProfile.ImageReference.ExactVersion.Split('.')[-1])
-    {
-        $newImageFound = $true
-    }
-    else
-    {
-        $newImageFound = $false
-    }
+if ($LatestVersion.Split('.')[-1] -gt $hostpoolVm.StorageProfile.ImageReference.ExactVersion.Split('.')[-1])
+{
+    $newImageFound = $true
+}
+else
+{
+    $newImageFound = $false
+}
 
 $objOut = [PSCustomObject]@{
     NewImageFound = $newImageFound
