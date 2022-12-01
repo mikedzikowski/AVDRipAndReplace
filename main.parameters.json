@@ -1,30 +1,30 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "emailContact": {
-            "value": "" // TODO: Fill in parameter value
-        },
-        "exisitingAutomationAccount": {
-            "value": "" // TODO: Fill in parameter value
-        },
-        "existingAutomationAccountRg": {
-            "value": "" // TODO: Fill in parameter value
-        },
-        "existingLogicAppRg": {
-            "value": "" // TODO: Fill in parameter value
-        },
-        "hostPoolName": {
-            "value": "" // TODO: Fill in parameter value
-        },
-        "hostPoolResourceGroupName": {
-            "value": "" // TODO: Fill in parameter value
-        },
-        "sessionHostResourceGroupName": {
-            "value": "" // TODO: Fill in parameter value
-        },
-        "templateSpecId": {
-            "value": "" // TODO: Fill in parameter value
-        }
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "emailContact": {
+      "value": ""
+    },
+    "exisitingAutomationAccount": {
+      "value": ""
+    },
+    "existingAutomationAccountRg": {
+      "value": ""
+    },
+    "hostPoolName": {
+      "value": ""
+    },
+    "hostPoolResourceGroupName": {
+      "value": ""
+    },
+    "logAnalyticsWorkspaceResourceId": {
+      "value": ""
+    },
+    "sessionHostResourceGroupName": {
+      "value": ""
+    },
+    "templateSpecId": {
+      "value": ""
     }
+  }
 }
