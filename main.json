@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.7.4.23292",
-      "templateHash": "13065710886479868276"
+      "templateHash": "5099299654987182411"
     }
   },
   "parameters": {
@@ -1703,10 +1703,7 @@
             }
           }
         }
-      },
-      "dependsOn": [
-        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingStorageAccountRg')), 'Microsoft.Resources/deployments', format('sa-deployment-{0}', parameters('deploymentNameSuffix')))]"
-      ]
+      }
     },
     {
       "condition": "[parameters('deployBlobUpdateLogicApp')]",
