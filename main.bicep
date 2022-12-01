@@ -342,9 +342,9 @@ module storageAccount 'modules/storageAccount.bicep' = if (deployBlobUpdateLogic
 
 module rbacBlobPermissionConnector 'modules/rbacPermissions.bicep' = if (deployBlobUpdateLogicApp) {
   name: 'rbac-blobConnector-deployment-${deploymentNameSuffix}'
-  scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
+  scope: resourceGroup(subscriptionId, existingStorageAccountRg)
   params: {
-    principalId: deployBlobUpdateLogicApp ? getBlobUpdateLogicApp.outputs.blobPrincipalId : 'None'
+    principalId: deployBlobUpdateLogicApp ? getBlobUpdateLogicApp.outputs.blobPrincipalId  : 'None'
     roleId: roleId
   }
   dependsOn: [
