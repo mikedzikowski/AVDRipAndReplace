@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.12.40.16777",
-      "templateHash": "16867319940356673234"
+      "templateHash": "5629467452353992186"
     }
   },
   "parameters": {
@@ -2174,7 +2174,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.12.40.16777",
-              "templateHash": "3985893982429893501"
+              "templateHash": "3928149342865230054"
             }
           },
           "parameters": {
@@ -2197,7 +2197,7 @@
           "variables": {
             "logAlerts": [
               {
-                "name": "AVD Rip & Replace Failed",
+                "name": "AVD Rip and Replace Failed",
                 "description": "The AVD Rip & Replace solution successfully added new session host to the specified AVD host pool.",
                 "severity": 0,
                 "evaluationFrequency": "PT5M",
@@ -2227,7 +2227,7 @@
                 }
               },
               {
-                "name": "AVD Rip & Replace Succeeded",
+                "name": "AVD Rip and Replace Succeeded",
                 "description": "The AVD Rip & Replace solution successfully added new session host to the specified AVD host pool.",
                 "severity": 3,
                 "evaluationFrequency": "PT5M",
