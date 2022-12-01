@@ -4,8 +4,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.12.40.16777",
-      "templateHash": "16867319940356673234"
+      "version": "0.7.4.23292",
+      "templateHash": "945438081512263797"
     }
   },
   "parameters": {
@@ -180,7 +180,7 @@
     "waitForRunBook": true,
     "officeConnectionName": "office365",
     "automationAccountConnectionName": "azureautomation",
-    "blobConnectionName": "azureblob",
+    "blobConnectionName": "sa-azureblob",
     "identityType": "SystemAssigned",
     "state": "Enabled",
     "schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
@@ -310,8 +310,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "9414147857770958225"
+              "version": "0.7.4.23292",
+              "templateHash": "11243270913721676751"
             }
           },
           "parameters": {
@@ -461,8 +461,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "11650482620621138565"
+              "version": "0.7.4.23292",
+              "templateHash": "16463077532820351799"
             }
           },
           "parameters": {
@@ -534,8 +534,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "9536782711155583375"
+              "version": "0.7.4.23292",
+              "templateHash": "7922443813728630339"
             }
           },
           "parameters": {
@@ -589,7 +589,7 @@
         "mode": "Incremental",
         "parameters": {
           "principalId": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('getImageVersionlogicApp-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.imagePrincipalId.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('getImageVersionlogicApp-deployment-{0}', parameters('deploymentNameSuffix')))).outputs.imagePrincipalId.value]"
           },
           "roleId": {
             "value": "[variables('roleId')]"
@@ -604,8 +604,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "6666462086277563153"
+              "version": "0.7.4.23292",
+              "templateHash": "2412093124036441964"
             }
           },
           "parameters": {
@@ -645,7 +645,7 @@
           "outputs": {
             "rbac": {
               "type": "string",
-              "value": "[reference(resourceId('Microsoft.Authorization/roleAssignments', guid(parameters('scope'), parameters('principalId'), parameters('roleId'))), '2020-04-01-preview').roleDefinitionId]"
+              "value": "[reference(resourceId('Microsoft.Authorization/roleAssignments', guid(parameters('scope'), parameters('principalId'), parameters('roleId')))).roleDefinitionId]"
             }
           }
         }
@@ -669,7 +669,7 @@
         "mode": "Incremental",
         "parameters": {
           "principalId": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.aaIdentityId.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix')))).outputs.aaIdentityId.value]"
           },
           "roleId": {
             "value": "[variables('roleId')]"
@@ -681,8 +681,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "6666462086277563153"
+              "version": "0.7.4.23292",
+              "templateHash": "2412093124036441964"
             }
           },
           "parameters": {
@@ -722,7 +722,7 @@
           "outputs": {
             "rbac": {
               "type": "string",
-              "value": "[reference(resourceId('Microsoft.Authorization/roleAssignments', guid(parameters('scope'), parameters('principalId'), parameters('roleId'))), '2020-04-01-preview').roleDefinitionId]"
+              "value": "[reference(resourceId('Microsoft.Authorization/roleAssignments', guid(parameters('scope'), parameters('principalId'), parameters('roleId')))).roleDefinitionId]"
             }
           }
         }
@@ -745,7 +745,7 @@
         "mode": "Incremental",
         "parameters": {
           "principalId": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.aaIdentityId.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix')))).outputs.aaIdentityId.value]"
           },
           "roleId": {
             "value": "[variables('roleId')]"
@@ -757,8 +757,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "6666462086277563153"
+              "version": "0.7.4.23292",
+              "templateHash": "2412093124036441964"
             }
           },
           "parameters": {
@@ -798,7 +798,7 @@
           "outputs": {
             "rbac": {
               "type": "string",
-              "value": "[reference(resourceId('Microsoft.Authorization/roleAssignments', guid(parameters('scope'), parameters('principalId'), parameters('roleId'))), '2020-04-01-preview').roleDefinitionId]"
+              "value": "[reference(resourceId('Microsoft.Authorization/roleAssignments', guid(parameters('scope'), parameters('principalId'), parameters('roleId')))).roleDefinitionId]"
             }
           }
         }
@@ -820,7 +820,7 @@
         "mode": "Incremental",
         "parameters": {
           "principalId": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.aaIdentityId.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix')))).outputs.aaIdentityId.value]"
           },
           "scope": {
             "value": "[subscription().id]"
@@ -832,8 +832,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "10172713869672620660"
+              "version": "0.7.4.23292",
+              "templateHash": "1148583834647782536"
             }
           },
           "parameters": {
@@ -869,7 +869,7 @@
           "outputs": {
             "rbac": {
               "type": "string",
-              "value": "[reference(subscriptionResourceId('Microsoft.Authorization/roleAssignments', guid(parameters('scope'), parameters('principalId'), '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')), '2020-04-01-preview').roleDefinitionId]"
+              "value": "[reference(subscriptionResourceId('Microsoft.Authorization/roleAssignments', guid(parameters('scope'), parameters('principalId'), '8e3af657-a8ff-443c-a75c-2fe8c4bcb635'))).roleDefinitionId]"
             }
           }
         }
@@ -943,7 +943,7 @@
             "value": "[variables('automationAccountNameValue')]"
           },
           "automationAccountLocation": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.aaLocation.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix')))).outputs.aaLocation.value]"
           },
           "automationAccountResourceGroup": {
             "value": "[parameters('existingAutomationAccountRg')]"
@@ -976,8 +976,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "12653797977790295818"
+              "version": "0.7.4.23292",
+              "templateHash": "17352015172784058023"
             }
           },
           "parameters": {
@@ -1504,8 +1504,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "12265498873617515105"
+              "version": "0.7.4.23292",
+              "templateHash": "16501575410296232655"
             }
           },
           "parameters": {
@@ -1562,8 +1562,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "6666462086277563153"
+              "version": "0.7.4.23292",
+              "templateHash": "2412093124036441964"
             }
           },
           "parameters": {
@@ -1603,7 +1603,7 @@
           "outputs": {
             "rbac": {
               "type": "string",
-              "value": "[reference(resourceId('Microsoft.Authorization/roleAssignments', guid(parameters('scope'), parameters('principalId'), parameters('roleId'))), '2020-04-01-preview').roleDefinitionId]"
+              "value": "[reference(resourceId('Microsoft.Authorization/roleAssignments', guid(parameters('scope'), parameters('principalId'), parameters('roleId')))).roleDefinitionId]"
             }
           }
         }
@@ -1649,8 +1649,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "18269368120345825940"
+              "version": "0.7.4.23292",
+              "templateHash": "2476708080359959860"
             }
           },
           "parameters": {
@@ -1695,6 +1695,10 @@
             "blobConnectionId": {
               "type": "string",
               "value": "[resourceId('Microsoft.Web/connections', parameters('name'))]"
+            },
+            "blobConnectionName": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Web/connections', parameters('name'))).displayName]"
             }
           }
         }
@@ -1720,6 +1724,33 @@
           "location": {
             "value": "[parameters('location')]"
           },
+          "cloud": {
+            "value": "[variables('cloud')]"
+          },
+          "dayOfWeek": {
+            "value": "[parameters('dayOfWeek')]"
+          },
+          "dayOfWeekOccurrence": {
+            "value": "[parameters('dayOfWeekOccurrence')]"
+          },
+          "emailContact": {
+            "value": "[parameters('emailContact')]"
+          },
+          "officeConnectionName": {
+            "value": "[variables('officeConnectionName')]"
+          },
+          "startTime": {
+            "value": "[parameters('startTime')]"
+          },
+          "templateSpecId": {
+            "value": "[parameters('templateSpecId')]"
+          },
+          "tenantId": {
+            "value": "[variables('tenantId')]"
+          },
+          "waitForRunBook": {
+            "value": "[variables('waitForRunBook')]"
+          },
           "workflows_GetBlobUpdate_name": {
             "value": "[variables('workflows_GetBlobUpdate_name')]"
           },
@@ -1731,6 +1762,9 @@
           },
           "automationAccountResourceGroup": {
             "value": "[parameters('existingAutomationAccountRg')]"
+          },
+          "automationAccountLocation": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix')))).outputs.aaLocation.value]"
           },
           "blobConnectionName": {
             "value": "[variables('blobConnectionName')]"
@@ -1774,12 +1808,6 @@
           "subscriptionId": {
             "value": "[variables('subscriptionId')]"
           },
-          "runbookGetRunBookSchedule": {
-            "value": "[variables('runbookScheduleRunbookName')]"
-          },
-          "runbookGetSessionHostVirtualMachine": {
-            "value": "[variables('runbookGetSessionHostVm')]"
-          },
           "runbookNewHostPoolRipAndReplace": {
             "value": "[variables('runbookNewHostPoolRipAndReplace')]"
           }
@@ -1790,8 +1818,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "5913021536058989483"
+              "version": "0.7.4.23292",
+              "templateHash": "9399656620274673811"
             }
           },
           "parameters": {
@@ -1805,6 +1833,9 @@
               "type": "string"
             },
             "automationAccountResourceGroup": {
+              "type": "string"
+            },
+            "automationAccountLocation": {
               "type": "string"
             },
             "automationAccountName": {
@@ -1852,13 +1883,34 @@
             "runbookNewHostPoolRipAndReplace": {
               "type": "string"
             },
-            "runbookGetRunBookSchedule": {
-              "type": "string"
-            },
-            "runbookGetSessionHostVirtualMachine": {
-              "type": "string"
-            },
             "storageAccountName": {
+              "type": "string"
+            },
+            "waitForRunBook": {
+              "type": "bool"
+            },
+            "emailContact": {
+              "type": "string"
+            },
+            "officeConnectionName": {
+              "type": "string"
+            },
+            "startTime": {
+              "type": "string"
+            },
+            "dayOfWeek": {
+              "type": "string"
+            },
+            "dayOfWeekOccurrence": {
+              "type": "string"
+            },
+            "cloud": {
+              "type": "string"
+            },
+            "tenantId": {
+              "type": "string"
+            },
+            "templateSpecId": {
               "type": "string"
             }
           },
@@ -1868,6 +1920,7 @@
               "apiVersion": "2017-07-01",
               "name": "[parameters('workflows_GetBlobUpdate_name')]",
               "location": "[parameters('location')]",
+              "tags": {},
               "identity": {
                 "type": "[parameters('identityType')]"
               },
@@ -1883,7 +1936,7 @@
                     }
                   },
                   "triggers": {
-                    "When_a_blob_is_added_or_modified_(properties_only)_(V2)": {
+                    "When_a_software_package_is_added_to_storage_account_container_for_AVD": {
                       "recurrence": {
                         "frequency": "[parameters('triggerFrequency')]",
                         "interval": "[parameters('triggerInterval')]"
@@ -1893,9 +1946,6 @@
                         "interval": "[parameters('triggerInterval')]"
                       },
                       "splitOn": "@triggerBody()",
-                      "metadata": {
-                        "container": "[format('/{0}', parameters('container'))]"
-                      },
                       "type": "ApiConnection",
                       "inputs": {
                         "host": {
@@ -1914,16 +1964,27 @@
                     }
                   },
                   "actions": {
-                    "Condition": {
+                    "Condition_Check_for_Approval_Selection_in_Email": {
                       "actions": {
-                        "Create_job_2": {
+                        "Create_Schedule_for_Hostpool_Rip_and_Replace_on_AVD_Environment": {
                           "runAfter": {},
                           "type": "ApiConnection",
                           "inputs": {
                             "body": {
                               "properties": {
                                 "parameters": {
-                                  "hostpoolName": "[parameters('hostPoolName')]"
+                                  "AutomationAccountName": "[parameters('automationAccountName')]",
+                                  "ResourceGroupName": "[parameters('automationAccountResourceGroup')]",
+                                  "ScheduleName": "[format('{0}-ScheduleForRipAndReplace', parameters('hostPoolName'))]",
+                                  "StartTime": "[parameters('startTime')]",
+                                  "DayOfWeek": "[parameters('dayOfWeek')]",
+                                  "DayOfWeekOccurrence": "[parameters('dayOfWeekOccurrence')]",
+                                  "environment": "[parameters('cloud')]",
+                                  "runbookName": "[parameters('runbookNewHostPoolRipAndReplace')]",
+                                  "HostPoolName": "[parameters('hostPoolName')]",
+                                  "TenantId": "[parameters('tenantId')]",
+                                  "TemplateSpecId": "[parameters('templateSpecId')]",
+                                  "SubscriptionId": "[parameters('subscriptionId')]"
                                 }
                               }
                             },
@@ -1935,79 +1996,15 @@
                             "method": "put",
                             "path": "[format('/subscriptions/@{{encodeURIComponent(''{0}'')}}/resourceGroups/@{{encodeURIComponent(''{1}'')}}/providers/Microsoft.Automation/automationAccounts/@{{encodeURIComponent(''{2}'')}}/jobs', parameters('subscriptionId'), parameters('automationAccountResourceGroup'), parameters('automationAccountName'))]",
                             "queries": {
-                              "runbookName": "[parameters('runbookGetSessionHostVirtualMachine')]",
-                              "wait": true,
+                              "runbookName": "New-AutomationSchedule",
+                              "wait": "[parameters('waitForRunBook')]",
                               "x-ms-api-version": "2015-10-31"
-                            }
-                          }
-                        },
-                        "Create_job_3": {
-                          "runAfter": {
-                            "Parse_JSON_2": [
-                              "Succeeded"
-                            ]
-                          },
-                          "type": "ApiConnection",
-                          "inputs": {
-                            "host": {
-                              "connection": {
-                                "name": "@parameters('$connections')['azureautomation']['connectionId']"
-                              }
-                            },
-                            "method": "put",
-                            "path": "[format('/subscriptions/@{{encodeURIComponent(''{0}'')}}/resourceGroups/@{{encodeURIComponent(''{1}'')}}/providers/Microsoft.Automation/automationAccounts/@{{encodeURIComponent(''{2}'')}}/jobs', parameters('subscriptionId'), parameters('automationAccountResourceGroup'), parameters('automationAccountName'))]",
-                            "queries": {
-                              "runbookName": "[parameters('runbookNewHostPoolRipAndReplace')]",
-                              "wait": true,
-                              "x-ms-api-version": "2015-10-31"
-                            }
-                          }
-                        },
-                        "Get_job_output_2": {
-                          "runAfter": {
-                            "Create_job_2": [
-                              "Succeeded"
-                            ]
-                          },
-                          "type": "ApiConnection",
-                          "inputs": {
-                            "host": {
-                              "connection": {
-                                "name": "@parameters('$connections')['azureautomation']['connectionId']"
-                              }
-                            },
-                            "method": "get",
-                            "path": "[format('/subscriptions/@{{encodeURIComponent(''{0}'')}}/resourceGroups/@{{encodeURIComponent(''{1}'')}}/providers/Microsoft.Automation/automationAccounts/@{{encodeURIComponent(''{2}'')}}/jobs/@{{encodeURIComponent(body(''Create_job_2'')?[''properties'']?[''jobId''])}}/output', parameters('subscriptionId'), parameters('automationAccountResourceGroup'), parameters('automationAccountName'))]",
-                            "queries": {
-                              "x-ms-api-version": "2015-10-31"
-                            }
-                          }
-                        },
-                        "Parse_JSON_2": {
-                          "runAfter": {
-                            "Get_job_output_2": [
-                              "Succeeded"
-                            ]
-                          },
-                          "type": "ParseJson",
-                          "inputs": {
-                            "content": "@body('Get_job_output_2')",
-                            "schema": {
-                              "properties": {
-                                "productionVM": {
-                                  "type": "string"
-                                },
-                                "productionVmRg": {
-                                  "type": "string"
-                                }
-                              },
-                              "type": "object"
                             }
                           }
                         }
                       },
                       "runAfter": {
-                        "Parse_JSON": [
+                        "Send_Approval_Email_for_Rip_and_Replace_in_AVD_Environment": [
                           "Succeeded"
                         ]
                       },
@@ -2026,78 +2023,35 @@
                         "and": [
                           {
                             "equals": [
-                              "@body('Parse_JSON')?['ScheduleFound']",
-                              false
+                              "@body('Send_Approval_Email_for_Rip_and_Replace_in_AVD_Environment')?['SelectedOption']",
+                              "Approve"
                             ]
                           }
                         ]
                       },
                       "type": "If"
                     },
-                    "Create_job": {
+                    "Send_Approval_Email_for_Rip_and_Replace_in_AVD_Environment": {
                       "runAfter": {},
-                      "type": "ApiConnection",
+                      "type": "ApiConnectionWebhook",
                       "inputs": {
                         "body": {
-                          "properties": {
-                            "parameters": {
-                              "AutomationAccountName": "[parameters('automationAccountName')]",
-                              "ResourceGroupName": "[parameters('automationAccountResourceGroup')]",
-                              "runbookName": "[parameters('runbookNewHostPoolRipAndReplace')]"
-                            }
-                          }
-                        },
-                        "host": {
-                          "connection": {
-                            "name": "@parameters('$connections')['azureautomation']['connectionId']"
-                          }
-                        },
-                        "method": "put",
-                        "path": "[format('/subscriptions/@{{encodeURIComponent(''{0}'')}}/resourceGroups/@{{encodeURIComponent(''{1}'')}}/providers/Microsoft.Automation/automationAccounts/@{{encodeURIComponent(''{2}'')}}/jobs', parameters('subscriptionId'), parameters('automationAccountResourceGroup'), parameters('automationAccountName'))]",
-                        "queries": {
-                          "runbookName": "[parameters('runbookGetRunBookSchedule')]",
-                          "wait": true,
-                          "x-ms-api-version": "2015-10-31"
-                        }
-                      }
-                    },
-                    "Get_job_output": {
-                      "runAfter": {
-                        "Create_job": [
-                          "Succeeded"
-                        ]
-                      },
-                      "type": "ApiConnection",
-                      "inputs": {
-                        "host": {
-                          "connection": {
-                            "name": "@parameters('$connections')['azureautomation']['connectionId']"
-                          }
-                        },
-                        "method": "get",
-                        "path": "[format('/subscriptions/@{{encodeURIComponent(''{0}'')}}/resourceGroups/@{{encodeURIComponent(''{1}'')}}/providers/Microsoft.Automation/automationAccounts/@{{encodeURIComponent(''{2}'')}}/jobs/@{{encodeURIComponent(body(''Create_job'')?[''properties'']?[''jobId''])}}/output', parameters('subscriptionId'), parameters('automationAccountResourceGroup'), parameters('automationAccountName'))]",
-                        "queries": {
-                          "x-ms-api-version": "2015-10-31"
-                        }
-                      }
-                    },
-                    "Parse_JSON": {
-                      "runAfter": {
-                        "Get_job_output": [
-                          "Succeeded"
-                        ]
-                      },
-                      "type": "ParseJson",
-                      "inputs": {
-                        "content": "@body('Get_job_output')",
-                        "schema": {
-                          "properties": {
-                            "ScheduleFound": {
-                              "type": "boolean"
-                            }
+                          "Message": {
+                            "HideHTMLMessage": false,
+                            "Importance": "High",
+                            "Options": "Approve, Reject",
+                            "ShowHTMLConfirmationDialog": false,
+                            "Subject": "Software Update Found for AVD Hostpool Environment - Please Approve or Reject the Rip and Replace of the AVD Environment",
+                            "To": "[parameters('emailContact')]"
                           },
-                          "type": "object"
-                        }
+                          "NotificationUrl": "@{listCallbackUrl()}"
+                        },
+                        "host": {
+                          "connection": {
+                            "name": "@parameters('$connections')['office365']['connectionId']"
+                          }
+                        },
+                        "path": "/approvalmail/$subscriptions"
                       }
                     }
                   },
@@ -2119,7 +2073,15 @@
                       "azureblob": {
                         "connectionId": "[format('/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Web/connections/{2}', parameters('subscriptionId'), resourceGroup().name, parameters('blobConnectionName'))]",
                         "connectionName": "[parameters('blobConnectionName')]",
-                        "id": "[format('/subscriptions/{0}/providers/Microsoft.Web/locations/{1}/managedApis/azureblob', parameters('subscriptionId'), parameters('location'))]"
+                        "id": "[format('/subscriptions/{0}/providers/Microsoft.Web/locations/{1}/managedApis/azureblob', parameters('subscriptionId'), parameters('location'))]",
+                        "authentication": {
+                          "type": "ManagedServiceIdentity"
+                        }
+                      },
+                      "office365": {
+                        "connectionId": "[format('/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Web/connections/{2}', parameters('subscriptionId'), resourceGroup().name, parameters('officeConnectionName'))]",
+                        "connectionName": "[parameters('officeConnectionName')]",
+                        "id": "[format('/subscriptions/{0}/providers/Microsoft.Web/locations/{1}/managedApis/office365', parameters('subscriptionId'), parameters('automationAccountLocation'))]"
                       }
                     }
                   }
@@ -2136,181 +2098,9 @@
         }
       },
       "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix')))]",
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('blobConnection-deployment-{0}', parameters('deploymentNameSuffix')))]"
       ]
-    },
-    {
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-10-01",
-      "name": "[format('notifications-deployment-{0}', parameters('deploymentNameSuffix'))]",
-      "subscriptionId": "[variables('subscriptionId')]",
-      "resourceGroup": "[parameters('hostPoolResourceGroupName')]",
-      "properties": {
-        "expressionEvaluationOptions": {
-          "scope": "inner"
-        },
-        "mode": "Incremental",
-        "parameters": {
-          "actionGroupName": {
-            "value": "[variables('actionGroupName')]"
-          },
-          "emailContact": {
-            "value": "[parameters('emailContact')]"
-          },
-          "location": {
-            "value": "[parameters('location')]"
-          },
-          "logAnalyticsWorkspaceResourceId": {
-            "value": "[parameters('logAnalyticsWorkspaceResourceId')]"
-          },
-          "tags": {
-            "value": {}
-          }
-        },
-        "template": {
-          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-          "contentVersion": "1.0.0.0",
-          "metadata": {
-            "_generator": {
-              "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "3985893982429893501"
-            }
-          },
-          "parameters": {
-            "actionGroupName": {
-              "type": "string"
-            },
-            "emailContact": {
-              "type": "string"
-            },
-            "location": {
-              "type": "string"
-            },
-            "logAnalyticsWorkspaceResourceId": {
-              "type": "string"
-            },
-            "tags": {
-              "type": "object"
-            }
-          },
-          "variables": {
-            "logAlerts": [
-              {
-                "name": "AVD Rip & Replace Failed",
-                "description": "The AVD Rip & Replace solution successfully added new session host to the specified AVD host pool.",
-                "severity": 0,
-                "evaluationFrequency": "PT5M",
-                "windowSize": "PT5M",
-                "criteria": {
-                  "allOf": [
-                    {
-                      "query": "AzureDiagnostics\n| where ResourceProvider == \"MICROSOFT.AUTOMATION\"\n| where Category  == \"JobStreams\"\n| where ResultDescription has \"AVD Rip & Replace failed\"",
-                      "timeAggregation": "Count",
-                      "dimensions": [
-                        {
-                          "name": "ResultDescription",
-                          "operator": "Include",
-                          "values": [
-                            "*"
-                          ]
-                        }
-                      ],
-                      "operator": "GreaterThanOrEqual",
-                      "threshold": 1,
-                      "failingPeriods": {
-                        "numberOfEvaluationPeriods": 1,
-                        "minFailingPeriodsToAlert": 1
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                "name": "AVD Rip & Replace Succeeded",
-                "description": "The AVD Rip & Replace solution successfully added new session host to the specified AVD host pool.",
-                "severity": 3,
-                "evaluationFrequency": "PT5M",
-                "windowSize": "PT5M",
-                "criteria": {
-                  "allOf": [
-                    {
-                      "query": "AzureDiagnostics\n| where ResourceProvider == \"MICROSOFT.AUTOMATION\"\n| where Category  == \"JobStreams\"\n| where ResultDescription has \"AVD Rip & Replace succeeded\"",
-                      "timeAggregation": "Count",
-                      "dimensions": [
-                        {
-                          "name": "ResultDescription",
-                          "operator": "Include",
-                          "values": [
-                            "*"
-                          ]
-                        }
-                      ],
-                      "operator": "GreaterThanOrEqual",
-                      "threshold": 1,
-                      "failingPeriods": {
-                        "numberOfEvaluationPeriods": 1,
-                        "minFailingPeriodsToAlert": 1
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          },
-          "resources": [
-            {
-              "type": "microsoft.insights/actionGroups",
-              "apiVersion": "2019-06-01",
-              "name": "[parameters('actionGroupName')]",
-              "location": "global",
-              "properties": {
-                "groupShortName": "EmailAlerts",
-                "enabled": true,
-                "emailReceivers": [
-                  {
-                    "name": "[parameters('emailContact')]",
-                    "emailAddress": "[parameters('emailContact')]",
-                    "useCommonAlertSchema": true
-                  }
-                ]
-              }
-            },
-            {
-              "copy": {
-                "name": "scheduledQueryRules",
-                "count": "[length(range(0, length(variables('logAlerts'))))]"
-              },
-              "type": "Microsoft.Insights/scheduledQueryRules",
-              "apiVersion": "2021-08-01",
-              "name": "[variables('logAlerts')[range(0, length(variables('logAlerts')))[copyIndex()]].name]",
-              "location": "[parameters('location')]",
-              "tags": "[parameters('tags')]",
-              "properties": {
-                "actions": {
-                  "actionGroups": [
-                    "[resourceId('microsoft.insights/actionGroups', parameters('actionGroupName'))]"
-                  ],
-                  "customProperties": {}
-                },
-                "criteria": "[variables('logAlerts')[range(0, length(variables('logAlerts')))[copyIndex()]].criteria]",
-                "displayName": "[variables('logAlerts')[range(0, length(variables('logAlerts')))[copyIndex()]].name]",
-                "description": "[variables('logAlerts')[range(0, length(variables('logAlerts')))[copyIndex()]].description]",
-                "enabled": false,
-                "evaluationFrequency": "[variables('logAlerts')[range(0, length(variables('logAlerts')))[copyIndex()]].evaluationFrequency]",
-                "scopes": [
-                  "[parameters('logAnalyticsWorkspaceResourceId')]"
-                ],
-                "severity": "[variables('logAlerts')[range(0, length(variables('logAlerts')))[copyIndex()]].severity]",
-                "windowSize": "[variables('logAlerts')[range(0, length(variables('logAlerts')))[copyIndex()]].windowSize]"
-              },
-              "dependsOn": [
-                "[resourceId('microsoft.insights/actionGroups', parameters('actionGroupName'))]"
-              ]
-            }
-          ]
-        }
-      }
     }
   ],
   "outputs": {

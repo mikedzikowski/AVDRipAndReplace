@@ -100,7 +100,7 @@ var recurrenceType = 'Recurrence'
 var waitForRunBook = true
 var officeConnectionName = 'office365'
 var automationAccountConnectionName = 'azureautomation'
-var blobConnectionName = 'azureblob'
+var blobConnectionName = 'sa-azureblob'
 var identityType = 'SystemAssigned'
 var state = 'Enabled'
 var schema = 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#'
@@ -374,10 +374,20 @@ module getBlobUpdateLogicApp 'modules/logicAppGetBlobUpdate.bicep' = if (deployB
   scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
   params: {
     location: location
+    cloud: cloud
+    dayOfWeek:dayOfWeek
+    dayOfWeekOccurrence: dayOfWeekOccurrence
+    emailContact:emailContact
+    officeConnectionName: officeConnectionName
+    startTime: startTime
+    templateSpecId: templateSpecId
+    tenantId: tenantId
+    waitForRunBook: waitForRunBook
     workflows_GetBlobUpdate_name: workflows_GetBlobUpdate_name
     automationAccountConnectionName: automationAccountConnectionName
     automationAccountName: automationAccountNameValue
     automationAccountResourceGroup: existingAutomationAccountRg
+    automationAccountLocation: automationAccount.outputs.aaLocation
     blobConnectionName: blobConnectionName
     identityType: identityType
     state: state
@@ -392,8 +402,6 @@ module getBlobUpdateLogicApp 'modules/logicAppGetBlobUpdate.bicep' = if (deployB
     checkBothCreatedAndModifiedDateTime: checkBothCreatedAndModifiedDateTime
     maxFileCount: maxFileCount
     subscriptionId: subscriptionId
-    runbookGetRunBookSchedule: runbookScheduleRunbookName
-    runbookGetSessionHostVirtualMachine: runbookGetSessionHostVm
     runbookNewHostPoolRipAndReplace: runbookNewHostPoolRipAndReplace
   }
   dependsOn: [

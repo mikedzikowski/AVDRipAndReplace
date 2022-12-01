@@ -2,6 +2,7 @@ param subscriptionId string
 param workflows_GetBlobUpdate_name string
 param automationAccountConnectionName string
 param automationAccountResourceGroup string
+param automationAccountLocation string
 param automationAccountName string
 param blobConnectionName string
 param location string
@@ -17,15 +18,23 @@ param hostPoolName string
 param checkBothCreatedAndModifiedDateTime bool
 param maxFileCount int
 param runbookNewHostPoolRipAndReplace string
-param runbookGetRunBookSchedule string
-param runbookGetSessionHostVirtualMachine string
 param storageAccountName string
+param waitForRunBook bool
+param emailContact string
+param officeConnectionName string
+param startTime string
+param dayOfWeek string
+param dayOfWeekOccurrence string
+param cloud string
+param tenantId string
+param templateSpecId string
 
 resource workflows_GetBlobUpdate_name_resource 'Microsoft.Logic/workflows@2017-07-01' = {
   name: workflows_GetBlobUpdate_name
   location: location
+  tags: {}
   identity: {
-    type:  identityType
+    type: identityType
   }
   properties: {
     state: state
@@ -40,7 +49,7 @@ resource workflows_GetBlobUpdate_name_resource 'Microsoft.Logic/workflows@2017-0
         }
       }
       triggers: {
-        'When_a_blob_is_added_or_modified_(properties_only)_(V2)': {
+        When_a_software_package_is_added_to_storage_account_container_for_AVD: {
           recurrence: {
             frequency: triggerFrequency
             interval: triggerInterval
@@ -50,9 +59,6 @@ resource workflows_GetBlobUpdate_name_resource 'Microsoft.Logic/workflows@2017-0
             interval: triggerInterval
           }
           splitOn: '@triggerBody()'
-          metadata: {
-            'container': '/${container}'
-          }
           type: 'ApiConnection'
           inputs: {
             host: {
@@ -71,9 +77,9 @@ resource workflows_GetBlobUpdate_name_resource 'Microsoft.Logic/workflows@2017-0
         }
       }
       actions: {
-        Condition: {
+        Condition_Check_for_Approval_Selection_in_Email: {
           actions: {
-            Create_job_2: {
+            Create_Schedule_for_Hostpool_Rip_and_Replace_on_AVD_Environment: {
               runAfter: {
               }
               type: 'ApiConnection'
@@ -81,7 +87,18 @@ resource workflows_GetBlobUpdate_name_resource 'Microsoft.Logic/workflows@2017-0
                 body: {
                   properties: {
                     parameters: {
-                      hostpoolName: hostPoolName
+                      AutomationAccountName: automationAccountName
+                      ResourceGroupName: automationAccountResourceGroup
+                      ScheduleName: '${hostPoolName}-ScheduleForRipAndReplace'
+                      StartTime: startTime
+                      DayOfWeek: dayOfWeek
+                      DayOfWeekOccurrence: dayOfWeekOccurrence
+                      environment: cloud
+                      runbookName: runbookNewHostPoolRipAndReplace
+                      HostPoolName: hostPoolName
+                      TenantId: tenantId
+                      TemplateSpecId: templateSpecId
+                      SubscriptionId: subscriptionId
                     }
                   }
                 }
@@ -93,79 +110,15 @@ resource workflows_GetBlobUpdate_name_resource 'Microsoft.Logic/workflows@2017-0
                 method: 'put'
                 path: '/subscriptions/@{encodeURIComponent(\'${subscriptionId}\')}/resourceGroups/@{encodeURIComponent(\'${automationAccountResourceGroup}\')}/providers/Microsoft.Automation/automationAccounts/@{encodeURIComponent(\'${automationAccountName}\')}/jobs'
                 queries: {
-                  runbookName: runbookGetSessionHostVirtualMachine
-                  wait: true
+                  runbookName: 'New-AutomationSchedule'
+                  wait: waitForRunBook
                   'x-ms-api-version': '2015-10-31'
-                }
-              }
-            }
-            Create_job_3: {
-              runAfter: {
-                Parse_JSON_2: [
-                  'Succeeded'
-                ]
-              }
-              type: 'ApiConnection'
-              inputs: {
-                host: {
-                  connection: {
-                    name: '@parameters(\'$connections\')[\'azureautomation\'][\'connectionId\']'
-                  }
-                }
-                method: 'put'
-                path: '/subscriptions/@{encodeURIComponent(\'${subscriptionId}\')}/resourceGroups/@{encodeURIComponent(\'${automationAccountResourceGroup}\')}/providers/Microsoft.Automation/automationAccounts/@{encodeURIComponent(\'${automationAccountName}\')}/jobs'
-                queries: {
-                  runbookName: runbookNewHostPoolRipAndReplace
-                  wait: true
-                  'x-ms-api-version': '2015-10-31'
-                }
-              }
-            }
-            Get_job_output_2: {
-              runAfter: {
-                Create_job_2: [
-                  'Succeeded'
-                ]
-              }
-              type: 'ApiConnection'
-              inputs: {
-                host: {
-                  connection: {
-                    name: '@parameters(\'$connections\')[\'azureautomation\'][\'connectionId\']'
-                  }
-                }
-                method: 'get'
-                path: '/subscriptions/@{encodeURIComponent(\'${subscriptionId}\')}/resourceGroups/@{encodeURIComponent(\'${automationAccountResourceGroup}\')}/providers/Microsoft.Automation/automationAccounts/@{encodeURIComponent(\'${automationAccountName}\')}/jobs/@{encodeURIComponent(body(\'Create_job_2\')?[\'properties\']?[\'jobId\'])}/output'
-                queries: {
-                  'x-ms-api-version': '2015-10-31'
-                }
-              }
-            }
-            Parse_JSON_2: {
-              runAfter: {
-                Get_job_output_2: [
-                  'Succeeded'
-                ]
-              }
-              type: 'ParseJson'
-              inputs: {
-                content: '@body(\'Get_job_output_2\')'
-                schema: {
-                  properties: {
-                    productionVM: {
-                      type: 'string'
-                    }
-                    productionVmRg: {
-                      type: 'string'
-                    }
-                  }
-                  type: 'object'
                 }
               }
             }
           }
           runAfter: {
-            Parse_JSON: [
+            Send_Approval_Email_for_Rip_and_Replace_in_AVD_Environment: [
               'Succeeded'
             ]
           }
@@ -185,80 +138,36 @@ resource workflows_GetBlobUpdate_name_resource 'Microsoft.Logic/workflows@2017-0
             and: [
               {
                 equals: [
-                  '@body(\'Parse_JSON\')?[\'ScheduleFound\']'
-                  false
+                  '@body(\'Send_Approval_Email_for_Rip_and_Replace_in_AVD_Environment\')?[\'SelectedOption\']'
+                  'Approve'
                 ]
               }
             ]
           }
           type: 'If'
         }
-        Create_job: {
+        Send_Approval_Email_for_Rip_and_Replace_in_AVD_Environment: {
           runAfter: {
           }
-          type: 'ApiConnection'
+          type: 'ApiConnectionWebhook'
           inputs: {
             body: {
-              properties: {
-                parameters: {
-                  AutomationAccountName: automationAccountName
-                  ResourceGroupName: automationAccountResourceGroup
-                  runbookName: runbookNewHostPoolRipAndReplace
-                }
+              Message: {
+                HideHTMLMessage: false
+                Importance: 'High'
+                Options: 'Approve, Reject'
+                ShowHTMLConfirmationDialog: false
+                Subject: 'Software Update Found for AVD Hostpool Environment - Please Approve or Reject the Rip and Replace of the AVD Environment'
+                To: emailContact
               }
+              NotificationUrl: '@{listCallbackUrl()}'
             }
             host: {
               connection: {
-                name: '@parameters(\'$connections\')[\'azureautomation\'][\'connectionId\']'
+                name: '@parameters(\'$connections\')[\'office365\'][\'connectionId\']'
               }
             }
-            method: 'put'
-            path: '/subscriptions/@{encodeURIComponent(\'${subscriptionId}\')}/resourceGroups/@{encodeURIComponent(\'${automationAccountResourceGroup}\')}/providers/Microsoft.Automation/automationAccounts/@{encodeURIComponent(\'${automationAccountName}\')}/jobs'
-            queries: {
-              runbookName: runbookGetRunBookSchedule
-              wait: true
-              'x-ms-api-version': '2015-10-31'
-            }
-          }
-        }
-        Get_job_output: {
-          runAfter: {
-            Create_job: [
-              'Succeeded'
-            ]
-          }
-          type: 'ApiConnection'
-          inputs: {
-            host: {
-              connection: {
-                name: '@parameters(\'$connections\')[\'azureautomation\'][\'connectionId\']'
-              }
-            }
-            method: 'get'
-            path: '/subscriptions/@{encodeURIComponent(\'${subscriptionId}\')}/resourceGroups/@{encodeURIComponent(\'${automationAccountResourceGroup}\')}/providers/Microsoft.Automation/automationAccounts/@{encodeURIComponent(\'${automationAccountName}\')}/jobs/@{encodeURIComponent(body(\'Create_job\')?[\'properties\']?[\'jobId\'])}/output'
-            queries: {
-              'x-ms-api-version': '2015-10-31'
-            }
-          }
-        }
-        Parse_JSON: {
-          runAfter: {
-            Get_job_output: [
-              'Succeeded'
-
-            ]
-          }
-          type: 'ParseJson'
-          inputs: {
-            content: '@body(\'Get_job_output\')'
-            schema: {
-              properties: {
-                ScheduleFound: {
-                  type: 'boolean'
-                }
-              }
-              type: 'object'
-            }
+            path: '/approvalmail/$subscriptions'
           }
         }
       }
@@ -273,8 +182,8 @@ resource workflows_GetBlobUpdate_name_resource 'Microsoft.Logic/workflows@2017-0
             connectionName: automationAccountConnectionName
             connectionProperties: {
               authentication: {
-              type: 'ManagedServiceIdentity'
-             }
+                type: 'ManagedServiceIdentity'
+              }
             }
             id: '/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis/azureautomation'
           }
@@ -282,6 +191,14 @@ resource workflows_GetBlobUpdate_name_resource 'Microsoft.Logic/workflows@2017-0
             connectionId: '/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Web/connections/${blobConnectionName}'
             connectionName: blobConnectionName
             id: '/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis/azureblob'
+            authentication: {
+              type: 'ManagedServiceIdentity'
+            }
+          }
+          office365: {
+            connectionId: '/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Web/connections/${officeConnectionName}'
+            connectionName: officeConnectionName
+            id: '/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${automationAccountLocation}/managedApis/office365'
           }
         }
       }

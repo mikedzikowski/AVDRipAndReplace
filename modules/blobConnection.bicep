@@ -27,3 +27,4 @@ resource blobStorageConnection 'Microsoft.Web/connections@2016-06-01' = {
 }
 
 output blobConnectionId string = blobStorageConnection.id
+output blobConnectionName string = blobStorageConnection.properties.displayName
