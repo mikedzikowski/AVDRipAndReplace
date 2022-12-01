@@ -3,6 +3,9 @@ targetScope = 'subscription'
 @description('The location for the resources deployed in this solution.')
 param location string = deployment().location
 
+@description('The resource ID to an existing log analytics workspace. Ideally, utilizing the same workspace used for AVD Insights.')
+param logAnalyticsWorkspaceResourceId string
+
 @description('The Template Spec version ID that will be used to by the rip and replace AVD solution.')
 param templateSpecId string
 
@@ -90,6 +93,7 @@ param startTime string = '23:00'
 var cloud = environment().name
 var tenantId = tenant().tenantId
 var subscriptionId = subscription().subscriptionId
+var actionGroupName = 'ag-${NamingStandard}'
 var workflows_GetImageVersion_name = 'la-${hostPoolName}-avd-imageVersion'
 var workflows_GetBlobUpdate_name = 'la-${hostPoolName}-avd-blobUpdate'
 var recurrenceType = 'Recurrence'
@@ -205,6 +209,7 @@ module automationAccount 'modules/automationAccount.bicep' = {
   params: {
     automationAccountName: automationAccountNameValue
     location: location
+    logAnalyticsWorkspaceResourceId: logAnalyticsWorkspaceResourceId
     runbookNames: runbooks
     pwsh7RunbookNames: runbooksPwsh7
   }
@@ -394,6 +399,19 @@ module getBlobUpdateLogicApp 'modules/logicAppGetBlobUpdate.bicep' = if (deployB
   dependsOn: [
     blobConnection
   ]
+}
+
+module notifications 'modules/notifications.bicep' = {
+  scope: resourceGroup(subscriptionId, hostPoolResourceGroupName)
+  name: 'notifications-deployment-${deploymentNameSuffix}'
+  params: {
+    actionGroupName: actionGroupName
+    emailContact: emailContact
+    location: location
+    logAnalyticsWorkspaceResourceId: logAnalyticsWorkspaceResourceId
+    tags: {
+    }
+  }
 }
 
 output automationAccountName string = automationAccountNameValue

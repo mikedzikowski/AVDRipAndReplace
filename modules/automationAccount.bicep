@@ -1,4 +1,5 @@
 param location string
+param logAnalyticsWorkspaceResourceId string
 param automationAccountName string
 param runbookNames array
 param pwsh7RunbookNames array
@@ -50,6 +51,25 @@ resource pwsh7runbookDeployment 'Microsoft.Automation/automationAccounts/runbook
     }
   }
 }]
+
+// Enables the runbook logs in Log Analytics for alerts
+resource diagnostics 'Microsoft.Insights/diagnosticsettings@2017-05-01-preview' = {
+  scope: automationAccount
+  name: 'diag-${automationAccount.name}'
+  properties: {
+    logs: [
+      {
+        category: 'JobLogs'
+        enabled: true
+      }
+      {
+        category: 'JobStreams'
+        enabled: true
+      }
+    ]
+    workspaceId: logAnalyticsWorkspaceResourceId
+  }
+}
 
 output aaIdentityId string = automationAccount.identity.principalId
 output aaLocation string = automationAccount.location
