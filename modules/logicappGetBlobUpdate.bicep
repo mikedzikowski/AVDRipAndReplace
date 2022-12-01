@@ -189,11 +189,8 @@ resource workflows_GetBlobUpdate_name_resource 'Microsoft.Logic/workflows@2017-0
           }
           azureblob: {
             connectionId: '/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Web/connections/${blobConnectionName}'
-            connectionName: blobConnectionName
+            connectionName: 'test'
             id: '/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis/azureblob'
-            authentication: {
-              type: 'ManagedServiceIdentity'
-            }
           }
           office365: {
             connectionId: '/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Web/connections/${officeConnectionName}'

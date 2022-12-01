@@ -350,6 +350,7 @@ module rbacBlobPermissionConnector 'modules/rbacPermissions.bicep' = if (deployB
   dependsOn: [
     automationAccount
     automationAccountConnection
+    blobConnection
   ]
 }
 
@@ -364,8 +365,7 @@ module blobConnection 'modules/blobConnection.bicep' = if (deployBlobUpdateLogic
     subscriptionId: subscriptionId
   }
   dependsOn: [
-    automationAccount
-    automationAccountConnection
+    storageAccount
   ]
 }
 
