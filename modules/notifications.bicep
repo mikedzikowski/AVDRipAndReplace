@@ -6,7 +6,7 @@ param tags object
 
 var logAlerts = [
   {
-    name: 'AVD Rip & Replace Failed'
+    name: 'AVD Rip and Replace Failed'
     description: 'The AVD Rip & Replace solution successfully added new session host to the specified AVD host pool.'
     severity: 0
     evaluationFrequency: 'PT5M'
@@ -36,7 +36,7 @@ var logAlerts = [
     }
   }
   {
-    name: 'AVD Rip & Replace Succeeded'
+    name: 'AVD Rip and Replace Succeeded'
     description: 'The AVD Rip & Replace solution successfully added new session host to the specified AVD host pool.'
     severity: 3
     evaluationFrequency: 'PT5M'
