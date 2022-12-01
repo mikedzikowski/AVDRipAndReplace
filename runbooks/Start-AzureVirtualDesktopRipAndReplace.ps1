@@ -210,10 +210,10 @@ try
 
     # Removing Azutomation Schedule
     Remove-AzAutomationSchedule -AutomationAccountName $AutomationAccountName -Name $ScheduleName -ResourceGroupName $AutomationAccountResourceGroupName -Force
-    Write-Output "$HostPooName | $HostPoolResourceGroup | AVD Rip & Replace succeeded."
+    Write-Output "$HostPoolName | $HostPoolResourceGroup | AVD Rip & Replace succeeded."
 }
 catch
 {
-    Write-Output "$HostPooName | $HostPoolResourceGroup | AVD Rip & Replace failed. Exception: $_"
+    Write-Output "$HostPoolName | $HostPoolResourceGroup | AVD Rip & Replace failed. Exception: $_"
     throw
 }
