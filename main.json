@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.7.4.23292",
-      "templateHash": "945438081512263797"
+      "templateHash": "13065710886479868276"
     }
   },
   "parameters": {
@@ -173,7 +173,7 @@
     "cloud": "[environment().name]",
     "tenantId": "[tenant().tenantId]",
     "subscriptionId": "[subscription().subscriptionId]",
-    "actionGroupName": "[format('ag-{0}', variables('NamingStandard'))]",
+    "actionGroupName": "[format('ag-{0}-avd-rar', variables('NamingStandard'))]",
     "workflows_GetImageVersion_name": "[format('la-{0}-avd-imageVersion', parameters('hostPoolName'))]",
     "workflows_GetBlobUpdate_name": "[format('la-{0}-avd-blobUpdate', parameters('hostPoolName'))]",
     "recurrenceType": "Recurrence",
@@ -1611,6 +1611,7 @@
       "dependsOn": [
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix')))]",
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('automationAccountConnection-deployment-{0}', parameters('deploymentNameSuffix')))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('blobConnection-deployment-{0}', parameters('deploymentNameSuffix')))]",
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('getBlobUpdateLogicApp-deployment-{0}', parameters('deploymentNameSuffix')))]"
       ]
     },
@@ -1704,8 +1705,7 @@
         }
       },
       "dependsOn": [
-        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix')))]",
-        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('automationAccountConnection-deployment-{0}', parameters('deploymentNameSuffix')))]"
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingStorageAccountRg')), 'Microsoft.Resources/deployments', format('sa-deployment-{0}', parameters('deploymentNameSuffix')))]"
       ]
     },
     {
@@ -1819,7 +1819,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.7.4.23292",
-              "templateHash": "9399656620274673811"
+              "templateHash": "14168866856196095368"
             }
           },
           "parameters": {
@@ -2073,10 +2073,7 @@
                       "azureblob": {
                         "connectionId": "[format('/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Web/connections/{2}', parameters('subscriptionId'), resourceGroup().name, parameters('blobConnectionName'))]",
                         "connectionName": "[parameters('blobConnectionName')]",
-                        "id": "[format('/subscriptions/{0}/providers/Microsoft.Web/locations/{1}/managedApis/azureblob', parameters('subscriptionId'), parameters('location'))]",
-                        "authentication": {
-                          "type": "ManagedServiceIdentity"
-                        }
+                        "id": "[format('/subscriptions/{0}/providers/Microsoft.Web/locations/{1}/managedApis/azureblob', parameters('subscriptionId'), parameters('location'))]"
                       },
                       "office365": {
                         "connectionId": "[format('/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Web/connections/{2}', parameters('subscriptionId'), resourceGroup().name, parameters('officeConnectionName'))]",
@@ -2101,6 +2098,179 @@
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix')))]",
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('blobConnection-deployment-{0}', parameters('deploymentNameSuffix')))]"
       ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "[format('notifications-deployment-{0}', parameters('deploymentNameSuffix'))]",
+      "subscriptionId": "[variables('subscriptionId')]",
+      "resourceGroup": "[parameters('hostPoolResourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "actionGroupName": {
+            "value": "[variables('actionGroupName')]"
+          },
+          "emailContact": {
+            "value": "[parameters('emailContact')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "logAnalyticsWorkspaceResourceId": {
+            "value": "[parameters('logAnalyticsWorkspaceResourceId')]"
+          },
+          "tags": {
+            "value": {}
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.7.4.23292",
+              "templateHash": "9853410293934178950"
+            }
+          },
+          "parameters": {
+            "actionGroupName": {
+              "type": "string"
+            },
+            "emailContact": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "logAnalyticsWorkspaceResourceId": {
+              "type": "string"
+            },
+            "tags": {
+              "type": "object"
+            }
+          },
+          "variables": {
+            "logAlerts": [
+              {
+                "name": "AVD Rip and Replace Failed",
+                "description": "The AVD Rip & Replace solution successfully added new session host to the specified AVD host pool.",
+                "severity": 0,
+                "evaluationFrequency": "PT5M",
+                "windowSize": "PT5M",
+                "criteria": {
+                  "allOf": [
+                    {
+                      "query": "AzureDiagnostics\n| where ResourceProvider == \"MICROSOFT.AUTOMATION\"\n| where Category  == \"JobStreams\"\n| where ResultDescription has \"AVD Rip & Replace failed\"",
+                      "timeAggregation": "Count",
+                      "dimensions": [
+                        {
+                          "name": "ResultDescription",
+                          "operator": "Include",
+                          "values": [
+                            "*"
+                          ]
+                        }
+                      ],
+                      "operator": "GreaterThanOrEqual",
+                      "threshold": 1,
+                      "failingPeriods": {
+                        "numberOfEvaluationPeriods": 1,
+                        "minFailingPeriodsToAlert": 1
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "AVD Rip and Replace Succeeded",
+                "description": "The AVD Rip & Replace solution successfully added new session host to the specified AVD host pool.",
+                "severity": 3,
+                "evaluationFrequency": "PT5M",
+                "windowSize": "PT5M",
+                "criteria": {
+                  "allOf": [
+                    {
+                      "query": "AzureDiagnostics\n| where ResourceProvider == \"MICROSOFT.AUTOMATION\"\n| where Category  == \"JobStreams\"\n| where ResultDescription has \"AVD Rip & Replace succeeded\"",
+                      "timeAggregation": "Count",
+                      "dimensions": [
+                        {
+                          "name": "ResultDescription",
+                          "operator": "Include",
+                          "values": [
+                            "*"
+                          ]
+                        }
+                      ],
+                      "operator": "GreaterThanOrEqual",
+                      "threshold": 1,
+                      "failingPeriods": {
+                        "numberOfEvaluationPeriods": 1,
+                        "minFailingPeriodsToAlert": 1
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "resources": [
+            {
+              "type": "microsoft.insights/actionGroups",
+              "apiVersion": "2019-06-01",
+              "name": "[parameters('actionGroupName')]",
+              "location": "global",
+              "properties": {
+                "groupShortName": "EmailAlerts",
+                "enabled": true,
+                "emailReceivers": [
+                  {
+                    "name": "[parameters('emailContact')]",
+                    "emailAddress": "[parameters('emailContact')]",
+                    "useCommonAlertSchema": true
+                  }
+                ]
+              }
+            },
+            {
+              "copy": {
+                "name": "scheduledQueryRules",
+                "count": "[length(range(0, length(variables('logAlerts'))))]"
+              },
+              "type": "Microsoft.Insights/scheduledQueryRules",
+              "apiVersion": "2021-08-01",
+              "name": "[variables('logAlerts')[range(0, length(variables('logAlerts')))[copyIndex()]].name]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "actions": {
+                  "actionGroups": [
+                    "[resourceId('microsoft.insights/actionGroups', parameters('actionGroupName'))]"
+                  ],
+                  "customProperties": {}
+                },
+                "criteria": "[variables('logAlerts')[range(0, length(variables('logAlerts')))[copyIndex()]].criteria]",
+                "displayName": "[variables('logAlerts')[range(0, length(variables('logAlerts')))[copyIndex()]].name]",
+                "description": "[variables('logAlerts')[range(0, length(variables('logAlerts')))[copyIndex()]].description]",
+                "enabled": false,
+                "evaluationFrequency": "[variables('logAlerts')[range(0, length(variables('logAlerts')))[copyIndex()]].evaluationFrequency]",
+                "scopes": [
+                  "[parameters('logAnalyticsWorkspaceResourceId')]"
+                ],
+                "severity": "[variables('logAlerts')[range(0, length(variables('logAlerts')))[copyIndex()]].severity]",
+                "windowSize": "[variables('logAlerts')[range(0, length(variables('logAlerts')))[copyIndex()]].windowSize]"
+              },
+              "dependsOn": [
+                "[resourceId('microsoft.insights/actionGroups', parameters('actionGroupName'))]"
+              ]
+            }
+          ]
+        }
+      }
     }
   ],
   "outputs": {
