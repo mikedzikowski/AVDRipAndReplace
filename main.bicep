@@ -9,7 +9,6 @@ param templateSpecId string
 @description('Set the following values if there are exisiting resource groups, automation accounts, or storage account that should be targeted. If values are not set a default naming convention will be used by resources created.')
 param exisitingAutomationAccount string
 param existingAutomationAccountRg string
-param existingLogicAppRg string
 
 // Start Blob Check Params
 @description('To be used with AVD solutions that deploy post configuration software. Set the following values if there is a storage account that should be targeted. If values are not set a default naming convention will be used by resources created.')
@@ -213,7 +212,7 @@ module automationAccount 'modules/automationAccount.bicep' = {
 
 module automationAccountConnection 'modules/automationAccountConnection.bicep' = {
   name: 'automationAccountConnection-deployment-${deploymentNameSuffix}'
-  scope: resourceGroup(subscriptionId, existingLogicAppRg)
+  scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
   params: {
     location: location
     connection_azureautomation_name: automationAccountConnectionName
@@ -227,7 +226,7 @@ module automationAccountConnection 'modules/automationAccountConnection.bicep' =
 
 module o365Connection 'modules/officeConnection.bicep' = {
   name: 'o365Connection-deployment-${deploymentNameSuffix}'
-  scope: resourceGroup(subscriptionId, existingLogicAppRg)
+  scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
   params: {
     displayName: officeConnectionName
     location: location
@@ -294,7 +293,7 @@ module rbacPermissionAzureAutomationAccountRg 'modules/rbacPermissionsSubscripti
 
 module getImageVersionlogicApp 'modules/logicappGetImageVersion.bicep' = {
   name: 'getImageVersionlogicApp-deployment-${deploymentNameSuffix}'
-  scope: resourceGroup(subscriptionId, existingLogicAppRg)
+  scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
   params: {
     dayOfWeek: dayOfWeek
     startTime: startTime
@@ -351,7 +350,7 @@ module rbacBlobPermissionConnector 'modules/rbacPermissions.bicep' = if (deployB
 
 module blobConnection 'modules/blobConnection.bicep' = if (deployBlobUpdateLogicApp) {
   name: 'blobConnection-deployment-${deploymentNameSuffix}'
-  scope: resourceGroup(subscriptionId, existingLogicAppRg)
+  scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
   params: {
     location: location
     storageName: deployBlobUpdateLogicApp ? exisitingStorageAccount : 'None'
@@ -367,7 +366,7 @@ module blobConnection 'modules/blobConnection.bicep' = if (deployBlobUpdateLogic
 
 module getBlobUpdateLogicApp 'modules/logicAppGetBlobUpdate.bicep' = if (deployBlobUpdateLogicApp)  {
   name: 'getBlobUpdateLogicApp-deployment-${deploymentNameSuffix}'
-  scope: resourceGroup(subscriptionId, existingLogicAppRg)
+  scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
   params: {
     location: location
     workflows_GetBlobUpdate_name: workflows_GetBlobUpdate_name

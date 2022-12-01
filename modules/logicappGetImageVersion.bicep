@@ -57,7 +57,7 @@ resource workflows_GetImageVersion_name_resource 'Microsoft.Logic/workflows@2017
         }
       }
       actions: {
-        Check_for_Exisiting_Runbook_Schedule_for_Hostpool_Validation_Environment: {
+        Check_for_Exisiting_Runbook_Schedule_for_Hostpool_AVD_Environment: {
           runAfter: {
             Parse_Session_Host_VM_and_RG: [
               'Succeeded'
@@ -90,11 +90,11 @@ resource workflows_GetImageVersion_name_resource 'Microsoft.Logic/workflows@2017
             }
           }
         }
-        Condition_Check_for_Runbook_Schedule_and_Image_Version_on_Validation_Environment: {
+        Condition_Check_for_Runbook_Schedule_and_Image_Version_on_AVD_Environment: {
           actions: {
             Condition_Check_for_Approval_Selection_in_Email: {
               actions: {
-                Create_Schedule_for_Hostpool_Rip_and_Replace_on_Validation_Environment: {
+                Create_Schedule_for_Hostpool_Rip_and_Replace_on_AVD_Environment: {
                   runAfter: {
                   }
                   type: 'ApiConnection'
@@ -133,7 +133,7 @@ resource workflows_GetImageVersion_name_resource 'Microsoft.Logic/workflows@2017
                 }
               }
               runAfter: {
-                Send_Approval_Email_for_Rip_and_Replace_in_Validation_Environment: [
+                Send_Approval_Email_for_Rip_and_Replace_in_AVD_Environment: [
                   'Succeeded'
                 ]
               }
@@ -153,7 +153,7 @@ resource workflows_GetImageVersion_name_resource 'Microsoft.Logic/workflows@2017
                 and: [
                   {
                     equals: [
-                      '@body(\'Send_Approval_Email_for_Rip_and_Replace_in_Validation_Environment\')?[\'SelectedOption\']'
+                      '@body(\'Send_Approval_Email_for_Rip_and_Replace_in_AVD_Environment\')?[\'SelectedOption\']'
                       'Approve'
                     ]
                   }
@@ -161,7 +161,7 @@ resource workflows_GetImageVersion_name_resource 'Microsoft.Logic/workflows@2017
               }
               type: 'If'
             }
-            Send_Approval_Email_for_Rip_and_Replace_in_Validation_Environment: {
+            Send_Approval_Email_for_Rip_and_Replace_in_AVD_Environment: {
               runAfter: {
               }
               type: 'ApiConnectionWebhook'
@@ -222,7 +222,7 @@ resource workflows_GetImageVersion_name_resource 'Microsoft.Logic/workflows@2017
           }
           type: 'If'
         }
-        Get_Image_Version_of_Sessionhost_in_Validation_Environment: {
+        Get_Image_Version_of_Sessionhost_in_AVD_Environment: {
           runAfter: {
             Parse_Schedule: [
               'Succeeded'
@@ -275,7 +275,7 @@ resource workflows_GetImageVersion_name_resource 'Microsoft.Logic/workflows@2017
         }
         Get_Job_Output_of_Marketplace_Image_Version: {
           runAfter: {
-            Get_Image_Version_of_Sessionhost_in_Validation_Environment: [
+            Get_Image_Version_of_Sessionhost_in_AVD_Environment: [
               'Succeeded'
             ]
           }
@@ -287,7 +287,7 @@ resource workflows_GetImageVersion_name_resource 'Microsoft.Logic/workflows@2017
               }
             }
             method: 'get'
-            path: concat('/subscriptions/@{encodeURIComponent(\'${subscriptionId}\')}/resourceGroups/@{encodeURIComponent(\'${automationAccountResourceGroup}\')}/providers/Microsoft.Automation/automationAccounts/@{encodeURIComponent(\'${automationAccountName}\')}/jobs/@{encodeURIComponent(body(\'Get_Image_Version_of_Sessionhost_in_Validation_Environment\')?[\'properties\']?[\'jobId\'])}/output')
+            path: concat('/subscriptions/@{encodeURIComponent(\'${subscriptionId}\')}/resourceGroups/@{encodeURIComponent(\'${automationAccountResourceGroup}\')}/providers/Microsoft.Automation/automationAccounts/@{encodeURIComponent(\'${automationAccountName}\')}/jobs/@{encodeURIComponent(body(\'Get_Image_Version_of_Sessionhost_in_AVD_Environment\')?[\'properties\']?[\'jobId\'])}/output')
             queries: {
               'x-ms-api-version': '2015-10-31'
             }
@@ -295,7 +295,7 @@ resource workflows_GetImageVersion_name_resource 'Microsoft.Logic/workflows@2017
         }
         'Get_Output_from_Runbook_Get-RunBookSchedule': {
           runAfter: {
-            Check_for_Exisiting_Runbook_Schedule_for_Hostpool_Validation_Environment: [
+            Check_for_Exisiting_Runbook_Schedule_for_Hostpool_AVD_Environment: [
               'Succeeded'
             ]
           }
@@ -307,7 +307,7 @@ resource workflows_GetImageVersion_name_resource 'Microsoft.Logic/workflows@2017
               }
             }
             method: 'get'
-            path: concat('/subscriptions/@{encodeURIComponent(\'${subscriptionId}\')}/resourceGroups/@{encodeURIComponent(\'${automationAccountResourceGroup}\')}/providers/Microsoft.Automation/automationAccounts/@{encodeURIComponent(\'${automationAccountName}\')}/jobs/@{encodeURIComponent(body(\'Check_for_Exisiting_Runbook_Schedule_for_Hostpool_Validation_Environment\')?[\'properties\']?[\'jobId\'])}/output')
+            path: concat('/subscriptions/@{encodeURIComponent(\'${subscriptionId}\')}/resourceGroups/@{encodeURIComponent(\'${automationAccountResourceGroup}\')}/providers/Microsoft.Automation/automationAccounts/@{encodeURIComponent(\'${automationAccountName}\')}/jobs/@{encodeURIComponent(body(\'Check_for_Exisiting_Runbook_Schedule_for_Hostpool_AVD_Environment\')?[\'properties\']?[\'jobId\'])}/output')
             queries: {
               'x-ms-api-version': '2015-10-31'
             }
