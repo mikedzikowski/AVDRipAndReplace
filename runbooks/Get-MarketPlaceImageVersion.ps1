@@ -30,7 +30,7 @@ foreach($Version in $Versions)
 
 $LatestVersionDate = $VersionDates | Sort-Object -Descending | Select-Object -First 1
 
-$LatestVersion = $Versions -like "*$LatestVersionDate"
+[string]$LatestVersion = $Versions -like "*$LatestVersionDate"
 
 if ($LatestVersion.Split('.')[-1] -gt $hostpoolVm.StorageProfile.ImageReference.ExactVersion.Split('.')[-1])
 {
