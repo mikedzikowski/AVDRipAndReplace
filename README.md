@@ -32,11 +32,10 @@ Repo for a logic app and set of automation scripts to rip and replace your AVD e
 ## Key Vault Secrets
  The following values will be required at runtime:
 
-* "SasToken" - SAS Token for the container of the storage account
-* "DomainJoinUserPrincipalName" - Domain join user for the Azure Active Directory environment
-* "DomainJoinPassword" - Domain join password for the djuser
-* "VmUserName" - The name of the vmuser for the virtual machine infastructure
-* "VmPassword' - The password for the virtual machine infrastructure
+* "DomainUserPrincipalName" - Domain join user for the Azure Active Directory environment
+* "DomainPassword" - Domain join password for the djuser
+* "LocalAdminUsername" - The name of the vmuser for the virtual machine infastructure
+* "LocalAdminPassword' - The password for the virtual machine infrastructure
 
 ## Authenticate API connector for Office 365
 
