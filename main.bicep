@@ -365,7 +365,6 @@ module blobConnection 'modules/blobConnection.bicep' = if (deployBlobUpdateLogic
     subscriptionId: subscriptionId
   }
   dependsOn: [
-    storageAccount
   ]
 }
 
