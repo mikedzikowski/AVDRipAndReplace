@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.12.40.16777",
-      "templateHash": "1662289645978848165"
+      "templateHash": "13738111835172809787"
     }
   },
   "parameters": {
@@ -2131,7 +2131,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.12.40.16777",
-              "templateHash": "6103797237842130718"
+              "templateHash": "9213522701362031621"
             }
           },
           "parameters": {
@@ -2253,6 +2253,7 @@
                 "criteria": "[variables('logAlerts')[range(0, length(variables('logAlerts')))[copyIndex()]].criteria]",
                 "displayName": "[variables('logAlerts')[range(0, length(variables('logAlerts')))[copyIndex()]].name]",
                 "description": "[variables('logAlerts')[range(0, length(variables('logAlerts')))[copyIndex()]].description]",
+                "autoMitigate": false,
                 "enabled": true,
                 "evaluationFrequency": "[variables('logAlerts')[range(0, length(variables('logAlerts')))[copyIndex()]].evaluationFrequency]",
                 "scopes": [
