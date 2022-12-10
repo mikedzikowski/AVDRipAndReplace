@@ -32,7 +32,7 @@ $hostpoolRg = ($hostpool).id.split("/")[4]
 
 # Select a VM in hostpool
 $sessionHosts = Get-AzWvdSessionHost -ResourceGroupName $hostpoolRg -HostPoolName $hostpoolName
-$existingSessionHost = ($sessionHosts.Name.Split("/")[-1]).Split(".")[0]
+$existingSessionHost = ($sessionHosts[0].Name.Split("/")[-1]).Split(".")[0]
 $productionVirtualMachine = Get-AzVM -Name $existingSessionHost
 
 $objOut = [PSCustomObject]@{
