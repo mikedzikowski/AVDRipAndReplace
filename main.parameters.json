@@ -3,28 +3,31 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "emailContact": {
-      "value": ""
+      "value": "micdz@microsoft.com"
     },
     "exisitingAutomationAccount": {
-      "value": ""
+      "value": "aa-fs-peo-va-d-00-rar2"
     },
     "existingAutomationAccountRg": {
-      "value": ""
+      "value": "rg-fs-peo-va-d-management-01"
     },
     "hostPoolName": {
-      "value": ""
+      "value": "hp-fs-peo-va-d-01"
     },
     "hostPoolResourceGroupName": {
-      "value": ""
+      "value": "rg-fs-peo-va-d-management-01"
     },
     "logAnalyticsWorkspaceResourceId": {
-      "value": ""
+      "value": "/subscriptions/f4972a61-1083-4904-a4e2-a790107320bf/resourcegroups/rg-fs-peo-va-d-management-01/providers/microsoft.operationalinsights/workspaces/avd-laws"
     },
     "sessionHostResourceGroupName": {
-      "value": ""
+      "value": "rg-fs-peo-va-d-host-01"
     },
     "templateSpecId": {
-      "value": ""
+      "value": "/subscriptions/f4972a61-1083-4904-a4e2-a790107320bf/resourceGroups/rg-fs-peo-va-d-management-01/providers/Microsoft.Resources/templateSpecs/avd4"
+    },
+    "deployBlobUpdateLogicApp": {
+        "value": false
     }
   }
 }

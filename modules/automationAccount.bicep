@@ -3,6 +3,10 @@ param logAnalyticsWorkspaceResourceId string
 param automationAccountName string
 param runbookNames array
 param pwsh7RunbookNames array
+param azAccountsUri string
+param azAccountsVersion string
+param azAlertsUri string
+param azAlertsVersion string
 
 resource automationAccount 'Microsoft.Automation/automationAccounts@2021-06-22' = {
   //name: uniqueString(automationAccountName, resourceGroup().id)
@@ -68,6 +72,33 @@ resource diagnostics 'Microsoft.Insights/diagnosticsettings@2017-05-01-preview' 
       }
     ]
     workspaceId: logAnalyticsWorkspaceResourceId
+  }
+}
+
+resource azAccountsModule 'Microsoft.Automation/automationAccounts/modules@2022-08-08' = {
+  name: 'Az.Accounts'
+  location: location
+  parent: automationAccount
+  properties: {
+    contentLink: {
+      uri: azAccountsUri
+      version: azAccountsVersion
+    }
+  }
+}
+
+resource azAlertsModule 'Microsoft.Automation/automationAccounts/modules@2022-08-08' = {
+  name: 'Az.AlertsManagement'
+  dependsOn:[
+    azAccountsModule
+  ]
+  location: location
+  parent: automationAccount
+  properties: {
+    contentLink: {
+      uri: azAlertsUri
+      version: azAlertsVersion
+    }
   }
 }
 

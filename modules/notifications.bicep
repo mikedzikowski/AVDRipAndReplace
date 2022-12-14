@@ -65,6 +65,37 @@ var logAlerts = [
       ]
     }
   }
+  {
+    name: 'New Image Found for AVD Environment'
+    description: 'New Image Found for AVD Environment. Please close this alert to act as approval in workflow.'
+    severity: 3
+    evaluationFrequency: 'PT5M'
+    windowSize: 'PT5M'
+    muteActionsDuration: 'P1D'
+    criteria: {
+      allOf: [
+        {
+          query: 'AzureDiagnostics\n| where ResourceProvider == "MICROSOFT.AUTOMATION"\n| where Category == "JobStreams"\n| extend jsonResourceDescription = parse_json(ResultDescription)\n| where jsonResourceDescription.NewImageFound == true'
+          timeAggregation: 'Count'
+          dimensions: [
+            {
+              name: 'ResultDescription'
+              operator: 'Include'
+              values: [
+                  '*'
+              ]
+          }
+          ]
+          operator: 'GreaterThanOrEqual'
+          threshold: 1
+          failingPeriods: {
+            numberOfEvaluationPeriods: 1
+            minFailingPeriodsToAlert: 1
+          }
+        }
+      ]
+    }
+  }
 ]
 
 resource actionGroup 'Microsoft.Insights/actionGroups@2019-06-01' = {

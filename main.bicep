@@ -113,6 +113,10 @@ var runbookNewHostPoolRipAndReplace = 'Start-AzureVirtualDesktopRipAndReplace'
 var runbookScheduleRunbookName = 'Get-RunBookSchedule'
 var runbookGetSessionHostVm = 'Get-SessionHostVirtualMachine'
 var runbookMarketPlaceImageVersion = 'Get-MarketPlaceImageVersion'
+var azAccountsUri = 'https://www.powershellgallery.com/api/v2/package/Az.Accounts/2.10.4'
+var azAccountsVersion  = '2.10.4'
+var azAlertsUri = 'https://www.powershellgallery.com/api/v2/package/Az.AlertsManagement/0.5.0'
+var azAlertsVersion = '0.5.0'
 var runbooks = [
   {
     name: 'Get-RunBookSchedule'
@@ -129,6 +133,10 @@ var runbooks = [
   {
     name: 'New-AutomationSchedule'
     uri: 'https://raw.githubusercontent.com/mikedzikowski/AVDRipAndReplace/main/runbooks/New-AutomationSchedule.ps1'
+  }
+  {
+    name: 'Get-NewImageAlertStatus'
+    uri: 'https://raw.githubusercontent.com/mikedzikowski/AVDRipAndReplace/main/runbooks/Get-NewImageAlertStatus.ps1'
   }
 ]
 
@@ -212,6 +220,10 @@ module automationAccount 'modules/automationAccount.bicep' = {
     logAnalyticsWorkspaceResourceId: logAnalyticsWorkspaceResourceId
     runbookNames: runbooks
     pwsh7RunbookNames: runbooksPwsh7
+    azAccountsUri:azAccountsUri
+    azAccountsVersion:azAccountsVersion
+    azAlertsUri:azAlertsUri
+    azAlertsVersion:azAlertsVersion
   }
 }
 
@@ -255,6 +267,7 @@ module rbacPermissionAzureAutomationConnector 'modules/rbacPermissions.bicep' = 
   dependsOn: [
     automationAccount
     automationAccountConnection
+    getImageVersionlogicApp
   ]
 }
 
@@ -296,7 +309,7 @@ module rbacPermissionAzureAutomationAccountRg 'modules/rbacPermissionsSubscripti
   ]
 }
 
-module getImageVersionlogicApp 'modules/logicappGetImageVersion.bicep' = {
+module getImageVersionlogicApp 'modules/test.bicep' = {
   name: 'getImageVersionlogicApp-deployment-${deploymentNameSuffix}'
   scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
   params: {
@@ -304,11 +317,9 @@ module getImageVersionlogicApp 'modules/logicappGetImageVersion.bicep' = {
     startTime: startTime
     dayOfWeekOccurrence: dayOfWeekOccurrence
     cloud: cloud
-    officeConnectionName: officeConnectionName
     subscriptionId: subscriptionId
     tenantId: tenantId
     templateSpecId: templateSpecId
-    emailContact: emailContact
     workflows_GetImageVersion_name: workflows_GetImageVersion_name
     automationAccountConnectionName: automationAccountConnectionName
     location: location
@@ -331,6 +342,41 @@ module getImageVersionlogicApp 'modules/logicappGetImageVersion.bicep' = {
     o365Connection
   ]
 }
+// module getImageVersionlogicApp 'modules/logicappGetImageVersion.bicep' = {
+//   name: 'getImageVersionlogicApp-deployment-${deploymentNameSuffix}'
+//   scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
+//   params: {
+//     dayOfWeek: dayOfWeek
+//     startTime: startTime
+//     dayOfWeekOccurrence: dayOfWeekOccurrence
+//     cloud: cloud
+//     officeConnectionName: officeConnectionName
+//     subscriptionId: subscriptionId
+//     tenantId: tenantId
+//     templateSpecId: templateSpecId
+//     emailContact: emailContact
+//     workflows_GetImageVersion_name: workflows_GetImageVersion_name
+//     automationAccountConnectionName: automationAccountConnectionName
+//     location: location
+//     state: state
+//     recurrenceFrequency: recurrenceFrequency
+//     recurrenceType: recurrenceType
+//     recurrenceInterval: recurrenceInterval
+//     automationAccountName: automationAccountNameValue
+//     automationAccountLocation: automationAccount.outputs.aaLocation
+//     automationAccountResourceGroup: existingAutomationAccountRg
+//     runbookNewHostPoolRipAndReplace: runbookNewHostPoolRipAndReplace
+//     getRunbookScheduleRunbookName: runbookScheduleRunbookName
+//     getRunbookGetSessionHostVm: runbookGetSessionHostVm
+//     getGetMarketPlaceImageVersion: runbookMarketPlaceImageVersion
+//     waitForRunBook: waitForRunBook
+//     hostPoolName: hostPoolName
+//     identityType: identityType
+//   }
+//   dependsOn: [
+//     o365Connection
+//   ]
+// }
 module storageAccount 'modules/storageAccount.bicep' = if (deployBlobUpdateLogicApp) {
   name: 'sa-deployment-${deploymentNameSuffix}'
   scope: resourceGroup(subscriptionId, existingStorageAccountRg)

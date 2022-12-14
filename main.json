@@ -4,8 +4,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.12.40.16777",
-      "templateHash": "13738111835172809787"
+      "version": "0.7.4.23292",
+      "templateHash": "905996773453698218"
     }
   },
   "parameters": {
@@ -193,6 +193,10 @@
     "runbookScheduleRunbookName": "Get-RunBookSchedule",
     "runbookGetSessionHostVm": "Get-SessionHostVirtualMachine",
     "runbookMarketPlaceImageVersion": "Get-MarketPlaceImageVersion",
+    "azAccountsUri": "https://www.powershellgallery.com/api/v2/package/Az.Accounts/2.10.4",
+    "azAccountsVersion": "2.10.4",
+    "azAlertsUri": "https://www.powershellgallery.com/api/v2/package/Az.AlertsManagement/0.5.0",
+    "azAlertsVersion": "0.5.0",
     "runbooks": [
       {
         "name": "Get-RunBookSchedule",
@@ -209,6 +213,10 @@
       {
         "name": "New-AutomationSchedule",
         "uri": "https://raw.githubusercontent.com/mikedzikowski/AVDRipAndReplace/main/runbooks/New-AutomationSchedule.ps1"
+      },
+      {
+        "name": "Get-NewImageAlertStatus",
+        "uri": "https://raw.githubusercontent.com/mikedzikowski/AVDRipAndReplace/main/runbooks/Get-NewImageAlertStatus.ps1"
       }
     ],
     "runbooksPwsh7": [
@@ -302,6 +310,18 @@
           },
           "pwsh7RunbookNames": {
             "value": "[variables('runbooksPwsh7')]"
+          },
+          "azAccountsUri": {
+            "value": "[variables('azAccountsUri')]"
+          },
+          "azAccountsVersion": {
+            "value": "[variables('azAccountsVersion')]"
+          },
+          "azAlertsUri": {
+            "value": "[variables('azAlertsUri')]"
+          },
+          "azAlertsVersion": {
+            "value": "[variables('azAlertsVersion')]"
           }
         },
         "template": {
@@ -310,8 +330,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "9414147857770958225"
+              "version": "0.7.4.23292",
+              "templateHash": "3350455304556292352"
             }
           },
           "parameters": {
@@ -329,6 +349,18 @@
             },
             "pwsh7RunbookNames": {
               "type": "array"
+            },
+            "azAccountsUri": {
+              "type": "string"
+            },
+            "azAccountsVersion": {
+              "type": "string"
+            },
+            "azAlertsUri": {
+              "type": "string"
+            },
+            "azAlertsVersion": {
+              "type": "string"
             }
           },
           "resources": [
@@ -415,6 +447,37 @@
               "dependsOn": [
                 "[resourceId('Microsoft.Automation/automationAccounts', parameters('automationAccountName'))]"
               ]
+            },
+            {
+              "type": "Microsoft.Automation/automationAccounts/modules",
+              "apiVersion": "2022-08-08",
+              "name": "[format('{0}/{1}', parameters('automationAccountName'), 'Az.Accounts')]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "contentLink": {
+                  "uri": "[parameters('azAccountsUri')]",
+                  "version": "[parameters('azAccountsVersion')]"
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Automation/automationAccounts', parameters('automationAccountName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Automation/automationAccounts/modules",
+              "apiVersion": "2022-08-08",
+              "name": "[format('{0}/{1}', parameters('automationAccountName'), 'Az.AlertsManagement')]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "contentLink": {
+                  "uri": "[parameters('azAlertsUri')]",
+                  "version": "[parameters('azAlertsVersion')]"
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Automation/automationAccounts', parameters('automationAccountName'))]",
+                "[resourceId('Microsoft.Automation/automationAccounts/modules', parameters('automationAccountName'), 'Az.Accounts')]"
+              ]
             }
           ],
           "outputs": {
@@ -461,8 +524,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "11650482620621138565"
+              "version": "0.7.4.23292",
+              "templateHash": "16463077532820351799"
             }
           },
           "parameters": {
@@ -534,8 +597,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "9536782711155583375"
+              "version": "0.7.4.23292",
+              "templateHash": "7922443813728630339"
             }
           },
           "parameters": {
@@ -589,7 +652,7 @@
         "mode": "Incremental",
         "parameters": {
           "principalId": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('getImageVersionlogicApp-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.imagePrincipalId.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('getImageVersionlogicApp-deployment-{0}', parameters('deploymentNameSuffix')))).outputs.imagePrincipalId.value]"
           },
           "roleId": {
             "value": "[variables('roleId')]"
@@ -604,8 +667,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "6666462086277563153"
+              "version": "0.7.4.23292",
+              "templateHash": "2412093124036441964"
             }
           },
           "parameters": {
@@ -645,7 +708,7 @@
           "outputs": {
             "rbac": {
               "type": "string",
-              "value": "[reference(resourceId('Microsoft.Authorization/roleAssignments', guid(parameters('scope'), parameters('principalId'), parameters('roleId'))), '2020-04-01-preview').roleDefinitionId]"
+              "value": "[reference(resourceId('Microsoft.Authorization/roleAssignments', guid(parameters('scope'), parameters('principalId'), parameters('roleId')))).roleDefinitionId]"
             }
           }
         }
@@ -669,7 +732,7 @@
         "mode": "Incremental",
         "parameters": {
           "principalId": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.aaIdentityId.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix')))).outputs.aaIdentityId.value]"
           },
           "roleId": {
             "value": "[variables('roleId')]"
@@ -681,8 +744,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "6666462086277563153"
+              "version": "0.7.4.23292",
+              "templateHash": "2412093124036441964"
             }
           },
           "parameters": {
@@ -722,7 +785,7 @@
           "outputs": {
             "rbac": {
               "type": "string",
-              "value": "[reference(resourceId('Microsoft.Authorization/roleAssignments', guid(parameters('scope'), parameters('principalId'), parameters('roleId'))), '2020-04-01-preview').roleDefinitionId]"
+              "value": "[reference(resourceId('Microsoft.Authorization/roleAssignments', guid(parameters('scope'), parameters('principalId'), parameters('roleId')))).roleDefinitionId]"
             }
           }
         }
@@ -745,7 +808,7 @@
         "mode": "Incremental",
         "parameters": {
           "principalId": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.aaIdentityId.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix')))).outputs.aaIdentityId.value]"
           },
           "roleId": {
             "value": "[variables('roleId')]"
@@ -757,8 +820,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "6666462086277563153"
+              "version": "0.7.4.23292",
+              "templateHash": "2412093124036441964"
             }
           },
           "parameters": {
@@ -798,7 +861,7 @@
           "outputs": {
             "rbac": {
               "type": "string",
-              "value": "[reference(resourceId('Microsoft.Authorization/roleAssignments', guid(parameters('scope'), parameters('principalId'), parameters('roleId'))), '2020-04-01-preview').roleDefinitionId]"
+              "value": "[reference(resourceId('Microsoft.Authorization/roleAssignments', guid(parameters('scope'), parameters('principalId'), parameters('roleId')))).roleDefinitionId]"
             }
           }
         }
@@ -820,7 +883,7 @@
         "mode": "Incremental",
         "parameters": {
           "principalId": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.aaIdentityId.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix')))).outputs.aaIdentityId.value]"
           },
           "scope": {
             "value": "[subscription().id]"
@@ -832,8 +895,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "10172713869672620660"
+              "version": "0.7.4.23292",
+              "templateHash": "12018947320927499093"
             }
           },
           "parameters": {
@@ -856,7 +919,7 @@
             {
               "type": "Microsoft.Authorization/roleAssignments",
               "apiVersion": "2020-04-01-preview",
-              "name": "[guid(parameters('scope'), parameters('principalId'), '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]",
+              "name": "[guid(parameters('scope'), parameters('principalId'), 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
               "properties": {
                 "canDelegate": "[parameters('canDelegate')]",
                 "description": "[parameters('description')]",
@@ -869,7 +932,7 @@
           "outputs": {
             "rbac": {
               "type": "string",
-              "value": "[reference(subscriptionResourceId('Microsoft.Authorization/roleAssignments', guid(parameters('scope'), parameters('principalId'), '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')), '2020-04-01-preview').roleDefinitionId]"
+              "value": "[reference(subscriptionResourceId('Microsoft.Authorization/roleAssignments', guid(parameters('scope'), parameters('principalId'), 'b24988ac-6180-42a0-ab88-20f7382dd24c'))).roleDefinitionId]"
             }
           }
         }
@@ -903,9 +966,6 @@
           "cloud": {
             "value": "[variables('cloud')]"
           },
-          "officeConnectionName": {
-            "value": "[variables('officeConnectionName')]"
-          },
           "subscriptionId": {
             "value": "[variables('subscriptionId')]"
           },
@@ -914,9 +974,6 @@
           },
           "templateSpecId": {
             "value": "[parameters('templateSpecId')]"
-          },
-          "emailContact": {
-            "value": "[parameters('emailContact')]"
           },
           "workflows_GetImageVersion_name": {
             "value": "[variables('workflows_GetImageVersion_name')]"
@@ -943,7 +1000,7 @@
             "value": "[variables('automationAccountNameValue')]"
           },
           "automationAccountLocation": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.aaLocation.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix')))).outputs.aaLocation.value]"
           },
           "automationAccountResourceGroup": {
             "value": "[parameters('existingAutomationAccountRg')]"
@@ -976,8 +1033,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "12653797977790295818"
+              "version": "0.7.4.23292",
+              "templateHash": "9439895683328223574"
             }
           },
           "parameters": {
@@ -1027,12 +1084,6 @@
               "type": "bool"
             },
             "identityType": {
-              "type": "string"
-            },
-            "emailContact": {
-              "type": "string"
-            },
-            "officeConnectionName": {
               "type": "string"
             },
             "startTime": {
@@ -1094,6 +1145,55 @@
                     }
                   },
                   "actions": {
+                    "Alert_Status": {
+                      "runAfter": {
+                        "Parse_image_version": [
+                          "Succeeded"
+                        ]
+                      },
+                      "type": "ApiConnection",
+                      "inputs": {
+                        "body": {
+                          "properties": {
+                            "parameters": {
+                              "environment": "[parameters('cloud')]"
+                            }
+                          }
+                        },
+                        "host": {
+                          "connection": {
+                            "name": "@parameters('$connections')['azureautomation']['connectionId']"
+                          }
+                        },
+                        "method": "put",
+                        "path": "[concat(format('/subscriptions/@{{encodeURIComponent(''{0}'')}}/resourceGroups/@{{encodeURIComponent(''{1}'')}}/providers/Microsoft.Automation/automationAccounts/@{{encodeURIComponent(''{2}'')}}/jobs', parameters('subscriptionId'), parameters('automationAccountResourceGroup'), parameters('automationAccountName')))]",
+                        "queries": {
+                          "runbookName": "Get-NewImageAlertStatus",
+                          "wait": true,
+                          "x-ms-api-version": "2015-10-31"
+                        }
+                      }
+                    },
+                    "Alert_Status_Output": {
+                      "runAfter": {
+                        "Alert_Status": [
+                          "Succeeded"
+                        ]
+                      },
+                      "type": "ApiConnection",
+                      "inputs": {
+                        "host": {
+                          "connection": {
+                            "name": "@parameters('$connections')['azureautomation']['connectionId']"
+                          }
+                        },
+                        "method": "get",
+                        "path": "[format('/subscriptions/@{{encodeURIComponent(''{0}'')}}/resourceGroups/@{{encodeURIComponent(''{1}'')}}/providers/Microsoft.Automation/automationAccounts/@{{encodeURIComponent(''{2}'')}}/jobs/@{{encodeURIComponent(body(''Alert_Status'')?[''properties'']?[''jobId''])}}/output', parameters('subscriptionId'), parameters('automationAccountResourceGroup'), parameters('automationAccountName'))]",
+                        "queries": {
+                          "x-ms-api-version": "2015-10-31"
+                        }
+                      }
+                    },
                     "Check_for_Exisiting_Runbook_Schedule_for_Hostpool_AVD_Environment": {
                       "runAfter": {
                         "Parse_Session_Host_VM_and_RG": [
@@ -1129,100 +1229,45 @@
                     },
                     "Condition_Check_for_Runbook_Schedule_and_Image_Version_on_AVD_Environment": {
                       "actions": {
-                        "Condition_Check_for_Approval_Selection_in_Email": {
-                          "actions": {
-                            "Create_Schedule_for_Hostpool_Rip_and_Replace_on_AVD_Environment": {
-                              "runAfter": {},
-                              "type": "ApiConnection",
-                              "inputs": {
-                                "body": {
-                                  "properties": {
-                                    "parameters": {
-                                      "AutomationAccountName": "[parameters('automationAccountName')]",
-                                      "ResourceGroupName": "[parameters('automationAccountResourceGroup')]",
-                                      "ScheduleName": "[format('{0}-ScheduleForRipAndReplace', parameters('hostPoolName'))]",
-                                      "StartTime": "[parameters('startTime')]",
-                                      "DayOfWeek": "[parameters('dayOfWeek')]",
-                                      "DayOfWeekOccurrence": "[parameters('dayOfWeekOccurrence')]",
-                                      "environment": "[parameters('cloud')]",
-                                      "runbookName": "[parameters('runbookNewHostPoolRipAndReplace')]",
-                                      "HostPoolName": "[parameters('hostPoolName')]",
-                                      "TenantId": "[parameters('tenantId')]",
-                                      "TemplateSpecId": "[parameters('templateSpecId')]",
-                                      "SubscriptionId": "[parameters('subscriptionId')]"
-                                    }
-                                  }
-                                },
-                                "host": {
-                                  "connection": {
-                                    "name": "@parameters('$connections')['azureautomation']['connectionId']"
-                                  }
-                                },
-                                "method": "put",
-                                "path": "[format('/subscriptions/@{{encodeURIComponent(''{0}'')}}/resourceGroups/@{{encodeURIComponent(''{1}'')}}/providers/Microsoft.Automation/automationAccounts/@{{encodeURIComponent(''{2}'')}}/jobs', parameters('subscriptionId'), parameters('automationAccountResourceGroup'), parameters('automationAccountName'))]",
-                                "queries": {
-                                  "runbookName": "New-AutomationSchedule",
-                                  "wait": true,
-                                  "x-ms-api-version": "2015-10-31"
-                                }
-                              }
-                            }
-                          },
-                          "runAfter": {
-                            "Send_Approval_Email_for_Rip_and_Replace_in_AVD_Environment": [
-                              "Succeeded"
-                            ]
-                          },
-                          "else": {
-                            "actions": {
-                              "Terminate_2": {
-                                "runAfter": {},
-                                "type": "Terminate",
-                                "inputs": {
-                                  "runStatus": "Cancelled"
-                                }
-                              }
-                            }
-                          },
-                          "expression": {
-                            "and": [
-                              {
-                                "equals": [
-                                  "@body('Send_Approval_Email_for_Rip_and_Replace_in_AVD_Environment')?['SelectedOption']",
-                                  "Approve"
-                                ]
-                              }
-                            ]
-                          },
-                          "type": "If"
-                        },
-                        "Send_Approval_Email_for_Rip_and_Replace_in_AVD_Environment": {
+                        "Create_Schedule_for_Hostpool_Rip_and_Replace_on_AVD_Environment": {
                           "runAfter": {},
-                          "type": "ApiConnectionWebhook",
+                          "type": "ApiConnection",
                           "inputs": {
                             "body": {
-                              "Message": {
-                                "Body": "[format('Hostpool: @{{body(''Parse_Session_Host_VM_and_RG'')?[''hostPool'']}}\n\n\nNew Image Version:  @{{body(''Parse_image_version'')?[''ImageVersion'']}}\n\n\nPlease approve schedule on the {0} {1} of the Month @ {2} for \"rip and replace\" of @{{body(''Parse_Session_Host_VM_and_RG'')?[''hostPool'']}} AVD enviroment. \n', parameters('dayOfWeekOccurrence'), parameters('dayOfWeek'), parameters('startTime'))]",
-                                "HideHTMLMessage": true,
-                                "Importance": "High",
-                                "Options": "Approve, Reject",
-                                "ShowHTMLConfirmationDialog": false,
-                                "Subject": "New Image Version Found for AVD Hostpool Environment - @{body('Parse_Session_Host_VM_and_RG')?['hostPool']}. Please Approve or Reject Creating Automated Schedule for Updating AVD Environment",
-                                "To": "[parameters('emailContact')]"
-                              },
-                              "NotificationUrl": "@{listCallbackUrl()}"
+                              "properties": {
+                                "parameters": {
+                                  "AutomationAccountName": "[parameters('automationAccountName')]",
+                                  "ResourceGroupName": "[parameters('automationAccountResourceGroup')]",
+                                  "ScheduleName": "[format('{0}-ScheduleForRipAndReplace', parameters('hostPoolName'))]",
+                                  "StartTime": "[parameters('startTime')]",
+                                  "DayOfWeek": "[parameters('dayOfWeek')]",
+                                  "DayOfWeekOccurrence": "[parameters('dayOfWeekOccurrence')]",
+                                  "environment": "[parameters('cloud')]",
+                                  "runbookName": "[parameters('runbookNewHostPoolRipAndReplace')]",
+                                  "HostPoolName": "[parameters('hostPoolName')]",
+                                  "TenantId": "[parameters('tenantId')]",
+                                  "TemplateSpecId": "[parameters('templateSpecId')]",
+                                  "SubscriptionId": "[parameters('subscriptionId')]"
+                                }
+                              }
                             },
                             "host": {
                               "connection": {
-                                "name": "@parameters('$connections')['office365']['connectionId']"
+                                "name": "@parameters('$connections')['azureautomation']['connectionId']"
                               }
                             },
-                            "path": "/approvalmail/$subscriptions"
+                            "method": "put",
+                            "path": "[format('/subscriptions/@{{encodeURIComponent(''{0}'')}}/resourceGroups/@{{encodeURIComponent(''{1}'')}}/providers/Microsoft.Automation/automationAccounts/@{{encodeURIComponent(''{2}'')}}/jobs', parameters('subscriptionId'), parameters('automationAccountResourceGroup'), parameters('automationAccountName'))]",
+                            "queries": {
+                              "runbookName": "New-AutomationSchedule",
+                              "wait": true,
+                              "x-ms-api-version": "2015-10-31"
+                            }
                           }
                         }
                       },
                       "runAfter": {
-                        "Parse_image_version": [
+                        "Parse_JSON": [
                           "Succeeded"
                         ]
                       },
@@ -1250,6 +1295,12 @@
                               "@body('Parse_image_version')?['NewImageFound']",
                               true
                             ]
+                          },
+                          {
+                            "equals": [
+                              "@body('Parse_JSON')?['Approval']",
+                              true
+                            ]
                           }
                         ]
                       },
@@ -1268,7 +1319,7 @@
                             "parameters": {
                               "ResourceGroupName": "@body('Parse_Session_Host_VM_and_RG')?['productionVmRg']",
                               "VMName": "@body('Parse_Session_Host_VM_and_RG')?['productionVm']",
-                              "Environment": "[parameters('cloud')]"
+                              "environment": "[parameters('cloud')]"
                             }
                           }
                         },
@@ -1353,8 +1404,8 @@
                         "body": {
                           "properties": {
                             "parameters": {
-                              "hostpoolName": "[parameters('hostPoolName')]",
-                              "Environment": "[parameters('cloud')]"
+                              "environment": "[parameters('cloud')]",
+                              "hostpoolName": "[parameters('hostPoolName')]"
                             }
                           }
                         },
@@ -1369,6 +1420,25 @@
                           "runbookName": "[parameters('getRunbookGetSessionHostVm')]",
                           "wait": true,
                           "x-ms-api-version": "2015-10-31"
+                        }
+                      }
+                    },
+                    "Parse_JSON": {
+                      "runAfter": {
+                        "Alert_Status_Output": [
+                          "Succeeded"
+                        ]
+                      },
+                      "type": "ParseJson",
+                      "inputs": {
+                        "content": "@body('Alert_Status_Output')",
+                        "schema": {
+                          "properties": {
+                            "Approval": {
+                              "type": "boolean"
+                            }
+                          },
+                          "type": "object"
                         }
                       }
                     },
@@ -1453,11 +1523,6 @@
                           }
                         },
                         "id": "[concat(format('/subscriptions/{0}/providers/Microsoft.Web/locations/{1}/managedApis/azureautomation', parameters('subscriptionId'), parameters('automationAccountLocation')))]"
-                      },
-                      "office365": {
-                        "connectionId": "[format('/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Web/connections/{2}', parameters('subscriptionId'), resourceGroup().name, parameters('officeConnectionName'))]",
-                        "connectionName": "[parameters('officeConnectionName')]",
-                        "id": "[format('/subscriptions/{0}/providers/Microsoft.Web/locations/{1}/managedApis/office365', parameters('subscriptionId'), parameters('automationAccountLocation'))]"
                       }
                     }
                   }
@@ -1504,8 +1569,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "12265498873617515105"
+              "version": "0.7.4.23292",
+              "templateHash": "16501575410296232655"
             }
           },
           "parameters": {
@@ -1562,8 +1627,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "6666462086277563153"
+              "version": "0.7.4.23292",
+              "templateHash": "2412093124036441964"
             }
           },
           "parameters": {
@@ -1603,7 +1668,7 @@
           "outputs": {
             "rbac": {
               "type": "string",
-              "value": "[reference(resourceId('Microsoft.Authorization/roleAssignments', guid(parameters('scope'), parameters('principalId'), parameters('roleId'))), '2020-04-01-preview').roleDefinitionId]"
+              "value": "[reference(resourceId('Microsoft.Authorization/roleAssignments', guid(parameters('scope'), parameters('principalId'), parameters('roleId')))).roleDefinitionId]"
             }
           }
         }
@@ -1650,8 +1715,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "182893977798674095"
+              "version": "0.7.4.23292",
+              "templateHash": "2476708080359959860"
             }
           },
           "parameters": {
@@ -1699,7 +1764,7 @@
             },
             "blobConnectionName": {
               "type": "string",
-              "value": "[reference(resourceId('Microsoft.Web/connections', parameters('name')), '2016-06-01').displayName]"
+              "value": "[reference(resourceId('Microsoft.Web/connections', parameters('name'))).displayName]"
             }
           }
         }
@@ -1761,7 +1826,7 @@
             "value": "[parameters('existingAutomationAccountRg')]"
           },
           "automationAccountLocation": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.aaLocation.value]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix')))).outputs.aaLocation.value]"
           },
           "blobConnectionName": {
             "value": "[variables('blobConnectionName')]"
@@ -1815,8 +1880,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "2175843780501872265"
+              "version": "0.7.4.23292",
+              "templateHash": "14168866856196095368"
             }
           },
           "parameters": {
@@ -2130,8 +2195,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "9213522701362031621"
+              "version": "0.7.4.23292",
+              "templateHash": "5185618742421182894"
             }
           },
           "parameters": {
@@ -2193,6 +2258,37 @@
                   "allOf": [
                     {
                       "query": "AzureDiagnostics\n| where ResourceProvider == \"MICROSOFT.AUTOMATION\"\n| where Category  == \"JobStreams\"\n| where ResultDescription has \"AVD Rip & Replace succeeded\"",
+                      "timeAggregation": "Count",
+                      "dimensions": [
+                        {
+                          "name": "ResultDescription",
+                          "operator": "Include",
+                          "values": [
+                            "*"
+                          ]
+                        }
+                      ],
+                      "operator": "GreaterThanOrEqual",
+                      "threshold": 1,
+                      "failingPeriods": {
+                        "numberOfEvaluationPeriods": 1,
+                        "minFailingPeriodsToAlert": 1
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "New Image Found for AVD Environment",
+                "description": "New Image Found for AVD Environment. Please close this alert to act as approval in workflow.",
+                "severity": 3,
+                "evaluationFrequency": "PT5M",
+                "windowSize": "PT5M",
+                "muteActionsDuration": "P1D",
+                "criteria": {
+                  "allOf": [
+                    {
+                      "query": "AzureDiagnostics\n| where ResourceProvider == \"MICROSOFT.AUTOMATION\"\n| where Category == \"JobStreams\"\n| extend jsonResourceDescription = parse_json(ResultDescription)\n| where jsonResourceDescription.NewImageFound == true",
                       "timeAggregation": "Count",
                       "dimensions": [
                         {
