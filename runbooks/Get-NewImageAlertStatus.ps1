@@ -14,7 +14,7 @@ catch
 }
 
 # Sleeping to ensure data is ingested into workspace
-Start-Sleep 450
+Start-Sleep 900
 
 try
 {
@@ -23,6 +23,7 @@ try
         Start-Sleep -Seconds 5
     }
     Start-Sleep -Seconds 120
+    ($alert = Get-AzAlert | Where-Object {$_.Name -like "New Image Found for AVD Environment"} | Sort-Object -Property StartDateTime | Select-Object -Last 1).State -eq "Closed"
     $comments = (Get-AzAlertObjectHistory -ResourceId $alert.id.split('/')[-1]).Comments
     if($comments[0].contains("Approved")){
         $Approval = $true
