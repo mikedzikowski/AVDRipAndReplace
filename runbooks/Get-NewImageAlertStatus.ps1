@@ -14,7 +14,9 @@ catch
 }
 
 # Sleeping to ensure data is ingested into workspace
-Start-Sleep 900
+while (($null -eq ($alert = Get-AzAlert | Where-Object {$_.Name -like "New Image Found for AVD Environment"} | Sort-Object -Property StartDateTime | Select-Object -Last 1).State -eq "New")) {
+    Start-Sleep -Seconds 1
+}
 
 try
 {
