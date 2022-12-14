@@ -1,4 +1,3 @@
-
 [CmdletBinding()]
 param (
     [parameter(mandatory = $true)]$Environment
@@ -14,16 +13,32 @@ catch
     exit
 }
 
+# Sleeping to ensure data is ingested into workspace
+Start-Sleep 450
+
 try
 {
     # Loop until the alert is closed
-    while ((Get-AzAlert | Where-Object {$_.Name -like "New Image Found for AVD Environment"}).State -eq "Open") {
-        Write-Output "Alert New Image Found for AVD Environment:" ((Get-AzAlert | Where-Object {$_.Name -like "New Image Found for AVD Environment"})).State
-        Start-Sleep -Seconds 1
+    while ((($alert = Get-AzAlert | Where-Object {$_.Name -like "New Image Found for AVD Environment"} | Sort-Object -Property StartDateTime | Select-Object -Last 1).State -eq "New") -and ("" -eq ($comments = Get-AzAlertObjectHistory -ResourceId $alert.id.split('/')[-1]).Comments)) {
+        Start-Sleep -Seconds 5
+    }
+    Start-Sleep -Seconds 120
+    $comments = (Get-AzAlertObjectHistory -ResourceId $alert.id.split('/')[-1]).Comments
+    if($comments[0].contains("Approved")){
+        $Approval = $true
+    }
+    else{
+        $Approval = $false
     }
 }
 catch
 {
-    Write-Output "Alert: New Image Found for AVD Environment not triggered or found $_"
+    $Approval = $false
     throw
 }
+
+$objOut = [PSCustomObject]@{
+    Approval = $Approval
+}
+
+Write-Output ( $objOut | ConvertTo-Json)
