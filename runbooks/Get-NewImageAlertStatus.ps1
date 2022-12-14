@@ -14,22 +14,25 @@ catch
 }
 
 # Sleeping to ensure data is ingested into workspace
-while ($null -eq ((Get-AzAlert | Where-Object {$_.Name -like "New Image Found for AVD Environment*"}).State -eq "New" `
-| Sort-Object -Property StartDateTime | Select-Object -Last 1 )) {
+while ($null -eq (($alert = Get-AzAlert | Where-Object {$_.Name -like "New Image Found for AVD Environment*" -and $_.State -eq "New"} | Sort-Object -Property StartDateTime | Select-Object -Last 1 ))) {
 Start-Sleep -Seconds 30
 }
+
+Write-host "Alert in"
 
 try
 {
     # Loop until the alert is closed
     while ((($alert = Get-AzAlert | Where-Object {$_.Name -like "New Image Found for AVD Environment*"} `
     | Sort-Object -Property StartDateTime | Select-Object -Last 1).State -eq "New") -and `
-    ("" -eq ($comments = Get-AzAlertObjectHistory -ResourceId $alert.id.split('/')[-1]).Comments)) {
-    Start-Sleep -Seconds 5
+    ($null -eq ($comments = (Get-AzAlertObjectHistory -ResourceId $alert.id.split('/')[-1])[0] | Where-Object {$_.Comments -eq $null}))) {
+        Write-Host "we made it"
+        Start-Sleep -Seconds 5
     }
     Start-Sleep -Seconds 120
-    ($alert = Get-AzAlert | Where-Object {$_.Name -like "New Image Found for AVD Environment*"} `
-    | Sort-Object -Property StartDateTime | Select-Object -Last 1).State -eq "Closed"
+    $alert = (Get-AzAlert | Where-Object {($_.Name -like "New Image Found for AVD Environment*") -and ($_.State -eq "Closed")} `
+    | Sort-Object -Property StartDateTime | Select-Object -Last 1)
+    write-Host "checking comments"
     $comments = (Get-AzAlertObjectHistory -ResourceId $alert.id.split('/')[-1]).Comments
     if($comments[0].contains("Approved")){
         $Approval = $true
