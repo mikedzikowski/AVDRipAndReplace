@@ -14,8 +14,8 @@ catch
 }
 
 # Sleeping to ensure data is ingested into workspace
-while ($null -eq ((Get-AzAlert | Where-Object {$_.Name -like "New Image Found for AVD Environment*"}).State -eq "New" | `
-Sort-Object -Property StartDateTime | Select-Object -Last 1 )) {
+while ($null -eq ((Get-AzAlert | Where-Object {$_.Name -like "New Image Found for AVD Environment*"}).State -eq "New" `
+| Sort-Object -Property StartDateTime | Select-Object -Last 1 )) {
 Start-Sleep -Seconds 30
 }
 
