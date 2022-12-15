@@ -1,33 +1,36 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-    "emailContact": {
-      "value": "micdz@microsoft.com"
-    },
-    "exisitingAutomationAccount": {
-      "value": "aa-fs-peo-va-d-00-rar2"
-    },
-    "existingAutomationAccountRg": {
-      "value": "rg-fs-peo-va-d-management-01"
-    },
-    "hostPoolName": {
-      "value": "hp-fs-peo-va-d-01"
-    },
-    "hostPoolResourceGroupName": {
-      "value": "rg-fs-peo-va-d-management-01"
-    },
-    "logAnalyticsWorkspaceResourceId": {
-      "value": "/subscriptions/f4972a61-1083-4904-a4e2-a790107320bf/resourcegroups/rg-fs-peo-va-d-management-01/providers/microsoft.operationalinsights/workspaces/avd-laws"
-    },
-    "sessionHostResourceGroupName": {
-      "value": "rg-fs-peo-va-d-host-01"
-    },
-    "templateSpecId": {
-      "value": "/subscriptions/f4972a61-1083-4904-a4e2-a790107320bf/resourceGroups/rg-fs-peo-va-d-management-01/providers/Microsoft.Resources/templateSpecs/avd4"
-    },
-    "deployBlobUpdateLogicApp": {
-        "value": false
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "emailContact": {
+            "value": "" // TODO: Fill in parameter value
+        },
+        "exisitingAutomationAccount": {
+            "value": "" // TODO: Fill in parameter value
+        },
+        "existingAutomationAccountRg": {
+            "value": "" // TODO: Fill in parameter value
+        },
+        "hostPoolName": {
+            "value": "" // TODO: Fill in parameter value
+        },
+        "hostPoolResourceGroupName": {
+            "value": "" // TODO: Fill in parameter value
+        },
+        "logAnalyticsWorkspaceResourceId": {
+            "value": "" // TODO: Fill in parameter value
+        },
+        "sessionHostResourceGroupName": {
+            "value": "" // TODO: Fill in parameter value
+        },
+        "templateSpecId": {
+            "value": "" // TODO: Fill in parameter value
+        },
+        "deployBlobUpdateLogicApp": {
+            "value": false
+        },
+        "deployWithoutConnector": {
+            "value": true
+        }
     }
-  }
 }
