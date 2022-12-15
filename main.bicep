@@ -3,6 +3,10 @@ targetScope = 'subscription'
 @description('The location for the resources deployed in this solution.')
 param location string = deployment().location
 
+param deployWithO365Connector bool = true
+
+param deployWithoutConnector bool = false
+
 @description('The resource ID to an existing log analytics workspace. Ideally, utilizing the same workspace used for AVD Insights.')
 param logAnalyticsWorkspaceResourceId string
 
@@ -241,7 +245,7 @@ module automationAccountConnection 'modules/automationAccountConnection.bicep' =
   ]
 }
 
-module o365Connection 'modules/officeConnection.bicep' = {
+module o365Connection 'modules/officeConnection.bicep' = if (deployWithO365Connector) {
   name: 'o365Connection-deployment-${deploymentNameSuffix}'
   scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
   params: {
@@ -253,21 +257,6 @@ module o365Connection 'modules/officeConnection.bicep' = {
   dependsOn: [
     automationAccount
     automationAccountConnection
-  ]
-}
-
-module rbacPermissionAzureAutomationConnector 'modules/rbacPermissions.bicep' = {
-  name: 'rbac-aaConnector-deployment-${deploymentNameSuffix}'
-  scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
-  params: {
-    principalId: getImageVersionlogicApp.outputs.imagePrincipalId
-    roleId: roleId
-    scope: 'resourceGroup().id'
-  }
-  dependsOn: [
-    automationAccount
-    automationAccountConnection
-    getImageVersionlogicApp
   ]
 }
 
@@ -309,8 +298,8 @@ module rbacPermissionAzureAutomationAccountRg 'modules/rbacPermissionsSubscripti
   ]
 }
 
-module getImageVersionlogicApp 'modules/test.bicep' = {
-  name: 'getImageVersionlogicApp-deployment-${deploymentNameSuffix}'
+module getImageVersionlogicAppUsingAzureMonitorAlerts 'modules/logicappGetImageVersionUsingAzureMonitorAlerts.bicep'  = if (deployWithoutConnector) {
+  name: 'getImageVersionlogicAppWOConnectpr-deployment-${deploymentNameSuffix}'
   scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
   params: {
     dayOfWeek: dayOfWeek
@@ -339,44 +328,46 @@ module getImageVersionlogicApp 'modules/test.bicep' = {
     identityType: identityType
   }
   dependsOn: [
+    automationAccount
+    automationAccountConnection
+  ]
+}
+
+module getImageVersionlogicApp 'modules/logicappGetImageVersion.bicep' = if (deployWithO365Connector) {
+  name: 'getImageVersionlogicApp-deployment-${deploymentNameSuffix}'
+  scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
+  params: {
+    dayOfWeek: dayOfWeek
+    startTime: startTime
+    dayOfWeekOccurrence: dayOfWeekOccurrence
+    cloud: cloud
+    officeConnectionName: officeConnectionName
+    subscriptionId: subscriptionId
+    tenantId: tenantId
+    templateSpecId: templateSpecId
+    emailContact: emailContact
+    workflows_GetImageVersion_name: workflows_GetImageVersion_name
+    automationAccountConnectionName: automationAccountConnectionName
+    location: location
+    state: state
+    recurrenceFrequency: recurrenceFrequency
+    recurrenceType: recurrenceType
+    recurrenceInterval: recurrenceInterval
+    automationAccountName: automationAccountNameValue
+    automationAccountLocation: automationAccount.outputs.aaLocation
+    automationAccountResourceGroup: existingAutomationAccountRg
+    runbookNewHostPoolRipAndReplace: runbookNewHostPoolRipAndReplace
+    getRunbookScheduleRunbookName: runbookScheduleRunbookName
+    getRunbookGetSessionHostVm: runbookGetSessionHostVm
+    getGetMarketPlaceImageVersion: runbookMarketPlaceImageVersion
+    waitForRunBook: waitForRunBook
+    hostPoolName: hostPoolName
+    identityType: identityType
+  }
+  dependsOn: [
     o365Connection
   ]
 }
-// module getImageVersionlogicApp 'modules/logicappGetImageVersion.bicep' = {
-//   name: 'getImageVersionlogicApp-deployment-${deploymentNameSuffix}'
-//   scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
-//   params: {
-//     dayOfWeek: dayOfWeek
-//     startTime: startTime
-//     dayOfWeekOccurrence: dayOfWeekOccurrence
-//     cloud: cloud
-//     officeConnectionName: officeConnectionName
-//     subscriptionId: subscriptionId
-//     tenantId: tenantId
-//     templateSpecId: templateSpecId
-//     emailContact: emailContact
-//     workflows_GetImageVersion_name: workflows_GetImageVersion_name
-//     automationAccountConnectionName: automationAccountConnectionName
-//     location: location
-//     state: state
-//     recurrenceFrequency: recurrenceFrequency
-//     recurrenceType: recurrenceType
-//     recurrenceInterval: recurrenceInterval
-//     automationAccountName: automationAccountNameValue
-//     automationAccountLocation: automationAccount.outputs.aaLocation
-//     automationAccountResourceGroup: existingAutomationAccountRg
-//     runbookNewHostPoolRipAndReplace: runbookNewHostPoolRipAndReplace
-//     getRunbookScheduleRunbookName: runbookScheduleRunbookName
-//     getRunbookGetSessionHostVm: runbookGetSessionHostVm
-//     getGetMarketPlaceImageVersion: runbookMarketPlaceImageVersion
-//     waitForRunBook: waitForRunBook
-//     hostPoolName: hostPoolName
-//     identityType: identityType
-//   }
-//   dependsOn: [
-//     o365Connection
-//   ]
-// }
 module storageAccount 'modules/storageAccount.bicep' = if (deployBlobUpdateLogicApp) {
   name: 'sa-deployment-${deploymentNameSuffix}'
   scope: resourceGroup(subscriptionId, existingStorageAccountRg)
@@ -384,6 +375,49 @@ module storageAccount 'modules/storageAccount.bicep' = if (deployBlobUpdateLogic
     storageAccountName: exisitingStorageAccount
     containerName: container
   }
+}
+
+module rbacPermissionAzureAutomationWconnector 'modules/rbacPermissions.bicep' = if (deployWithO365Connector) {
+  name: 'rbac-aaConnectorWConn-deployment-${deploymentNameSuffix}'
+  scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
+  params: {
+    principalId: deployWithO365Connector ? getImageVersionlogicApp.outputs.imagePrincipalId : 'None'
+    roleId: roleId
+    scope: 'resourceGroup().id'
+  }
+  dependsOn: [
+    automationAccount
+    automationAccountConnection
+  ]
+}
+
+module rbacPermissionAzureAutomationConnector 'modules/rbacPermissions.bicep' = if (deployWithoutConnector) {
+  name: 'rbac-aaConnectorWoConn-deployment-${deploymentNameSuffix}'
+  scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
+  params: {
+    principalId: deployWithoutConnector ? getImageVersionlogicAppUsingAzureMonitorAlerts.outputs.imagePrincipalId : 'None'
+    roleId: roleId
+    scope: 'resourceGroup().id'
+  }
+  dependsOn: [
+    automationAccount
+    automationAccountConnection
+  ]
+}
+
+
+module blobConnection 'modules/blobConnection.bicep' = if (deployBlobUpdateLogicApp) {
+  name: 'blobConnection-deployment-${deploymentNameSuffix}'
+  scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
+  params: {
+    location: location
+    storageName: deployBlobUpdateLogicApp ? exisitingStorageAccount : 'None'
+    name: blobConnectionName
+    saResourceGroup: existingStorageAccountRg
+    subscriptionId: subscriptionId
+  }
+  dependsOn: [
+  ]
 }
 
 module rbacBlobPermissionConnector 'modules/rbacPermissions.bicep' = if (deployBlobUpdateLogicApp) {
@@ -397,20 +431,6 @@ module rbacBlobPermissionConnector 'modules/rbacPermissions.bicep' = if (deployB
     automationAccount
     automationAccountConnection
     blobConnection
-  ]
-}
-
-module blobConnection 'modules/blobConnection.bicep' = if (deployBlobUpdateLogicApp) {
-  name: 'blobConnection-deployment-${deploymentNameSuffix}'
-  scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
-  params: {
-    location: location
-    storageName: deployBlobUpdateLogicApp ? exisitingStorageAccount : 'None'
-    name: blobConnectionName
-    saResourceGroup: existingStorageAccountRg
-    subscriptionId: subscriptionId
-  }
-  dependsOn: [
   ]
 }
 
