@@ -1,0 +1,512 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2021-09-09/uiFormDefinition.schema.json",
+    "view": {
+        "kind": "Form",
+        "properties": {
+            "title": "Test Form View",
+            "steps": [
+                {
+                    "name": "basics",
+                    "label": "Basics",
+                    "elements": [
+                        {
+                            "name": "resourceScope",
+                            "type": "Microsoft.Common.ResourceScope",
+                            "location": {
+                                "resourceTypes": []
+                            },
+                            "resourceTypeMetadata": []
+                        },
+                        {
+                            "name": "location",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Location",
+                            "defaultValue": "[[deployment().location]",
+                            "toolTip": "The location for the resources deployed in this solution.",
+                            "constraints": {
+                                "required": false,
+                                "regex": "",
+                                "validationMessage": ""
+                            },
+                            "visible": false
+                        },
+                        {
+                            "name": "deploymentNameSuffix",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Deployment Name Suffix",
+                            "defaultValue": "[[utcNow()]",
+                            "toolTip": "deployment name suffix.",
+                            "constraints": {
+                                "required": false,
+                                "regex": "",
+                                "validationMessage": ""
+                            },
+                            "visible": false
+                        },
+                        {
+                            "name": "triggerFrequency",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Trigger Frequency",
+                            "defaultValue": "Day",
+                            "toolTip": "Frequency of logic app trigger for Blob Check Logic App.",
+                            "constraints": {
+                                "required": false,
+                                "allowedValues": [
+                                    {
+                                        "label": "Month",
+                                        "value": "Month"
+                                    },
+                                    {
+                                        "label": "Week",
+                                        "value": "Week"
+                                    },
+                                    {
+                                        "label": "Day",
+                                        "value": "Day"
+                                    },
+                                    {
+                                        "label": "Hour",
+                                        "value": "Hour"
+                                    },
+                                    {
+                                        "label": "Minute",
+                                        "value": "Minute"
+                                    },
+                                    {
+                                        "label": "Second",
+                                        "value": "Second"
+                                    }
+                                ]
+                            },
+                            "visible": true
+                        },
+                        {
+                            "name": "triggerInterval",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Trigger Interval",
+                            "defaultValue": "1",
+                            "toolTip": "Interval of logic app trigger for Blob Check Logic App.",
+                            "constraints": {
+                                "required": false,
+                                "regex": "",
+                                "validationMessage": ""
+                            },
+                            "visible": true
+                        },
+                        {
+                            "name": "recurrenceFrequency",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Recurrence Frequency",
+                            "defaultValue": "Day",
+                            "toolTip": "Frequency of logic app trigger for Image Check Logic App.",
+                            "constraints": {
+                                "required": false,
+                                "allowedValues": [
+                                    {
+                                        "label": "Month",
+                                        "value": "Month"
+                                    },
+                                    {
+                                        "label": "Week",
+                                        "value": "Week"
+                                    },
+                                    {
+                                        "label": "Day",
+                                        "value": "Day"
+                                    },
+                                    {
+                                        "label": "Hour",
+                                        "value": "Hour"
+                                    },
+                                    {
+                                        "label": "Minute",
+                                        "value": "Minute"
+                                    },
+                                    {
+                                        "label": "Second",
+                                        "value": "Second"
+                                    }
+                                ]
+                            },
+                            "visible": true
+                        },
+                        {
+                            "name": "recurrenceInterval",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Recurrence Interval",
+                            "defaultValue": "1",
+                            "toolTip": "Interval of logic app trigger for Image Check Logic App.",
+                            "constraints": {
+                                "required": false,
+                                "regex": "",
+                                "validationMessage": ""
+                            },
+                            "visible": true
+                        },
+                        {
+                            "name": "ResourceGroupApi",
+                            "visible": false,
+                            "type": "Microsoft.Solutions.ArmApiControl",
+                            "defaultValue": "",
+                            "request": {
+                                "method": "GET",
+                                "path": "[concat(steps('basics').resourceScope.subscription.id, '/resourceGroups?api-version=2021-04-01')]"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "blobUpdate",
+                    "label": "Deploy Additional Logic App to Monitor Blob Updates",
+                    "elements": [
+                        {
+                            "name": "deployBlobUpdateLogicApp",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Deploy Blob Update Logic App",
+                            "defaultValue": "false",
+                            "toolTip": "To be used with AVD solutions that deploy post configuration software. Set the following values if there is a storage account that should be targeted. If values are not set a default naming convention will be used by resources created.",
+                            "constraints": {
+                                "required": false,
+                                "allowedValues": [
+                                    {
+                                        "label": "true",
+                                        "value": true
+                                    },
+                                    {
+                                        "label": "false",
+                                        "value": false
+                                    }
+                                ]
+                            },
+                            "visible": true
+                        },
+                        {
+                            "name": "storageAccount",
+                            "type": "Microsoft.Storage.StorageAccountSelector",
+                            "label": "Storage account",
+                            "toolTip": "",
+                            "defaultValue": {
+                                "name": "",
+                                "type": ""
+                            },
+                            "constraints": {
+                                "allowedTypes": [],
+                                "excludedTypes": []
+                            },
+                            "options": {
+                                "hideExisting": false
+                            },
+                            "visible": "[equals(steps('AutomationEnvironment').deployBlobUpdateLogicApp, true)]"
+                        },
+                        {
+                            "name": "container",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Container",
+                            "defaultValue": "",
+                            "toolTip": "",
+                            "constraints": {
+                                "required": false,
+                                "regex": "",
+                                "validationMessage": ""
+                            },
+                            "visible": "[equals(steps('AutomationEnvironment').deployBlobUpdateLogicApp, true)]"
+                        }
+                    ]
+                },
+                {
+                    "name": "notifications",
+                    "label": "Notification Alerts and Gating",
+                    "elements": [
+                        {
+                            "name": "o365Connector",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Notification Type",
+                            "defaultValue": "false",
+                            "toolTip": "",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Use O365 Connector for notifications and gating",
+                                        "value": "true"
+                                    },
+                                    {
+                                        "label": "Use Action Groups with Logic App for notifications and gating",
+                                        "value": "false"
+                                    }
+                                ],
+                                "required": true
+                            },
+                            "visible": true
+                        },
+                        {
+                            "name": "emailAddress",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Email or Group for Alerts ",
+                            "defaultValue": "",
+                            "toolTip": "Please enter a valid email account",
+                            "constraints": {
+                                "required": false,
+                                "regex": "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$",
+                                "validationMessage": "Email is not valid. Please re-enter."
+                            },
+                            "visible": true
+                        },
+                        {
+                            "name": "lawSelector",
+                            "type": "Microsoft.Solutions.ResourceSelector",
+                            "label": "Log Analytics Resource ID",
+                            "resourceType": "Microsoft.OperationalInsights/workspaces",
+                            "options": {
+                                "filter": {
+                                    "subscription": "onBasics",
+                                    "location": "onBasics"
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "AutomationEnvironment",
+                    "label": "Automation Environment",
+                    "elements": [
+                        {
+                            "name": "existingAutomationAccount",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "visible": true,
+                            "label": "Existing Automation Account",
+                            "defaultValue": "No",
+                            "toolTip": "Select an existing automation account",
+                            "constraints": {
+                                "required": true,
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": true
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": false
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "automationAccounts",
+                            "type": "Microsoft.Solutions.ResourceSelector",
+                            "visible": "[equals(steps('AutomationEnvironment').existingAutomationAccount, true)]",
+                            "label": "Automation Account",
+                            "resourceType": "Microsoft.Automation/automationAccounts",
+                            "options": {
+                                "filter": {
+                                    "subscription": "onBasics",
+                                    "location": "onBasics"
+                                }
+                            }
+                        },
+                        {
+                            "name": "automationAccount",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Automation Account",
+                            "visible": "[equals(steps('AutomationEnvironment').existingAutomationAccount, false)]",
+                            "toolTip": "Input a custom name for the Automation Account.",
+                            "placeholder": "Example: aa-account-01",
+                            "constraints": {
+                                "required": true,
+                                "regex": "[a-zA-Z][a-zA-Z0-9-]{4,48}[a-zA-Z0-9]$",
+                                "validationMessage": "The value must be alphanumerics and hyphens. The value must start with a letter and end with an alphanumeric. The length must be 6 to 50 characters."
+                            }
+                        },
+                        {
+                            "name": "aaResourceGroup",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Automation Account Resource Group",
+                            "defaultValue": "",
+                            "constraints": {
+                                "allowedValues": "[map(steps('basics').ResourceGroupApi.value, (item) => parse(concat('{\"label\":\"', item.name, '\",\"value\":\"', item.name, '\"}')))]"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "AvdEnvironment",
+                    "label": "AVD Resource Integration",
+                    "elements": [
+                        {
+                            "name": "ResourceGroupApi",
+                            "type": "Microsoft.Solutions.ArmApiControl",
+                            "defaultValue": "",
+                            "request": {
+                                "method": "GET",
+                                "path": "[concat(steps('basics').resourceScope.subscription.id, '/resourceGroups?api-version=2021-04-01')]"
+                            }
+                        },
+                        {
+                            "name": "hostPoolSelector",
+                            "type": "Microsoft.Solutions.ResourceSelector",
+                            "label": "Hostpool",
+                            "resourceType": "Microsoft.DesktopVirtualization/hostpools",
+                            "options": {
+                                "filter": {
+                                    "subscription": "onBasics",
+                                    "location": "onBasics"
+                                }
+                            }
+                        },
+                        {
+                            "name": "hostPoolResourceGroup",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Hostpool Resource Group",
+                            "defaultValue": "",
+                            "constraints": {
+                                "allowedValues": "[map(steps('basics').ResourceGroupApi.value, (item) => parse(concat('{\"label\":\"', item.name, '\",\"value\":\"', item.name, '\"}')))]"
+                            }
+                        },
+                        {
+                            "name": "sessionHostResourceGroup",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Session Host Resource Group",
+                            "defaultValue": "",
+                            "constraints": {
+                                "allowedValues": "[map(steps('basics').ResourceGroupApi.value, (item) => parse(concat('{\"label\":\"', item.name, '\",\"value\":\"', item.name, '\"}')))]"
+                            }
+                        },
+                        {
+                            "name": "avdTempSpec",
+                            "type": "Microsoft.Solutions.ResourceSelector",
+                            "label": "Avd TemplateSpec",
+                            "resourceType": "Microsoft.Resources/templateSpecs",
+                            "options": {
+                                "filter": {
+                                    "subscription": "onBasics",
+                                    "location": "onBasics"
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "maintenaceWindow",
+                    "label": "Define Maintenace Window",
+                    "elements": [
+                        {
+                            "name": "dayOfWeek",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Day Of Week",
+                            "defaultValue": "Saturday",
+                            "toolTip": "The target maintenance window day for AVD",
+                            "constraints": {
+                                "required": false,
+                                "allowedValues": [
+                                    {
+                                        "label": "Monday",
+                                        "value": "Monday"
+                                    },
+                                    {
+                                        "label": "Tuesday",
+                                        "value": "Tuesday"
+                                    },
+                                    {
+                                        "label": "Wednesday",
+                                        "value": "Wednesday"
+                                    },
+                                    {
+                                        "label": "Thursday",
+                                        "value": "Thursday"
+                                    },
+                                    {
+                                        "label": "Friday",
+                                        "value": "Friday"
+                                    },
+                                    {
+                                        "label": "Saturday",
+                                        "value": "Saturday"
+                                    },
+                                    {
+                                        "label": "Sunday",
+                                        "value": "Sunday"
+                                    }
+                                ]
+                            },
+                            "visible": true
+                        },
+                        {
+                            "name": "dayOfWeekOccurrence",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Day Of Week Occurrence",
+                            "defaultValue": "First",
+                            "toolTip": "The target maintenance window week occurrence for AVD",
+                            "constraints": {
+                                "required": false,
+                                "allowedValues": [
+                                    {
+                                        "label": "First",
+                                        "value": "First"
+                                    },
+                                    {
+                                        "label": "Second",
+                                        "value": "Second"
+                                    },
+                                    {
+                                        "label": "Third",
+                                        "value": "Third"
+                                    },
+                                    {
+                                        "label": "Fourth",
+                                        "value": "Fourth"
+                                    },
+                                    {
+                                        "label": "LastDay",
+                                        "value": "LastDay"
+                                    }
+                                ]
+                            },
+                            "visible": true
+                        },
+                        {
+                            "name": "startTime",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Start Time",
+                            "defaultValue": "23:00",
+                            "toolTip": "The target maintenance window start time for AVD",
+                            "constraints": {
+                                "required": false,
+                                "regex": "",
+                                "validationMessage": ""
+                            },
+                            "visible": true
+                        }
+                    ]
+                }
+            ]
+        },
+        "outputs": {
+            "parameters": {
+                "location": "[steps('basics').location]",
+                "sessionHostResourceGroupName": "[steps('AvdEnvironment').sessionHostResourceGroup]",
+                "hostPoolResourceGroupName": "[steps('AvdEnvironment').hostPoolResourceGroup]",
+                "hostPoolName": "[steps('AvdEnvironment').hostPoolSelector.name]",
+                "deployWithO365Connector": "[steps('notifications').o365Connector.constraints.allowedValues.value]",
+                "dayOfWeek": "[steps('maintenaceWindow').dayOfWeek]",
+                "dayOfWeekOccurrence": "[steps('maintenaceWindow').dayOfWeekOccurrence]",
+                "startTime": "[steps('maintenaceWindow').startTime]",
+                "logAnalyticsWorkspaceResourceId": "[steps('notifications').lawSelector.id]",
+                "templateSpecId": "[steps('AvdEnvironment').avdTempSpec.id]",
+                "deploymentNameSuffix": "[steps('basics').deploymentNameSuffix]",
+                "exisitingAutomationAccount": "[steps('AutomationEnvironment').automationAccounts.name]",
+                "existingAutomationAccountRg": "[steps('AutomationEnvironment').aaResourceGroup]",
+                "deployBlobUpdateLogicApp": "[steps('blobUpdate').deployBlobUpdateLogicApp.value]",
+                "exisitingStorageAccount": "[steps('blobUpdate').storageAccount.name]",
+                "existingStorageAccountRg": "[steps('blobUpdate').storageAccount.resourceGroup]",
+                "container": "[steps('blobUpdate').container]",
+                "triggerFrequency": "[steps('basics').triggerFrequency]",
+                "triggerInterval": "[steps('basics').triggerInterval]",
+                "recurrenceFrequency": "[steps('basics').recurrenceFrequency]",
+                "recurrenceInterval": "[steps('basics').recurrenceInterval]",
+                "emailContact": "[steps('notifications').emailAddress]"
+            },
+            "kind": "Subscription",
+            "location": "[steps('basics').resourceScope.location.name]",
+            "subscriptionId": "[steps('basics').resourceScope.subscription.id]"
+        }
+    }
+}
