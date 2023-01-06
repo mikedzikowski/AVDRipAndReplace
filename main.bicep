@@ -92,7 +92,7 @@ param dayOfWeekOccurrence string = 'First'
 @description('The target maintenance window start time for AVD')
 param startTime string = '23:00'
 
-param newAutomationAccount bool = true
+param newAutomationAccount bool
 
 // Variables
 var cloud = environment().name

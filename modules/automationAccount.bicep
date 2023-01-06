@@ -7,9 +7,9 @@ param azAccountsUri string
 param azAccountsVersion string
 param azAlertsUri string
 param azAlertsVersion string
+param newAutomationAccount bool
 
-resource automationAccount 'Microsoft.Automation/automationAccounts@2021-06-22' = {
-  //name: uniqueString(automationAccountName, resourceGroup().id)
+resource automationAccount 'Microsoft.Automation/automationAccounts@2021-06-22' = if(newAutomationAccount) {
   name: automationAccountName
   location: location
   identity: {
@@ -26,9 +26,12 @@ resource automationAccount 'Microsoft.Automation/automationAccounts@2021-06-22' 
   }
 }
 
+resource aa 'Microsoft.Automation/automationAccounts@2021-06-22' existing = {
+  name: newAutomationAccount ? automationAccount.name : automationAccountName
+}
 resource runbookDeployment 'Microsoft.Automation/automationAccounts/runbooks@2019-06-01' = [for (runbook, i) in runbookNames: {
   name: runbook.name
-  parent: automationAccount
+  parent: aa
   location: location
   properties: {
     runbookType: 'PowerShell'
@@ -43,7 +46,7 @@ resource runbookDeployment 'Microsoft.Automation/automationAccounts/runbooks@201
 
 resource pwsh7runbookDeployment 'Microsoft.Automation/automationAccounts/runbooks@2019-06-01' = [for (runbook, i) in pwsh7RunbookNames: {
   name: runbook.name
-  parent: automationAccount
+  parent: aa
   location: location
   properties: {
     runbookType: 'PowerShell7'
@@ -58,7 +61,7 @@ resource pwsh7runbookDeployment 'Microsoft.Automation/automationAccounts/runbook
 
 // Enables the runbook logs in Log Analytics for alerts
 resource diagnostics 'Microsoft.Insights/diagnosticsettings@2017-05-01-preview' = {
-  scope: automationAccount
+  scope: aa
   name: 'diag-${automationAccount.name}'
   properties: {
     logs: [
@@ -78,7 +81,7 @@ resource diagnostics 'Microsoft.Insights/diagnosticsettings@2017-05-01-preview' 
 resource azAccountsModule 'Microsoft.Automation/automationAccounts/modules@2022-08-08' = {
   name: 'Az.Accounts'
   location: location
-  parent: automationAccount
+  parent: aa
   properties: {
     contentLink: {
       uri: azAccountsUri
@@ -93,7 +96,7 @@ resource azAlertsModule 'Microsoft.Automation/automationAccounts/modules@2022-08
     azAccountsModule
   ]
   location: location
-  parent: automationAccount
+  parent: aa
   properties: {
     contentLink: {
       uri: azAlertsUri
@@ -102,5 +105,5 @@ resource azAlertsModule 'Microsoft.Automation/automationAccounts/modules@2022-08
   }
 }
 
-output aaIdentityId string = automationAccount.identity.principalId
+output aaIdentityId string = newAutomationAccount ? automationAccount.identity.principalId : aa.identity.principalId
 output aaLocation string = automationAccount.location
