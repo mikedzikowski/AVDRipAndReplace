@@ -601,7 +601,8 @@
                 "recurrenceFrequency": "[steps('basics').recurrenceFrequency]",
                 "recurrenceInterval": "[steps('basics').recurrenceInterval]",
                 "emailContact": "[steps('notifications').emailAddress]",
-                "newStorageAccount":"[steps('blobUpdate').existingStorageAccount.value]"
+                "newStorageAccount":"[steps('blobUpdate').existingStorageAccount.value]",
+                "newAutomationAccount":"[steps('AutomationEnvironment').existingAutomationAccount]"
             },
             "kind": "Subscription",
             "location": "[steps('basics').resourceScope.location.name]",
