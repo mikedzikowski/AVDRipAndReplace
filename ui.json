@@ -3,7 +3,7 @@
     "view": {
         "kind": "Form",
         "properties": {
-            "title": "Test Form View",
+            "title": "AVD Rip and Replace Solution",
             "steps": [
                 {
                     "name": "basics",
@@ -44,6 +44,16 @@
                             "visible": false
                         },
                         {
+                            "name": "ResourceGroupApi",
+                            "visible": false,
+                            "type": "Microsoft.Solutions.ArmApiControl",
+                            "defaultValue": "",
+                            "request": {
+                                "method": "GET",
+                                "path": "[concat(steps('basics').resourceScope.subscription.id, '/resourceGroups?api-version=2021-04-01')]"
+                            }
+                        },
+                        {
                             "name": "triggerFrequency",
                             "type": "Microsoft.Common.DropDown",
                             "label": "Trigger Frequency",
@@ -78,7 +88,7 @@
                                     }
                                 ]
                             },
-                            "visible": true
+                            "visible": false
                         },
                         {
                             "name": "triggerInterval",
@@ -91,7 +101,7 @@
                                 "regex": "",
                                 "validationMessage": ""
                             },
-                            "visible": true
+                            "visible": false
                         },
                         {
                             "name": "recurrenceFrequency",
@@ -128,7 +138,7 @@
                                     }
                                 ]
                             },
-                            "visible": true
+                            "visible": false
                         },
                         {
                             "name": "recurrenceInterval",
@@ -141,83 +151,24 @@
                                 "regex": "",
                                 "validationMessage": ""
                             },
-                            "visible": true
-                        },
-                        {
-                            "name": "ResourceGroupApi",
-                            "visible": false,
-                            "type": "Microsoft.Solutions.ArmApiControl",
-                            "defaultValue": "",
-                            "request": {
-                                "method": "GET",
-                                "path": "[concat(steps('basics').resourceScope.subscription.id, '/resourceGroups?api-version=2021-04-01')]"
-                            }
-                        }
-                    ]
-                },
-                {
-                    "name": "blobUpdate",
-                    "label": "Deploy Additional Logic App to Monitor Blob Updates",
-                    "elements": [
-                        {
-                            "name": "deployBlobUpdateLogicApp",
-                            "type": "Microsoft.Common.DropDown",
-                            "label": "Deploy Blob Update Logic App",
-                            "defaultValue": "false",
-                            "toolTip": "To be used with AVD solutions that deploy post configuration software. Set the following values if there is a storage account that should be targeted. If values are not set a default naming convention will be used by resources created.",
-                            "constraints": {
-                                "required": false,
-                                "allowedValues": [
-                                    {
-                                        "label": "true",
-                                        "value": true
-                                    },
-                                    {
-                                        "label": "false",
-                                        "value": false
-                                    }
-                                ]
-                            },
-                            "visible": true
-                        },
-                        {
-                            "name": "storageAccount",
-                            "type": "Microsoft.Storage.StorageAccountSelector",
-                            "label": "Storage account",
-                            "toolTip": "",
-                            "defaultValue": {
-                                "name": "",
-                                "type": ""
-                            },
-                            "constraints": {
-                                "allowedTypes": [],
-                                "excludedTypes": []
-                            },
-                            "options": {
-                                "hideExisting": false
-                            },
-                            "visible": "[equals(steps('AutomationEnvironment').deployBlobUpdateLogicApp, true)]"
-                        },
-                        {
-                            "name": "container",
-                            "type": "Microsoft.Common.TextBox",
-                            "label": "Container",
-                            "defaultValue": "",
-                            "toolTip": "",
-                            "constraints": {
-                                "required": false,
-                                "regex": "",
-                                "validationMessage": ""
-                            },
-                            "visible": "[equals(steps('AutomationEnvironment').deployBlobUpdateLogicApp, true)]"
+                            "visible": false
                         }
                     ]
                 },
                 {
                     "name": "notifications",
-                    "label": "Notification Alerts and Gating",
+                    "label": "Notifications",
                     "elements": [
-                        {
+                            {
+                                "name": "info",
+                                "type": "Microsoft.Common.InfoBox",
+                                "visible": true,
+                                "options": {
+                                    "text":"O365 connector to be used in commercial, GCC-H, MAG (Microsoft Azure Government) cloud environments. Action Groups with Logic App to be used in DoD environments.",
+                                    "style":"Info"
+                                }
+                            },
+                            {
                             "name": "o365Connector",
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Notification Type",
@@ -241,7 +192,7 @@
                         {
                             "name": "emailAddress",
                             "type": "Microsoft.Common.TextBox",
-                            "label": "Email or Group for Alerts ",
+                            "label": "Email or Group for Action Groups",
                             "defaultValue": "",
                             "toolTip": "Please enter a valid email account",
                             "constraints": {
@@ -266,9 +217,139 @@
                     ]
                 },
                 {
+                    "name": "blobUpdate",
+                    "label": "Blob Updates",
+                    "elements": [
+                        {
+                            "name": "info",
+                            "type": "Microsoft.Common.InfoBox",
+                            "visible": true,
+                            "options": {
+                                "text":"Select true for AVD solutions that deploy post configuration software. An existing storage account may be targeted or a new storage account and container can be created. The target container will be monitored for changes by the Blob Update logic app.",
+                                "style":"Info"
+                            }
+                        },
+                        {
+                            "name": "deployBlobUpdateLogicApp",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Deploy Blob Update Logic App",
+                            "defaultValue": "false",
+                            "toolTip": "To be used with AVD solutions that deploy post configuration software. Set the following values if there is a storage account that should be targeted. If values are not set a default naming convention will be used by resources created.",
+                            "constraints": {
+                                "required": false,
+                                "allowedValues": [
+                                    {
+                                        "label": "true",
+                                        "value": true
+                                    },
+                                    {
+                                        "label": "false",
+                                        "value": false
+                                    }
+                                ]
+                            },
+                            "visible": true
+                        },
+                        {
+                            "name": "existingStorageAccount",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "visible": "[equals(steps('blobUpdate').deployBlobUpdateLogicApp, true)]",
+                            "label": "Existing Storage Account",
+                            "defaultValue": "No",
+                            "toolTip": "Use an existing automation account",
+                            "constraints": {
+                                "required": true,
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": true
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": false
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "storageAccounts",
+                            "type": "Microsoft.Solutions.ResourceSelector",
+                            "visible": "[equals(steps('blobUpdate').existingStorageAccount, true)]",
+                            "label": "Storage Account Name",
+                            "resourceType": "Microsoft.Storage/storageAccounts",
+                            "options": {
+                                "filter": {
+                                    "subscription": "onBasics",
+                                    "location": "onBasics"
+                                }
+                            }
+                        },
+                        {
+                            "name": "storageAccount_checkNameAvailability",
+                            "type": "Microsoft.Solutions.ArmApiControl",
+                            "request": {
+                                "method": "POST",
+                                "path": "[concat(steps('basics').resourceScope.subscription.id,'/providers/Microsoft.Storage/checkNameAvailability?api-version=2022-05-01')]",
+                                "body": {
+                                    "name": "[steps('blobUpdate').storageAccount]",
+                                    "type": "Microsoft.Storage/storageAccounts"
+                                }
+                            }
+                        },
+                        {
+                            "name": "storageAccount",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Storage Account Name",
+                            "visible": "[equals(steps('blobUpdate').existingStorageAccount, false)]",
+                            "toolTip": "Input a name for the Storage Account.",
+                            "placeholder": "Example: storage01",
+                            "constraints": {
+                                "required": true,
+                                "validations": [
+                                    {
+                                        "isValid": "[steps('blobUpdate').storageAccount_checkNameAvailability.nameAvailable]",
+                                        "message": "[steps('blobUpdate').storageAccount_checkNameAvailability.message]"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "saResourceGroup",
+                            "type": "Microsoft.Common.DropDown",
+                            "visible": "[equals(steps('blobUpdate').deployBlobUpdateLogicApp, true)]",
+                            "label": "Storage Account Resource Group",
+                            "constraints": {
+                                "allowedValues": "[map(steps('basics').ResourceGroupApi.value, (item) => parse(concat('{\"label\":\"', item.name, '\",\"value\":\"', item.name, '\"}')))]"
+                            }
+                        },
+                        {
+                            "name": "container",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Container",
+                            "defaultValue": "",
+                            "toolTip": "",
+                            "constraints": {
+                                "required": false,
+                                "regex": "",
+                                "validationMessage": ""
+                            },
+                            "visible": "[equals(steps('blobUpdate').deployBlobUpdateLogicApp, true)]"
+                        }
+                    ]
+                },
+                {
                     "name": "AutomationEnvironment",
                     "label": "Automation Environment",
                     "elements": [
+                        {
+                            "name": "info",
+                            "type": "Microsoft.Common.InfoBox",
+                            "visible": true,
+                            "options": {
+                                "text":"Please select to use an exisiting automation account or to deploy a new automation account. Runbooks and modules will be deploy to the target automation account.",
+                                "style":"Info"
+                            }
+                        },
                         {
                             "name": "existingAutomationAccount",
                             "type": "Microsoft.Common.OptionsGroup",
@@ -294,7 +375,7 @@
                             "name": "automationAccounts",
                             "type": "Microsoft.Solutions.ResourceSelector",
                             "visible": "[equals(steps('AutomationEnvironment').existingAutomationAccount, true)]",
-                            "label": "Automation Account",
+                            "label": "Existing Automation Account Name",
                             "resourceType": "Microsoft.Automation/automationAccounts",
                             "options": {
                                 "filter": {
@@ -306,7 +387,7 @@
                         {
                             "name": "automationAccount",
                             "type": "Microsoft.Common.TextBox",
-                            "label": "Automation Account",
+                            "label": "New Automation Account Name",
                             "visible": "[equals(steps('AutomationEnvironment').existingAutomationAccount, false)]",
                             "toolTip": "Input a custom name for the Automation Account.",
                             "placeholder": "Example: aa-account-01",
@@ -320,6 +401,7 @@
                             "name": "aaResourceGroup",
                             "type": "Microsoft.Common.DropDown",
                             "label": "Automation Account Resource Group",
+                            "visible": true,
                             "defaultValue": "",
                             "constraints": {
                                 "allowedValues": "[map(steps('basics').ResourceGroupApi.value, (item) => parse(concat('{\"label\":\"', item.name, '\",\"value\":\"', item.name, '\"}')))]"
@@ -331,6 +413,15 @@
                     "name": "AvdEnvironment",
                     "label": "AVD Resource Integration",
                     "elements": [
+                        {
+                            "name": "info",
+                            "type": "Microsoft.Common.InfoBox",
+                            "visible": true,
+                            "options": {
+                                "text":"Please select the exisiting AVD hostpool and session host and corresponding resource groups for the AVD Rip and Replace solution.",
+                                "style":"Info"
+                            }
+                        },
                         {
                             "name": "ResourceGroupApi",
                             "type": "Microsoft.Solutions.ArmApiControl",
@@ -356,7 +447,6 @@
                             "name": "hostPoolResourceGroup",
                             "type": "Microsoft.Common.DropDown",
                             "label": "Hostpool Resource Group",
-                            "defaultValue": "",
                             "constraints": {
                                 "allowedValues": "[map(steps('basics').ResourceGroupApi.value, (item) => parse(concat('{\"label\":\"', item.name, '\",\"value\":\"', item.name, '\"}')))]"
                             }
@@ -365,7 +455,6 @@
                             "name": "sessionHostResourceGroup",
                             "type": "Microsoft.Common.DropDown",
                             "label": "Session Host Resource Group",
-                            "defaultValue": "",
                             "constraints": {
                                 "allowedValues": "[map(steps('basics').ResourceGroupApi.value, (item) => parse(concat('{\"label\":\"', item.name, '\",\"value\":\"', item.name, '\"}')))]"
                             }
@@ -386,8 +475,17 @@
                 },
                 {
                     "name": "maintenaceWindow",
-                    "label": "Define Maintenace Window",
+                    "label": "Maintenace Window",
                     "elements": [
+                        {
+                            "name": "info",
+                            "type": "Microsoft.Common.InfoBox",
+                            "visible": true,
+                            "options": {
+                                "text":"Please define a maintenace window for AVD infrastructure rip and replace.",
+                                "style":"Info"
+                            }
+                        },
                         {
                             "name": "dayOfWeek",
                             "type": "Microsoft.Common.DropDown",
@@ -485,24 +583,25 @@
                 "sessionHostResourceGroupName": "[steps('AvdEnvironment').sessionHostResourceGroup]",
                 "hostPoolResourceGroupName": "[steps('AvdEnvironment').hostPoolResourceGroup]",
                 "hostPoolName": "[steps('AvdEnvironment').hostPoolSelector.name]",
-                "deployWithO365Connector": "[steps('notifications').o365Connector.constraints.allowedValues.value]",
+                "deployWithO365Connector": "[steps('notifications').o365Connector]",
                 "dayOfWeek": "[steps('maintenaceWindow').dayOfWeek]",
                 "dayOfWeekOccurrence": "[steps('maintenaceWindow').dayOfWeekOccurrence]",
                 "startTime": "[steps('maintenaceWindow').startTime]",
                 "logAnalyticsWorkspaceResourceId": "[steps('notifications').lawSelector.id]",
                 "templateSpecId": "[steps('AvdEnvironment').avdTempSpec.id]",
                 "deploymentNameSuffix": "[steps('basics').deploymentNameSuffix]",
-                "exisitingAutomationAccount": "[steps('AutomationEnvironment').automationAccounts.name]",
+                "exisitingAutomationAccount": "[if(equals(steps('AutomationEnvironment').existingAutomationAccount, true), steps('AutomationEnvironment').automationAccounts.name, steps('AutomationEnvironment').automationAccount.name)]",
                 "existingAutomationAccountRg": "[steps('AutomationEnvironment').aaResourceGroup]",
-                "deployBlobUpdateLogicApp": "[steps('blobUpdate').deployBlobUpdateLogicApp.value]",
-                "exisitingStorageAccount": "[steps('blobUpdate').storageAccount.name]",
-                "existingStorageAccountRg": "[steps('blobUpdate').storageAccount.resourceGroup]",
+                "deployBlobUpdateLogicApp": "[steps('blobUpdate').deployBlobUpdateLogicApp]",
+                "exisitingStorageAccount": "[if(equals(steps('blobUpdate').existingStorageAccount, true), steps('blobUpdate').storageAccounts.name, steps('blobUpdate').storageAccount.name)]",
+                "existingStorageAccountRg": "[steps('blobUpdate').saResourceGroup]",
                 "container": "[steps('blobUpdate').container]",
                 "triggerFrequency": "[steps('basics').triggerFrequency]",
                 "triggerInterval": "[steps('basics').triggerInterval]",
                 "recurrenceFrequency": "[steps('basics').recurrenceFrequency]",
                 "recurrenceInterval": "[steps('basics').recurrenceInterval]",
-                "emailContact": "[steps('notifications').emailAddress]"
+                "emailContact": "[steps('notifications').emailAddress]",
+                "newStorageAccount":"[steps('blobUpdate').existingStorageAccount.value]"
             },
             "kind": "Subscription",
             "location": "[steps('basics').resourceScope.location.name]",
