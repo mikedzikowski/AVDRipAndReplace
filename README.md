@@ -48,5 +48,10 @@ After the solution is deployed the O365 connector must be authenticated.
 Refence Links for the O365 Connector:
 [Connect using other accounts](https://docs.microsoft.com/en-us/azure/connectors/connectors-create-api-office365-outlook#connect-using-other-accounts)
 
+### Azure Portal
 
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmikedzikowski%2FAVDRipAndReplace%2Fmain%2Fmain.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2Fmikedzikowski%2FAVDRipAndReplace%2Fmain%2Fui.json)
+
+
+[![Deploy to Azure Gov](https://aka.ms/deploytoazuregovbutton)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmikedzikowski%2FAVDRipAndReplace%2Fmain%2Fmain.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2Fmikedzikowski%2FAVDRipAndReplace%2Fmain%2Fui.json)
 
