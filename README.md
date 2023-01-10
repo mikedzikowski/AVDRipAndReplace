@@ -26,10 +26,10 @@ Repo for a logic app and set of automation scripts to rip and replace your AVD e
     New-AzDeployment -name 'Avd-LogicApp-RipAndReplace' -TemplateFile .\main.json -TemplateParameterFile .\main.parameters.json -Verbose -Location usgovvirginia
 ```
 
-4. Resource Pre-Reqs
+## Resource Pre-Reqs
 
 
-## Key Vault Secrets
+### Key Vault Secrets
  The following values will be required to have been created in a keyvault to be used with the template spec:
 
 * "DomainUserPrincipalName" - Domain join user for the Azure Active Directory environment
@@ -37,13 +37,13 @@ Repo for a logic app and set of automation scripts to rip and replace your AVD e
 * "LocalAdminUsername" - The name of the vmuser for the virtual machine infastructure
 * "LocalAdminPassword' - The password for the virtual machine infrastructure
 
-## Template Spec
+### Template Spec
 
 * A template spec should be created to support the rip and replace of the AVD environment. The resource id of the template spec will be selected during deployment of the solution.
 
 The powershell script included in the AVDRipAndReplace repository - [New-AvdTemplateSpec.ps1](https://github.com/mikedzikowski/AVDRipAndReplace/blob/main/templateSpec/New-AvdTemplateSpec.ps1) can assist with automating the creation of the template spec.
 
-## Authenticate API connector for Office 365
+### Authenticate API connector for Office 365
 
 If the O365 connector deployment option is selected the solution uses the [O365 connector](https://docs.microsoft.com/en-us/connectors/office365connector/) to automate the task of sending an approval workflow e-mail.
 
@@ -54,7 +54,7 @@ After the solution is deployed the O365 connector must be authenticated.
 Refence Links for the O365 Connector:
 [Connect using other accounts](https://docs.microsoft.com/en-us/azure/connectors/connectors-create-api-office365-outlook#connect-using-other-accounts)
 
-### Azure Portal
+## Deployment
 
 
 | Deployment Type | Link |
