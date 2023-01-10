@@ -300,7 +300,7 @@
                         {
                             "name": "storageAccount",
                             "type": "Microsoft.Common.TextBox",
-                            "label": "Storage Account Name",
+                            "label": "New Storage Account Name",
                             "visible": "[equals(steps('blobUpdate').existingStorageAccount, false)]",
                             "toolTip": "Input a name for the Storage Account.",
                             "defaultValue": "",
