@@ -275,7 +275,7 @@
                             "name": "storageAccounts",
                             "type": "Microsoft.Solutions.ResourceSelector",
                             "visible": "[equals(steps('blobUpdate').existingStorageAccount, true)]",
-                            "label": "Storage Account Name",
+                            "label": "Existing Storage Account Name",
                             "defaultValue": "storage01",
                             "resourceType": "Microsoft.Storage/storageAccounts",
                             "options": {
@@ -303,7 +303,7 @@
                             "label": "Storage Account Name",
                             "visible": "[equals(steps('blobUpdate').existingStorageAccount, false)]",
                             "toolTip": "Input a name for the Storage Account.",
-                            "defaultValue": "storage01",
+                            "defaultValue": "",
                             "placeholder": "Example: storage01",
                             "constraints": {
                                 "required": true,
