@@ -10,12 +10,6 @@
                     "label": "Basics",
                     "elements": [
                         {
-                            "name": "deploymentPreRequesites",
-                            "type": "Microsoft.Common.Section",
-                            "visible": true,
-                            "label": "Deployment pre-requesites",
-                            "elements": [
-                                {
                                     "name": "infoPreReq",
                                     "type": "Microsoft.Common.InfoBox",
                                     "options": {
@@ -23,8 +17,6 @@
                                         "uri": "https://github.com/mikedzikowski/AVDRipAndReplace/blob/main/README.md",
                                         "style": "Warning"
                                     }
-                                }
-                            ]
                         },
                         {
                             "name": "resourceScope",
