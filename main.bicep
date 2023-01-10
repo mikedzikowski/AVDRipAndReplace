@@ -18,7 +18,7 @@ param existingAutomationAccountRg string
 // Start Blob Check Params
 @description('To be used with AVD solutions that deploy post configuration software. Set the following values if there is a storage account that should be targeted. If values are not set a default naming convention will be used by resources created.')
 param deployBlobUpdateLogicApp bool = false
-param newStorageAccount bool = false
+param newStorageAccount bool
 param exisitingStorageAccount string = ''
 param existingStorageAccountRg string = ''
 param container string = ''
@@ -371,6 +371,7 @@ module getImageVersionlogicApp 'modules/logicappGetImageVersion.bicep' = if (dep
     o365Connection
   ]
 }
+
 module storageAccount 'modules/storageAccount.bicep' = if (deployBlobUpdateLogicApp) {
   name: 'sa-deployment-${deploymentNameSuffix}'
   scope: resourceGroup(subscriptionId, existingStorageAccountRg)
@@ -379,6 +380,7 @@ module storageAccount 'modules/storageAccount.bicep' = if (deployBlobUpdateLogic
     containerName: container
     location: location
     new: newStorageAccount
+    logAnalyticsWorkspaceId: logAnalyticsWorkspaceResourceId
   }
 }
 
@@ -416,7 +418,7 @@ module blobConnection 'modules/blobConnection.bicep' = if (deployBlobUpdateLogic
   scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
   params: {
     location: location
-    storageName: deployBlobUpdateLogicApp ? exisitingStorageAccount : 'None'
+    storageName: deployBlobUpdateLogicApp ? storageAccount.outputs.storageAccountName : 'None'
     name: blobConnectionName
     saResourceGroup: existingStorageAccountRg
     subscriptionId: subscriptionId
