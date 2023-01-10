@@ -60,4 +60,4 @@ Refence Links for the O365 Connector:
 | Deployment Type | Link |
 |:--|:--|
 | Azure portal UI | [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmikedzikowski%2FAVDRipAndReplace%2Fmain%2Fmain.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2Fmikedzikowski%2FAVDRipAndReplace%2Fmain%2Fui.json) [![Deploy to Azure Gov](https://aka.ms/deploytoazuregovbutton)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmikedzikowski%2FAVDRipAndReplace%2Fmain%2Fmain.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2Fmikedzikowski%2FAVDRipAndReplace%2Fmain%2Fui.json) |
-| Command line (Bicep/ARM) | [![Powershell/Azure CLI](./workload/docs/icons/powershell.png)](https://github.com/mikedzikowski/AVDRipAndReplace#using-the-rip-and-replace-logic-app-solution) |
+| Command line (Bicep/ARM) | [![Powershell/Azure CLI](./images/powershell.png)](https://github.com/mikedzikowski/AVDRipAndReplace#using-the-rip-and-replace-logic-app-solution) |
