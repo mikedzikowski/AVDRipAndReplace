@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.7.4.23292",
-      "templateHash": "16984594719719110090"
+      "templateHash": "5865704885446906161"
     }
   },
   "parameters": {
@@ -49,8 +49,7 @@
       }
     },
     "newStorageAccount": {
-      "type": "bool",
-      "defaultValue": false
+      "type": "bool"
     },
     "exisitingStorageAccount": {
       "type": "string",
@@ -2107,6 +2106,9 @@
           },
           "new": {
             "value": "[parameters('newStorageAccount')]"
+          },
+          "logAnalyticsWorkspaceId": {
+            "value": "[parameters('logAnalyticsWorkspaceResourceId')]"
           }
         },
         "template": {
@@ -2116,7 +2118,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.7.4.23292",
-              "templateHash": "10681633620675238702"
+              "templateHash": "821310635138149064"
             }
           },
           "parameters": {
@@ -2130,6 +2132,9 @@
               "type": "bool"
             },
             "location": {
+              "type": "string"
+            },
+            "logAnalyticsWorkspaceId": {
               "type": "string"
             }
           },
@@ -2146,7 +2151,7 @@
               "kind": "StorageV2",
               "properties": {
                 "accessTier": "Hot",
-                "allowBlobPublicAccess": false,
+                "allowBlobPublicAccess": true,
                 "allowCrossTenantReplication": false,
                 "allowSharedKeyAccess": true,
                 "encryption": {
@@ -2172,6 +2177,37 @@
                 },
                 "supportsHttpsTrafficOnly": true
               }
+            },
+            {
+              "type": "Microsoft.Storage/storageAccounts/blobServices",
+              "apiVersion": "2021-06-01",
+              "name": "[format('{0}/{1}', parameters('storageAccountName'), 'default')]",
+              "properties": {},
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Insights/diagnosticSettings",
+              "apiVersion": "2021-05-01-preview",
+              "scope": "[format('Microsoft.Storage/storageAccounts/{0}/blobServices/{1}', parameters('storageAccountName'), 'default')]",
+              "name": "diagnostics",
+              "properties": {
+                "workspaceId": "[parameters('logAnalyticsWorkspaceId')]",
+                "logs": [
+                  {
+                    "category": "StorageWrite",
+                    "enabled": true
+                  },
+                  {
+                    "category": "Transaction",
+                    "enabled": true
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccountName'), 'default')]"
+              ]
             },
             {
               "condition": "[parameters('new')]",
@@ -2379,7 +2415,7 @@
             "value": "[parameters('location')]"
           },
           "storageName": {
-            "value": "[if(parameters('deployBlobUpdateLogicApp'), parameters('exisitingStorageAccount'), 'None')]"
+            "value": "[if(parameters('deployBlobUpdateLogicApp'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingStorageAccountRg')), 'Microsoft.Resources/deployments', format('sa-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.storageAccountName.value, 'None')]"
           },
           "name": {
             "value": "[variables('blobConnectionName')]"
@@ -2450,7 +2486,10 @@
             }
           }
         }
-      }
+      },
+      "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingStorageAccountRg')), 'Microsoft.Resources/deployments', format('sa-deployment-{0}', parameters('deploymentNameSuffix')))]"
+      ]
     },
     {
       "condition": "[parameters('deployBlobUpdateLogicApp')]",
@@ -2957,7 +2996,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.7.4.23292",
-              "templateHash": "5185618742421182894"
+              "templateHash": "313167526435303929"
             }
           },
           "parameters": {
@@ -3051,6 +3090,7 @@
                     {
                       "query": "AzureDiagnostics\n| where ResourceProvider == \"MICROSOFT.AUTOMATION\"\n| where Category == \"JobStreams\"\n| extend jsonResourceDescription = parse_json(ResultDescription)\n| where jsonResourceDescription.NewImageFound == true",
                       "timeAggregation": "Count",
+                      "resourceIdColumn": "_ResourceId",
                       "dimensions": [
                         {
                           "name": "ResultDescription",
@@ -3062,6 +3102,30 @@
                       ],
                       "operator": "GreaterThanOrEqual",
                       "threshold": 1,
+                      "failingPeriods": {
+                        "numberOfEvaluationPeriods": 1,
+                        "minFailingPeriodsToAlert": 1
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "New Blob Uploaded to AVD Storage Container",
+                "description": "New Blob Uploaded to AVD Storage Container. Please close this alert to act as approval in workflow.",
+                "severity": 3,
+                "evaluationFrequency": "PT5M",
+                "windowSize": "PT5M",
+                "muteActionsDuration": "P1D",
+                "criteria": {
+                  "allOf": [
+                    {
+                      "query": "StorageBlobLogs\n| where OperationName == \"PutBlob\" and StatusText == \"Success\"\n\n",
+                      "timeAggregation": "Count",
+                      "dimensions": [],
+                      "operator": "GreaterThan",
+                      "resourceIdColumn": "_ResourceId",
+                      "threshold": 0,
                       "failingPeriods": {
                         "numberOfEvaluationPeriods": 1,
                         "minFailingPeriodsToAlert": 1
