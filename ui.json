@@ -437,7 +437,7 @@
                         {
                             "name": "hostPoolSelector",
                             "type": "Microsoft.Solutions.ResourceSelector",
-                            "label": "Hostpool",
+                            "label": "Existing Hostpool",
                             "resourceType": "Microsoft.DesktopVirtualization/hostpools",
                             "options": {
                                 "filter": {
@@ -449,7 +449,8 @@
                         {
                             "name": "sessionHostResourceGroup",
                             "type": "Microsoft.Common.DropDown",
-                            "label": "Session Host Resource Group",
+                            "label": "Existing Session Host Resource Group",
+                            "defaultValue": "",
                             "constraints": {
                                 "allowedValues": "[map(steps('basics').ResourceGroupApi.value, (item) => parse(concat('{\"label\":\"', item.name, '\",\"value\":\"', item.name, '\"}')))]"
                             }
@@ -457,7 +458,7 @@
                         {
                             "name": "avdTempSpec",
                             "type": "Microsoft.Solutions.ResourceSelector",
-                            "label": "Avd TemplateSpec",
+                            "label": "Existing AVD TemplateSpec",
                             "resourceType": "Microsoft.Resources/templateSpecs",
                             "options": {
                                 "filter": {
