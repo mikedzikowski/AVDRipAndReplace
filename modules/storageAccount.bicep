@@ -2,6 +2,7 @@ param storageAccountName string
 param containerName string
 param new bool
 param location string
+param logAnalyticsWorkspaceId string
 
 resource storage 'Microsoft.Storage/storageAccounts@2021-09-01' = if (new) {
   name: storageAccountName
@@ -12,7 +13,7 @@ resource storage 'Microsoft.Storage/storageAccounts@2021-09-01' = if (new) {
   kind: 'StorageV2'
   properties: {
     accessTier: 'Hot'
-    allowBlobPublicAccess: false
+    allowBlobPublicAccess: true
     allowCrossTenantReplication: false
     allowSharedKeyAccess: true
     encryption: {
@@ -37,6 +38,30 @@ resource storage 'Microsoft.Storage/storageAccounts@2021-09-01' = if (new) {
       defaultAction: 'Deny'
     }
     supportsHttpsTrafficOnly: true
+  }
+}
+
+resource blobService 'Microsoft.Storage/storageAccounts/blobServices@2021-06-01' = {
+  parent: storage
+  name: 'default'
+  properties: {}
+}
+
+resource diagnosticsBlob 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: blobService
+  name: 'diagnostics'
+  properties: {
+    workspaceId: logAnalyticsWorkspaceId
+    logs: [
+      {
+        category: 'StorageWrite'
+        enabled: true
+      }
+      {
+        category: 'Transaction'
+        enabled: true
+      }
+    ]
   }
 }
 

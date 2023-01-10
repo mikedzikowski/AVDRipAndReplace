@@ -77,6 +77,7 @@ var logAlerts = [
         {
           query: 'AzureDiagnostics\n| where ResourceProvider == "MICROSOFT.AUTOMATION"\n| where Category == "JobStreams"\n| extend jsonResourceDescription = parse_json(ResultDescription)\n| where jsonResourceDescription.NewImageFound == true'
           timeAggregation: 'Count'
+          resourceIdColumn: '_ResourceId'
           dimensions: [
             {
               name: 'ResultDescription'
@@ -88,6 +89,30 @@ var logAlerts = [
           ]
           operator: 'GreaterThanOrEqual'
           threshold: 1
+          failingPeriods: {
+            numberOfEvaluationPeriods: 1
+            minFailingPeriodsToAlert: 1
+          }
+        }
+      ]
+    }
+  }
+  {
+    name: 'New Blob Uploaded to AVD Storage Container'
+    description: 'New Blob Uploaded to AVD Storage Container. Please close this alert to act as approval in workflow.'
+    severity: 3
+    evaluationFrequency: 'PT5M'
+    windowSize: 'PT5M'
+    muteActionsDuration: 'P1D'
+    criteria: {
+      allOf: [
+        {
+          query: 'StorageBlobLogs\n| where OperationName == "PutBlob" and StatusText == "Success"\n\n'
+          timeAggregation: 'Count'
+          dimensions: []
+          operator: 'GreaterThan'
+          resourceIdColumn: '_ResourceId'
+          threshold: 0
           failingPeriods: {
             numberOfEvaluationPeriods: 1
             minFailingPeriodsToAlert: 1

@@ -256,7 +256,7 @@
                             "visible": "[equals(steps('blobUpdate').deployBlobUpdateLogicApp, true)]",
                             "label": "Existing Storage Account",
                             "defaultValue": "No",
-                            "toolTip": "Use an existing automation account",
+                            "toolTip": "Use an storage account",
                             "constraints": {
                                 "required": true,
                                 "allowedValues": [
@@ -276,6 +276,7 @@
                             "type": "Microsoft.Solutions.ResourceSelector",
                             "visible": "[equals(steps('blobUpdate').existingStorageAccount, true)]",
                             "label": "Storage Account Name",
+                            "defaultValue": "storage01",
                             "resourceType": "Microsoft.Storage/storageAccounts",
                             "options": {
                                 "filter": {
@@ -302,6 +303,7 @@
                             "label": "Storage Account Name",
                             "visible": "[equals(steps('blobUpdate').existingStorageAccount, false)]",
                             "toolTip": "Input a name for the Storage Account.",
+                            "defaultValue": "storage01",
                             "placeholder": "Example: storage01",
                             "constraints": {
                                 "required": true,
@@ -317,6 +319,7 @@
                             "name": "saResourceGroup",
                             "type": "Microsoft.Common.DropDown",
                             "visible": "[equals(steps('blobUpdate').deployBlobUpdateLogicApp, true)]",
+                            "defaultValue": "sa-rg",
                             "label": "Storage Account Resource Group",
                             "constraints": {
                                 "allowedValues": "[map(steps('basics').ResourceGroupApi.value, (item) => parse(concat('{\"label\":\"', item.name, '\",\"value\":\"', item.name, '\"}')))]"
@@ -401,7 +404,7 @@
                             "name": "aaResourceGroup",
                             "type": "Microsoft.Common.DropDown",
                             "label": "Automation Account Resource Group",
-                            "visible": true,
+                            "visible": "[equals(steps('AutomationEnvironment').existingAutomationAccount, false)]",
                             "defaultValue": "",
                             "constraints": {
                                 "allowedValues": "[map(steps('basics').ResourceGroupApi.value, (item) => parse(concat('{\"label\":\"', item.name, '\",\"value\":\"', item.name, '\"}')))]"
@@ -441,14 +444,6 @@
                                     "subscription": "onBasics",
                                     "location": "onBasics"
                                 }
-                            }
-                        },
-                        {
-                            "name": "hostPoolResourceGroup",
-                            "type": "Microsoft.Common.DropDown",
-                            "label": "Hostpool Resource Group",
-                            "constraints": {
-                                "allowedValues": "[map(steps('basics').ResourceGroupApi.value, (item) => parse(concat('{\"label\":\"', item.name, '\",\"value\":\"', item.name, '\"}')))]"
                             }
                         },
                         {
@@ -581,7 +576,7 @@
             "parameters": {
                 "location": "[steps('basics').location]",
                 "sessionHostResourceGroupName": "[steps('AvdEnvironment').sessionHostResourceGroup]",
-                "hostPoolResourceGroupName": "[steps('AvdEnvironment').hostPoolResourceGroup]",
+                "hostPoolResourceGroupName": "[first(skip(split(steps('AvdEnvironment').hostPoolSelector.id, '/'), 4))]",
                 "hostPoolName": "[steps('AvdEnvironment').hostPoolSelector.name]",
                 "deployWithO365Connector": "[steps('notifications').o365Connector]",
                 "dayOfWeek": "[steps('maintenaceWindow').dayOfWeek]",
@@ -591,18 +586,18 @@
                 "templateSpecId": "[steps('AvdEnvironment').avdTempSpec.id]",
                 "deploymentNameSuffix": "[steps('basics').deploymentNameSuffix]",
                 "exisitingAutomationAccount": "[if(equals(steps('AutomationEnvironment').existingAutomationAccount, true), steps('AutomationEnvironment').automationAccounts.name, steps('AutomationEnvironment').automationAccount.name)]",
-                "existingAutomationAccountRg": "[steps('AutomationEnvironment').aaResourceGroup]",
+                "existingAutomationAccountRg": "[if(equals(steps('AutomationEnvironment').existingAutomationAccount, true), first(skip(split(steps('AutomationEnvironment').automationAccounts.id, '/'), 4)), steps('AutomationEnvironment').aaResourceGroup)]",
                 "deployBlobUpdateLogicApp": "[steps('blobUpdate').deployBlobUpdateLogicApp]",
-                "exisitingStorageAccount": "[if(equals(steps('blobUpdate').existingStorageAccount, true), steps('blobUpdate').storageAccounts.name, steps('blobUpdate').storageAccount.name)]",
-                "existingStorageAccountRg": "[steps('blobUpdate').saResourceGroup]",
+                "exisitingStorageAccount": "[if(equals(steps('blobUpdate').existingStorageAccount, true), steps('blobUpdate').storageAccounts.name, steps('blobUpdate').storageAccount)]",
+                "existingStorageAccountRg": "[if(equals(steps('blobUpdate').deployBlobUpdateLogicApp, true), steps('blobUpdate').saResourceGroup, 'none')]",
                 "container": "[steps('blobUpdate').container]",
                 "triggerFrequency": "[steps('basics').triggerFrequency]",
                 "triggerInterval": "[steps('basics').triggerInterval]",
                 "recurrenceFrequency": "[steps('basics').recurrenceFrequency]",
                 "recurrenceInterval": "[steps('basics').recurrenceInterval]",
                 "emailContact": "[steps('notifications').emailAddress]",
-                "newStorageAccount":"[steps('blobUpdate').existingStorageAccount.value]",
-                "newAutomationAccount":"[steps('AutomationEnvironment').existingAutomationAccount]"
+                "newStorageAccount":"[if(equals(steps('blobUpdate').existingStorageAccount, false), true, false)]",
+                "newAutomationAccount":"[if(equals(steps('AutomationEnvironment').existingAutomationAccount, false), true, false)]"
             },
             "kind": "Subscription",
             "location": "[steps('basics').resourceScope.location.name]",

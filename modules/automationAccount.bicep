@@ -9,7 +9,7 @@ param azAlertsUri string
 param azAlertsVersion string
 param newAutomationAccount bool
 
-resource automationAccount 'Microsoft.Automation/automationAccounts@2021-06-22' = if(newAutomationAccount) {
+resource automationAccount 'Microsoft.Automation/automationAccounts@2021-06-22' = if (newAutomationAccount) {
   name: automationAccountName
   location: location
   identity: {
@@ -27,8 +27,9 @@ resource automationAccount 'Microsoft.Automation/automationAccounts@2021-06-22' 
 }
 
 resource aa 'Microsoft.Automation/automationAccounts@2021-06-22' existing = {
-  name: newAutomationAccount ? automationAccount.name : automationAccountName
+  name: (newAutomationAccount) ? automationAccount.name : automationAccountName
 }
+
 resource runbookDeployment 'Microsoft.Automation/automationAccounts/runbooks@2019-06-01' = [for (runbook, i) in runbookNames: {
   name: runbook.name
   parent: aa
