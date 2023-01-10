@@ -318,7 +318,7 @@
                         {
                             "name": "saResourceGroup",
                             "type": "Microsoft.Common.DropDown",
-                            "visible": "[equals(steps('blobUpdate').deployBlobUpdateLogicApp, true)]",
+                            "visible": "[equals(steps('blobUpdate').existingStorageAccount, false)]",
                             "defaultValue": "sa-rg",
                             "label": "Storage Account Resource Group",
                             "constraints": {
