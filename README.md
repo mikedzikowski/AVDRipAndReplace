@@ -41,7 +41,7 @@ Repo for a logic app and set of automation scripts to rip and replace your AVD e
 
 * A template spec should be created to support the rip and replace of the AVD environment. The resource id of the template spec will be selected during deployment of the solution.
 
-The powershell script included in the AVDRipAndReplace repository - [New-AvdTemplateSpec.ps1](https://github.com/mikedzikowski/AVDRipAndReplace/blob/main/templateSpec/New-AvdTemplateSpec.ps1 can assist with automating the creation of the template spec.
+The powershell script included in the AVDRipAndReplace repository - [New-AvdTemplateSpec.ps1](https://github.com/mikedzikowski/AVDRipAndReplace/blob/main/templateSpec/New-AvdTemplateSpec.ps1) can assist with automating the creation of the template spec.
 
 ## Authenticate API connector for Office 365
 
