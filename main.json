@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.7.4.23292",
-      "templateHash": "5865704885446906161"
+      "templateHash": "82834685941734763"
     }
   },
   "parameters": {
@@ -65,7 +65,7 @@
     },
     "triggerFrequency": {
       "type": "string",
-      "defaultValue": "Day",
+      "defaultValue": "Minute",
       "metadata": {
         "description": "Frequency of logic app trigger for Blob Check Logic App."
       },
@@ -226,6 +226,10 @@
       },
       {
         "name": "Get-NewImageAlertStatus",
+        "uri": "https://raw.githubusercontent.com/mikedzikowski/AVDRipAndReplace/main/runbooks/Get-NewImageAlertStatus.ps1"
+      },
+      {
+        "name": "Get-NewBlobAlertStatus",
         "uri": "https://raw.githubusercontent.com/mikedzikowski/AVDRipAndReplace/main/runbooks/Get-NewImageAlertStatus.ps1"
       }
     ],
@@ -2118,7 +2122,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.7.4.23292",
-              "templateHash": "821310635138149064"
+              "templateHash": "16518548972980128433"
             }
           },
           "parameters": {
@@ -2197,10 +2201,6 @@
                 "logs": [
                   {
                     "category": "StorageWrite",
-                    "enabled": true
-                  },
-                  {
-                    "category": "Transaction",
                     "enabled": true
                   }
                 ]
@@ -2567,7 +2567,416 @@
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix')))]",
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('automationAccountConnection-deployment-{0}', parameters('deploymentNameSuffix')))]",
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('blobConnection-deployment-{0}', parameters('deploymentNameSuffix')))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('getBlobUpdateLogicApp-deployment-{0}', parameters('deploymentNameSuffix')))]",
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('getBlobUpdateLogicApp-deployment-{0}', parameters('deploymentNameSuffix')))]"
+      ]
+    },
+    {
+      "condition": "[and(parameters('deployBlobUpdateLogicApp'), not(parameters('deployWithO365Connector')))]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "[format('getBlobUpdateLogicApp-deployment-{0}', parameters('deploymentNameSuffix'))]",
+      "subscriptionId": "[variables('subscriptionId')]",
+      "resourceGroup": "[parameters('existingAutomationAccountRg')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "cloud": {
+            "value": "[variables('cloud')]"
+          },
+          "dayOfWeek": {
+            "value": "[parameters('dayOfWeek')]"
+          },
+          "dayOfWeekOccurrence": {
+            "value": "[parameters('dayOfWeekOccurrence')]"
+          },
+          "startTime": {
+            "value": "[parameters('startTime')]"
+          },
+          "templateSpecId": {
+            "value": "[parameters('templateSpecId')]"
+          },
+          "tenantId": {
+            "value": "[variables('tenantId')]"
+          },
+          "waitForRunBook": {
+            "value": "[variables('waitForRunBook')]"
+          },
+          "workflows_GetBlobUpdate_name": {
+            "value": "[variables('workflows_GetBlobUpdate_name')]"
+          },
+          "automationAccountConnectionName": {
+            "value": "[variables('automationAccountConnectionName')]"
+          },
+          "automationAccountName": {
+            "value": "[variables('automationAccountNameValue')]"
+          },
+          "automationAccountResourceGroup": {
+            "value": "[parameters('existingAutomationAccountRg')]"
+          },
+          "blobConnectionName": {
+            "value": "[variables('blobConnectionName')]"
+          },
+          "identityType": {
+            "value": "[variables('identityType')]"
+          },
+          "state": {
+            "value": "[variables('state')]"
+          },
+          "schema": {
+            "value": "[variables('schema')]"
+          },
+          "contentVersion": {
+            "value": "[variables('contentVersion')]"
+          },
+          "connectionType": {
+            "value": "[variables('connectionType')]"
+          },
+          "triggerFrequency": {
+            "value": "[parameters('triggerFrequency')]"
+          },
+          "triggerInterval": {
+            "value": "[parameters('triggerInterval')]"
+          },
+          "storageAccountName": {
+            "value": "[if(parameters('deployBlobUpdateLogicApp'), parameters('exisitingStorageAccount'), 'None')]"
+          },
+          "container": {
+            "value": "[if(parameters('deployBlobUpdateLogicApp'), parameters('container'), 'None')]"
+          },
+          "hostPoolName": {
+            "value": "[parameters('hostPoolName')]"
+          },
+          "checkBothCreatedAndModifiedDateTime": {
+            "value": "[variables('checkBothCreatedAndModifiedDateTime')]"
+          },
+          "maxFileCount": {
+            "value": "[variables('maxFileCount')]"
+          },
+          "subscriptionId": {
+            "value": "[variables('subscriptionId')]"
+          },
+          "runbookNewHostPoolRipAndReplace": {
+            "value": "[variables('runbookNewHostPoolRipAndReplace')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.7.4.23292",
+              "templateHash": "11933186219244855112"
+            }
+          },
+          "parameters": {
+            "subscriptionId": {
+              "type": "string"
+            },
+            "workflows_GetBlobUpdate_name": {
+              "type": "string"
+            },
+            "automationAccountConnectionName": {
+              "type": "string"
+            },
+            "automationAccountResourceGroup": {
+              "type": "string"
+            },
+            "automationAccountName": {
+              "type": "string"
+            },
+            "blobConnectionName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "identityType": {
+              "type": "string"
+            },
+            "state": {
+              "type": "string"
+            },
+            "schema": {
+              "type": "string"
+            },
+            "contentVersion": {
+              "type": "string"
+            },
+            "connectionType": {
+              "type": "string"
+            },
+            "triggerFrequency": {
+              "type": "string"
+            },
+            "triggerInterval": {
+              "type": "int"
+            },
+            "container": {
+              "type": "string"
+            },
+            "hostPoolName": {
+              "type": "string"
+            },
+            "checkBothCreatedAndModifiedDateTime": {
+              "type": "bool"
+            },
+            "maxFileCount": {
+              "type": "int"
+            },
+            "runbookNewHostPoolRipAndReplace": {
+              "type": "string"
+            },
+            "storageAccountName": {
+              "type": "string"
+            },
+            "waitForRunBook": {
+              "type": "bool"
+            },
+            "startTime": {
+              "type": "string"
+            },
+            "dayOfWeek": {
+              "type": "string"
+            },
+            "dayOfWeekOccurrence": {
+              "type": "string"
+            },
+            "cloud": {
+              "type": "string"
+            },
+            "tenantId": {
+              "type": "string"
+            },
+            "templateSpecId": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Logic/workflows",
+              "apiVersion": "2017-07-01",
+              "name": "[parameters('workflows_GetBlobUpdate_name')]",
+              "location": "[parameters('location')]",
+              "tags": {},
+              "identity": {
+                "type": "[parameters('identityType')]"
+              },
+              "properties": {
+                "state": "[parameters('state')]",
+                "definition": {
+                  "$schema": "[parameters('schema')]",
+                  "contentVersion": "[parameters('contentVersion')]",
+                  "parameters": {
+                    "$connections": {
+                      "defaultValue": {},
+                      "type": "[parameters('connectionType')]"
+                    }
+                  },
+                  "triggers": {
+                    "When_a_software_package_is_added_to_storage_account_container_for_AVD": {
+                      "recurrence": {
+                        "frequency": "[parameters('triggerFrequency')]",
+                        "interval": "[parameters('triggerInterval')]"
+                      },
+                      "evaluatedRecurrence": {
+                        "frequency": "[parameters('triggerFrequency')]",
+                        "interval": "[parameters('triggerInterval')]"
+                      },
+                      "splitOn": "@triggerBody()",
+                      "type": "ApiConnection",
+                      "inputs": {
+                        "host": {
+                          "connection": {
+                            "name": "@parameters('$connections')['azureblob']['connectionId']"
+                          }
+                        },
+                        "method": "get",
+                        "path": "[format('/v2/datasets/@{{encodeURIComponent(encodeURIComponent(''{0}''))}}/triggers/batch/onupdatedfile', parameters('storageAccountName'))]",
+                        "queries": {
+                          "checkBothCreatedAndModifiedDateTime": "[parameters('checkBothCreatedAndModifiedDateTime')]",
+                          "folderId": "[format('/{0}', parameters('container'))]",
+                          "maxFileCount": "[parameters('maxFileCount')]"
+                        }
+                      }
+                    }
+                  },
+                  "actions": {
+                    "Condition_Check_for_Approval_Selection_in_Email": {
+                      "actions": {
+                        "Create_Schedule_for_Hostpool_Rip_and_Replace_on_AVD_Environment": {
+                          "runAfter": {},
+                          "type": "ApiConnection",
+                          "inputs": {
+                            "body": {
+                              "properties": {
+                                "parameters": {
+                                  "AutomationAccountName": "[parameters('automationAccountName')]",
+                                  "ResourceGroupName": "[parameters('automationAccountResourceGroup')]",
+                                  "ScheduleName": "[format('{0}-ScheduleForRipAndReplace', parameters('hostPoolName'))]",
+                                  "StartTime": "[parameters('startTime')]",
+                                  "DayOfWeek": "[parameters('dayOfWeek')]",
+                                  "DayOfWeekOccurrence": "[parameters('dayOfWeekOccurrence')]",
+                                  "environment": "[parameters('cloud')]",
+                                  "runbookName": "[parameters('runbookNewHostPoolRipAndReplace')]",
+                                  "HostPoolName": "[parameters('hostPoolName')]",
+                                  "TenantId": "[parameters('tenantId')]",
+                                  "TemplateSpecId": "[parameters('templateSpecId')]",
+                                  "SubscriptionId": "[parameters('subscriptionId')]"
+                                }
+                              }
+                            },
+                            "host": {
+                              "connection": {
+                                "name": "@parameters('$connections')['azureautomation']['connectionId']"
+                              }
+                            },
+                            "method": "put",
+                            "path": "[format('/subscriptions/@{{encodeURIComponent(''{0}'')}}/resourceGroups/@{{encodeURIComponent(''{1}'')}}/providers/Microsoft.Automation/automationAccounts/@{{encodeURIComponent(''{2}'')}}/jobs', parameters('subscriptionId'), parameters('automationAccountResourceGroup'), parameters('automationAccountName'))]",
+                            "queries": {
+                              "runbookName": "New-AutomationSchedule",
+                              "wait": "[parameters('waitForRunBook')]",
+                              "x-ms-api-version": "2015-10-31"
+                            }
+                          }
+                        }
+                      },
+                      "runAfter": {
+                        "Parse_JSON": [
+                          "Succeeded"
+                        ]
+                      },
+                      "else": {
+                        "actions": {
+                          "Terminate": {
+                            "runAfter": {},
+                            "type": "Terminate",
+                            "inputs": {
+                              "runStatus": "Cancelled"
+                            }
+                          }
+                        }
+                      },
+                      "expression": {
+                        "and": [
+                          {
+                            "equals": [
+                              "@body('Parse_JSON')?['Approval']",
+                              true
+                            ]
+                          }
+                        ]
+                      },
+                      "type": "If"
+                    },
+                    "Alert_Status": {
+                      "runAfter": {},
+                      "type": "ApiConnection",
+                      "inputs": {
+                        "body": {
+                          "properties": {
+                            "parameters": {
+                              "environment": "[parameters('cloud')]"
+                            }
+                          }
+                        },
+                        "host": {
+                          "connection": {
+                            "name": "@parameters('$connections')['azureautomation']['connectionId']"
+                          }
+                        },
+                        "method": "put",
+                        "path": "[format('/subscriptions/@{{encodeURIComponent(''{0}'')}}/resourceGroups/@{{encodeURIComponent(''{1}'')}}/providers/Microsoft.Automation/automationAccounts/@{{encodeURIComponent(''{2}'')}}/jobs', parameters('subscriptionId'), parameters('automationAccountResourceGroup'), parameters('automationAccountName'))]",
+                        "queries": {
+                          "runbookName": "Get-NewBlobAlertStatus",
+                          "wait": "[parameters('waitForRunBook')]",
+                          "x-ms-api-version": "2015-10-31"
+                        }
+                      }
+                    },
+                    "Alert_status_output": {
+                      "runAfter": {
+                        "Alert_Status": [
+                          "Succeeded"
+                        ]
+                      },
+                      "type": "ApiConnection",
+                      "inputs": {
+                        "host": {
+                          "connection": {
+                            "name": "@parameters('$connections')['azureautomation']['connectionId']"
+                          }
+                        },
+                        "method": "get",
+                        "path": "[format('/subscriptions/@{{encodeURIComponent(''{0}'')}}/resourceGroups/@{{encodeURIComponent(''{1}'')}}/providers/Microsoft.Automation/automationAccounts/@{{encodeURIComponent(''{2}'')}}/jobs/@{{encodeURIComponent(body(''Alert_Status'')?[''properties'']?[''jobId''])}}/output', parameters('subscriptionId'), parameters('automationAccountResourceGroup'), parameters('automationAccountName'))]",
+                        "queries": {
+                          "x-ms-api-version": "2015-10-31"
+                        }
+                      }
+                    },
+                    "Parse_JSON": {
+                      "runAfter": {
+                        "Alert_status_output": [
+                          "Succeeded"
+                        ]
+                      },
+                      "type": "ParseJson",
+                      "inputs": {
+                        "content": "@body('Alert_status_output')",
+                        "schema": {
+                          "properties": {
+                            "Approval": {
+                              "type": "boolean"
+                            }
+                          },
+                          "type": "object"
+                        }
+                      }
+                    }
+                  },
+                  "outputs": {}
+                },
+                "parameters": {
+                  "$connections": {
+                    "value": {
+                      "azureautomation": {
+                        "connectionId": "[format('/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Web/connections/{2}', parameters('subscriptionId'), resourceGroup().name, parameters('automationAccountConnectionName'))]",
+                        "connectionName": "[parameters('automationAccountConnectionName')]",
+                        "connectionProperties": {
+                          "authentication": {
+                            "type": "ManagedServiceIdentity"
+                          }
+                        },
+                        "id": "[format('/subscriptions/{0}/providers/Microsoft.Web/locations/{1}/managedApis/azureautomation', parameters('subscriptionId'), parameters('location'))]"
+                      },
+                      "azureblob": {
+                        "connectionId": "[format('/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Web/connections/{2}', parameters('subscriptionId'), resourceGroup().name, parameters('blobConnectionName'))]",
+                        "connectionName": "[parameters('blobConnectionName')]",
+                        "id": "[format('/subscriptions/{0}/providers/Microsoft.Web/locations/{1}/managedApis/azureblob', parameters('subscriptionId'), parameters('location'))]"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "outputs": {
+            "blobPrincipalId": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Logic/workflows', parameters('workflows_GetBlobUpdate_name')), '2017-07-01', 'full').identity.principalId]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('blobConnection-deployment-{0}', parameters('deploymentNameSuffix')))]"
       ]
     },
     {
@@ -2996,7 +3405,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.7.4.23292",
-              "templateHash": "313167526435303929"
+              "templateHash": "16841457418768805629"
             }
           },
           "parameters": {
@@ -3109,30 +3518,6 @@
                     }
                   ]
                 }
-              },
-              {
-                "name": "New Blob Uploaded to AVD Storage Container",
-                "description": "New Blob Uploaded to AVD Storage Container. Please close this alert to act as approval in workflow.",
-                "severity": 3,
-                "evaluationFrequency": "PT5M",
-                "windowSize": "PT5M",
-                "muteActionsDuration": "P1D",
-                "criteria": {
-                  "allOf": [
-                    {
-                      "query": "StorageBlobLogs\n| where OperationName == \"PutBlob\" and StatusText == \"Success\"\n\n",
-                      "timeAggregation": "Count",
-                      "dimensions": [],
-                      "operator": "GreaterThan",
-                      "resourceIdColumn": "_ResourceId",
-                      "threshold": 0,
-                      "failingPeriods": {
-                        "numberOfEvaluationPeriods": 1,
-                        "minFailingPeriodsToAlert": 1
-                      }
-                    }
-                  ]
-                }
               }
             ]
           },
@@ -3190,6 +3575,156 @@
           ]
         }
       }
+    },
+    {
+      "condition": "[parameters('deployBlobUpdateLogicApp')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "[format('blobNotifications-deployment-{0}', parameters('deploymentNameSuffix'))]",
+      "subscriptionId": "[variables('subscriptionId')]",
+      "resourceGroup": "[parameters('existingStorageAccountRg')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "actionGroupName": {
+            "value": "[variables('actionGroupName')]"
+          },
+          "emailContact": {
+            "value": "[parameters('emailContact')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "storageAccount": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingStorageAccountRg')), 'Microsoft.Resources/deployments', format('sa-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.storageAccountName.value]"
+          },
+          "storageAccountId": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingStorageAccountRg')), 'Microsoft.Resources/deployments', format('sa-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.storageAccountId.value]"
+          },
+          "tags": {
+            "value": {}
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.7.4.23292",
+              "templateHash": "14630371467858854576"
+            }
+          },
+          "parameters": {
+            "actionGroupName": {
+              "type": "string"
+            },
+            "emailContact": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "tags": {
+              "type": "object"
+            },
+            "storageAccount": {
+              "type": "string"
+            },
+            "storageAccountId": {
+              "type": "string"
+            }
+          },
+          "variables": {
+            "logAlerts": [
+              {
+                "name": "[format('New blob uploaded to container on {0}', parameters('storageAccount'))]",
+                "description": "[format('New Blob Uploaded to AVD container on {0}. Please close this alert to act as approval in workflow.', parameters('storageAccount'))]",
+                "severity": 3,
+                "evaluationFrequency": "PT5M",
+                "windowSize": "PT5M",
+                "muteActionsDuration": "P1D",
+                "criteria": {
+                  "allOf": [
+                    {
+                      "query": "StorageBlobLogs | where OperationName == \"PutBlob\" and StatusText == \"Success\"",
+                      "timeAggregation": "Count",
+                      "dimensions": [],
+                      "operator": "GreaterThanOrEqual",
+                      "threshold": 1,
+                      "failingPeriods": {
+                        "numberOfEvaluationPeriods": 1,
+                        "minFailingPeriodsToAlert": 1
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "resources": [
+            {
+              "type": "microsoft.insights/actionGroups",
+              "apiVersion": "2019-06-01",
+              "name": "[parameters('actionGroupName')]",
+              "location": "global",
+              "properties": {
+                "groupShortName": "EmailAlerts",
+                "enabled": true,
+                "emailReceivers": [
+                  {
+                    "name": "[parameters('emailContact')]",
+                    "emailAddress": "[parameters('emailContact')]",
+                    "useCommonAlertSchema": true
+                  }
+                ]
+              }
+            },
+            {
+              "copy": {
+                "name": "scheduledQueryRules",
+                "count": "[length(range(0, length(variables('logAlerts'))))]"
+              },
+              "type": "Microsoft.Insights/scheduledQueryRules",
+              "apiVersion": "2021-08-01",
+              "name": "[variables('logAlerts')[range(0, length(variables('logAlerts')))[copyIndex()]].name]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "actions": {
+                  "actionGroups": [
+                    "[resourceId('microsoft.insights/actionGroups', parameters('actionGroupName'))]"
+                  ],
+                  "customProperties": {}
+                },
+                "criteria": "[variables('logAlerts')[range(0, length(variables('logAlerts')))[copyIndex()]].criteria]",
+                "displayName": "[variables('logAlerts')[range(0, length(variables('logAlerts')))[copyIndex()]].name]",
+                "description": "[variables('logAlerts')[range(0, length(variables('logAlerts')))[copyIndex()]].description]",
+                "autoMitigate": false,
+                "enabled": true,
+                "evaluationFrequency": "[variables('logAlerts')[range(0, length(variables('logAlerts')))[copyIndex()]].evaluationFrequency]",
+                "scopes": [
+                  "[parameters('storageAccountId')]"
+                ],
+                "targetResourceTypes": [
+                  "Microsoft.Storage/storageAccounts"
+                ],
+                "severity": "[variables('logAlerts')[range(0, length(variables('logAlerts')))[copyIndex()]].severity]",
+                "windowSize": "[variables('logAlerts')[range(0, length(variables('logAlerts')))[copyIndex()]].windowSize]"
+              },
+              "dependsOn": [
+                "[resourceId('microsoft.insights/actionGroups', parameters('actionGroupName'))]"
+              ]
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingStorageAccountRg')), 'Microsoft.Resources/deployments', format('sa-deployment-{0}', parameters('deploymentNameSuffix')))]"
+      ]
     }
   ],
   "outputs": {

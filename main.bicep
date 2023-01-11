@@ -31,7 +31,7 @@ param container string = ''
   'Second'
 ])
 @description('Frequency of logic app trigger for Blob Check Logic App.')
-param triggerFrequency string = 'Day'
+param triggerFrequency string = 'Minute'
 
 @description('Interval of logic app trigger for Blob Check Logic App.')
 param triggerInterval int = 1
@@ -141,6 +141,10 @@ var runbooks = [
   }
   {
     name: 'Get-NewImageAlertStatus'
+    uri: 'https://raw.githubusercontent.com/mikedzikowski/AVDRipAndReplace/main/runbooks/Get-NewImageAlertStatus.ps1'
+  }
+  {
+    name: 'Get-NewBlobAlertStatus'
     uri: 'https://raw.githubusercontent.com/mikedzikowski/AVDRipAndReplace/main/runbooks/Get-NewImageAlertStatus.ps1'
   }
 ]
@@ -439,10 +443,49 @@ module rbacBlobPermissionConnector 'modules/rbacPermissions.bicep' = if (deployB
     automationAccountConnection
     blobConnection
     getBlobUpdateLogicApp
+    getBlobUpdateLogicAppUsingAzureMonitorAlerts
   ]
 }
 
-module getBlobUpdateLogicApp 'modules/logicAppGetBlobUpdate.bicep' = if (deployBlobUpdateLogicApp)  {
+module getBlobUpdateLogicAppUsingAzureMonitorAlerts 'modules/logicAppGetBlobUpdateUsingAzureMonitorAlerts.bicep' = if (deployBlobUpdateLogicApp && (!deployWithO365Connector)) {
+  name: 'getBlobUpdateLogicApp-deployment-${deploymentNameSuffix}'
+  scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
+  params: {
+    location: location
+    cloud: cloud
+    dayOfWeek:dayOfWeek
+    dayOfWeekOccurrence: dayOfWeekOccurrence
+    startTime: startTime
+    templateSpecId: templateSpecId
+    tenantId: tenantId
+    waitForRunBook: waitForRunBook
+    workflows_GetBlobUpdate_name: workflows_GetBlobUpdate_name
+    automationAccountConnectionName: automationAccountConnectionName
+    automationAccountName: automationAccountNameValue
+    automationAccountResourceGroup: existingAutomationAccountRg
+    blobConnectionName: blobConnectionName
+    identityType: identityType
+    state: state
+    schema: schema
+    contentVersion: contentVersion
+    connectionType: connectionType
+    triggerFrequency: triggerFrequency
+    triggerInterval: triggerInterval
+    storageAccountName: deployBlobUpdateLogicApp ? exisitingStorageAccount: 'None'
+    container: deployBlobUpdateLogicApp ? container : 'None'
+    hostPoolName: hostPoolName
+    checkBothCreatedAndModifiedDateTime: checkBothCreatedAndModifiedDateTime
+    maxFileCount: maxFileCount
+    subscriptionId: subscriptionId
+    runbookNewHostPoolRipAndReplace: runbookNewHostPoolRipAndReplace
+  }
+  dependsOn: [
+    blobConnection
+  ]
+}
+
+
+module getBlobUpdateLogicApp 'modules/logicAppGetBlobUpdate.bicep' = if (deployBlobUpdateLogicApp) {
   name: 'getBlobUpdateLogicApp-deployment-${deploymentNameSuffix}'
   scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
   params: {
@@ -490,6 +533,20 @@ module notifications 'modules/notifications.bicep' = {
     emailContact: emailContact
     location: location
     logAnalyticsWorkspaceResourceId: logAnalyticsWorkspaceResourceId
+    tags: {
+    }
+  }
+}
+
+module blobNotifications 'modules/blobNotifications.bicep' = if (deployBlobUpdateLogicApp) {
+  scope: resourceGroup(subscriptionId, existingStorageAccountRg)
+  name: 'blobNotifications-deployment-${deploymentNameSuffix}'
+  params: {
+    actionGroupName: actionGroupName
+    emailContact: emailContact
+    location: location
+    storageAccount: storageAccount.outputs.storageAccountName
+    storageAccountId: storageAccount.outputs.storageAccountId
     tags: {
     }
   }

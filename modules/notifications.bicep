@@ -97,30 +97,6 @@ var logAlerts = [
       ]
     }
   }
-  {
-    name: 'New Blob Uploaded to AVD Storage Container'
-    description: 'New Blob Uploaded to AVD Storage Container. Please close this alert to act as approval in workflow.'
-    severity: 3
-    evaluationFrequency: 'PT5M'
-    windowSize: 'PT5M'
-    muteActionsDuration: 'P1D'
-    criteria: {
-      allOf: [
-        {
-          query: 'StorageBlobLogs\n| where OperationName == "PutBlob" and StatusText == "Success"\n\n'
-          timeAggregation: 'Count'
-          dimensions: []
-          operator: 'GreaterThan'
-          resourceIdColumn: '_ResourceId'
-          threshold: 0
-          failingPeriods: {
-            numberOfEvaluationPeriods: 1
-            minFailingPeriodsToAlert: 1
-          }
-        }
-      ]
-    }
-  }
 ]
 
 resource actionGroup 'Microsoft.Insights/actionGroups@2019-06-01' = {

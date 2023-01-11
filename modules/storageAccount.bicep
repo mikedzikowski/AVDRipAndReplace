@@ -57,10 +57,6 @@ resource diagnosticsBlob 'Microsoft.Insights/diagnosticSettings@2021-05-01-previ
         category: 'StorageWrite'
         enabled: true
       }
-      {
-        category: 'Transaction'
-        enabled: true
-      }
     ]
   }
 }
