@@ -448,7 +448,7 @@ module rbacBlobPermissionConnector 'modules/rbacPermissions.bicep' = if (deployB
 }
 
 module getBlobUpdateLogicAppUsingAzureMonitorAlerts 'modules/logicAppGetBlobUpdateUsingAzureMonitorAlerts.bicep' = if (deployBlobUpdateLogicApp && (!deployWithO365Connector)) {
-  name: 'getBlobUpdateLogicApp-deployment-${deploymentNameSuffix}'
+  name: 'getBlobUpdateLogicAppUsingAzureMonitorAlerts-deployment-${deploymentNameSuffix}'
   scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
   params: {
     location: location
