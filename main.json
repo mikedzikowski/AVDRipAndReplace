@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.7.4.23292",
-      "templateHash": "15148007017254114382"
+      "templateHash": "2426046217394117847"
     }
   },
   "parameters": {
@@ -17,8 +17,7 @@
       }
     },
     "deployWithO365Connector": {
-      "type": "bool",
-      "defaultValue": false
+      "type": "bool"
     },
     "logAnalyticsWorkspaceResourceId": {
       "type": "string",
@@ -43,7 +42,6 @@
     },
     "deployBlobUpdateLogicApp": {
       "type": "bool",
-      "defaultValue": false,
       "metadata": {
         "description": "To be used with AVD solutions that deploy post configuration software. Set the following values if there is a storage account that should be targeted. If values are not set a default naming convention will be used by resources created."
       }
@@ -295,7 +293,11 @@
     "LocationShortName": "[variables('LocationShortNames')[parameters('location')]]",
     "NamingStandard": "[format('{0}', variables('LocationShortName'))]",
     "automationAccountNameVar": "[if(not(empty(parameters('exisitingAutomationAccount'))), createArray(parameters('exisitingAutomationAccount')), createArray(replace(format('aa-{0}', variables('NamingStandard')), 'aa', uniqueString(variables('NamingStandard')))))]",
-    "automationAccountNameValue": "[first(variables('automationAccountNameVar'))]"
+    "automationAccountNameValue": "[first(variables('automationAccountNameVar'))]",
+    "blobWithConnector": "[and(parameters('deployBlobUpdateLogicApp'), parameters('deployWithO365Connector'))]",
+    "blobWithOutConnector": "[and(parameters('deployBlobUpdateLogicApp'), not(parameters('deployWithO365Connector')))]",
+    "imageWithConnector": "[parameters('deployWithO365Connector')]",
+    "imageWithOutConnector": "[not(parameters('deployWithO365Connector'))]"
   },
   "resources": [
     {
@@ -588,7 +590,7 @@
       ]
     },
     {
-      "condition": "[parameters('deployWithO365Connector')]",
+      "condition": "[variables('imageWithConnector')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
       "name": "[format('o365Connection-deployment-{0}', parameters('deploymentNameSuffix'))]",
@@ -885,7 +887,7 @@
       ]
     },
     {
-      "condition": "[not(parameters('deployWithO365Connector'))]",
+      "condition": "[variables('imageWithOutConnector')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
       "name": "[format('getImageVersionlogicAppWOConnectpr-deployment-{0}', parameters('deploymentNameSuffix'))]",
@@ -1487,7 +1489,7 @@
       ]
     },
     {
-      "condition": "[parameters('deployWithO365Connector')]",
+      "condition": "[variables('imageWithConnector')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
       "name": "[format('getImageVersionlogicApp-deployment-{0}', parameters('deploymentNameSuffix'))]",
@@ -2318,7 +2320,7 @@
       ]
     },
     {
-      "condition": "[not(parameters('deployWithO365Connector'))]",
+      "condition": "[variables('imageWithOutConnector')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
       "name": "[format('rbac-aaConnectorWoConn-deployment-{0}', parameters('deploymentNameSuffix'))]",
@@ -2331,7 +2333,7 @@
         "mode": "Incremental",
         "parameters": {
           "principalId": {
-            "value": "[if(not(parameters('deployWithO365Connector')), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('getImageVersionlogicAppWOConnectpr-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.imagePrincipalId.value, 'None')]"
+            "value": "[if(variables('imageWithOutConnector'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('getImageVersionlogicAppWOConnectpr-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.imagePrincipalId.value, 'None')]"
           },
           "roleId": {
             "value": "[variables('roleId')]"
@@ -2492,7 +2494,7 @@
       ]
     },
     {
-      "condition": "[parameters('deployBlobUpdateLogicApp')]",
+      "condition": "[variables('blobWithConnector')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
       "name": "[format('rbac-blobConnector-deployment-{0}', parameters('deploymentNameSuffix'))]",
@@ -2505,7 +2507,7 @@
         "mode": "Incremental",
         "parameters": {
           "principalId": {
-            "value": "[if(parameters('deployBlobUpdateLogicApp'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('getBlobUpdateLogicApp-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.blobPrincipalId.value, 'None')]"
+            "value": "[if(variables('blobWithConnector'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('getBlobUpdateLogicApps-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.blobPrincipalId.value, 'None')]"
           },
           "roleId": {
             "value": "[variables('roleId')]"
@@ -2567,15 +2569,484 @@
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix')))]",
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('automationAccountConnection-deployment-{0}', parameters('deploymentNameSuffix')))]",
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('blobConnection-deployment-{0}', parameters('deploymentNameSuffix')))]",
-        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('getBlobUpdateLogicApp-deployment-{0}', parameters('deploymentNameSuffix')))]",
-        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('getBlobUpdateLogicAppUsingAzureMonitorAlerts-deployment-{0}', parameters('deploymentNameSuffix')))]"
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('getBlobUpdateLogicApps-deployment-{0}', parameters('deploymentNameSuffix')))]"
       ]
     },
     {
-      "condition": "[and(parameters('deployBlobUpdateLogicApp'), not(parameters('deployWithO365Connector')))]",
+      "condition": "[variables('blobWithOutConnector')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
-      "name": "[format('getBlobUpdateLogicAppUsingAzureMonitorAlerts-deployment-{0}', parameters('deploymentNameSuffix'))]",
+      "name": "[format('rbac-blobConnector-alert-{0}', parameters('deploymentNameSuffix'))]",
+      "subscriptionId": "[variables('subscriptionId')]",
+      "resourceGroup": "[parameters('existingAutomationAccountRg')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "principalId": {
+            "value": "[if(variables('blobWithOutConnector'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('getBlobUpdateLogicAppWAlerts-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.blobPrincipalId.value, 'None')]"
+          },
+          "roleId": {
+            "value": "[variables('roleId')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.7.4.23292",
+              "templateHash": "2412093124036441964"
+            }
+          },
+          "parameters": {
+            "canDelegate": {
+              "type": "bool",
+              "defaultValue": false
+            },
+            "description": {
+              "type": "string",
+              "defaultValue": "Contributor RBAC permission"
+            },
+            "principalId": {
+              "type": "string"
+            },
+            "roleId": {
+              "type": "string"
+            },
+            "scope": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().id]"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Authorization/roleAssignments",
+              "apiVersion": "2020-04-01-preview",
+              "name": "[guid(parameters('scope'), parameters('principalId'), parameters('roleId'))]",
+              "properties": {
+                "canDelegate": "[parameters('canDelegate')]",
+                "description": "[parameters('description')]",
+                "principalId": "[parameters('principalId')]",
+                "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleId'))]",
+                "principalType": "ServicePrincipal"
+              }
+            }
+          ],
+          "outputs": {
+            "rbac": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Authorization/roleAssignments', guid(parameters('scope'), parameters('principalId'), parameters('roleId')))).roleDefinitionId]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix')))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('automationAccountConnection-deployment-{0}', parameters('deploymentNameSuffix')))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('blobConnection-deployment-{0}', parameters('deploymentNameSuffix')))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('getBlobUpdateLogicAppWAlerts-deployment-{0}', parameters('deploymentNameSuffix')))]"
+      ]
+    },
+    {
+      "condition": "[variables('blobWithConnector')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "[format('getBlobUpdateLogicApps-deployment-{0}', parameters('deploymentNameSuffix'))]",
+      "subscriptionId": "[variables('subscriptionId')]",
+      "resourceGroup": "[parameters('existingAutomationAccountRg')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "cloud": {
+            "value": "[variables('cloud')]"
+          },
+          "dayOfWeek": {
+            "value": "[parameters('dayOfWeek')]"
+          },
+          "dayOfWeekOccurrence": {
+            "value": "[parameters('dayOfWeekOccurrence')]"
+          },
+          "emailContact": {
+            "value": "[parameters('emailContact')]"
+          },
+          "officeConnectionName": {
+            "value": "[variables('officeConnectionName')]"
+          },
+          "startTime": {
+            "value": "[parameters('startTime')]"
+          },
+          "templateSpecId": {
+            "value": "[parameters('templateSpecId')]"
+          },
+          "tenantId": {
+            "value": "[variables('tenantId')]"
+          },
+          "waitForRunBook": {
+            "value": "[variables('waitForRunBook')]"
+          },
+          "workflows_GetBlobUpdate_name": {
+            "value": "[variables('workflows_GetBlobUpdate_name')]"
+          },
+          "automationAccountConnectionName": {
+            "value": "[variables('automationAccountConnectionName')]"
+          },
+          "automationAccountName": {
+            "value": "[variables('automationAccountNameValue')]"
+          },
+          "automationAccountResourceGroup": {
+            "value": "[parameters('existingAutomationAccountRg')]"
+          },
+          "automationAccountLocation": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix')))).outputs.aaLocation.value]"
+          },
+          "blobConnectionName": {
+            "value": "[variables('blobConnectionName')]"
+          },
+          "identityType": {
+            "value": "[variables('identityType')]"
+          },
+          "state": {
+            "value": "[variables('state')]"
+          },
+          "schema": {
+            "value": "[variables('schema')]"
+          },
+          "contentVersion": {
+            "value": "[variables('contentVersion')]"
+          },
+          "connectionType": {
+            "value": "[variables('connectionType')]"
+          },
+          "triggerFrequency": {
+            "value": "[parameters('triggerFrequency')]"
+          },
+          "triggerInterval": {
+            "value": "[parameters('triggerInterval')]"
+          },
+          "storageAccountName": {
+            "value": "[if(parameters('deployBlobUpdateLogicApp'), parameters('exisitingStorageAccount'), 'None')]"
+          },
+          "container": {
+            "value": "[if(parameters('deployBlobUpdateLogicApp'), parameters('container'), 'None')]"
+          },
+          "hostPoolName": {
+            "value": "[parameters('hostPoolName')]"
+          },
+          "checkBothCreatedAndModifiedDateTime": {
+            "value": "[variables('checkBothCreatedAndModifiedDateTime')]"
+          },
+          "maxFileCount": {
+            "value": "[variables('maxFileCount')]"
+          },
+          "subscriptionId": {
+            "value": "[variables('subscriptionId')]"
+          },
+          "runbookNewHostPoolRipAndReplace": {
+            "value": "[variables('runbookNewHostPoolRipAndReplace')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.7.4.23292",
+              "templateHash": "14168866856196095368"
+            }
+          },
+          "parameters": {
+            "subscriptionId": {
+              "type": "string"
+            },
+            "workflows_GetBlobUpdate_name": {
+              "type": "string"
+            },
+            "automationAccountConnectionName": {
+              "type": "string"
+            },
+            "automationAccountResourceGroup": {
+              "type": "string"
+            },
+            "automationAccountLocation": {
+              "type": "string"
+            },
+            "automationAccountName": {
+              "type": "string"
+            },
+            "blobConnectionName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "identityType": {
+              "type": "string"
+            },
+            "state": {
+              "type": "string"
+            },
+            "schema": {
+              "type": "string"
+            },
+            "contentVersion": {
+              "type": "string"
+            },
+            "connectionType": {
+              "type": "string"
+            },
+            "triggerFrequency": {
+              "type": "string"
+            },
+            "triggerInterval": {
+              "type": "int"
+            },
+            "container": {
+              "type": "string"
+            },
+            "hostPoolName": {
+              "type": "string"
+            },
+            "checkBothCreatedAndModifiedDateTime": {
+              "type": "bool"
+            },
+            "maxFileCount": {
+              "type": "int"
+            },
+            "runbookNewHostPoolRipAndReplace": {
+              "type": "string"
+            },
+            "storageAccountName": {
+              "type": "string"
+            },
+            "waitForRunBook": {
+              "type": "bool"
+            },
+            "emailContact": {
+              "type": "string"
+            },
+            "officeConnectionName": {
+              "type": "string"
+            },
+            "startTime": {
+              "type": "string"
+            },
+            "dayOfWeek": {
+              "type": "string"
+            },
+            "dayOfWeekOccurrence": {
+              "type": "string"
+            },
+            "cloud": {
+              "type": "string"
+            },
+            "tenantId": {
+              "type": "string"
+            },
+            "templateSpecId": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Logic/workflows",
+              "apiVersion": "2017-07-01",
+              "name": "[parameters('workflows_GetBlobUpdate_name')]",
+              "location": "[parameters('location')]",
+              "tags": {},
+              "identity": {
+                "type": "[parameters('identityType')]"
+              },
+              "properties": {
+                "state": "[parameters('state')]",
+                "definition": {
+                  "$schema": "[parameters('schema')]",
+                  "contentVersion": "[parameters('contentVersion')]",
+                  "parameters": {
+                    "$connections": {
+                      "defaultValue": {},
+                      "type": "[parameters('connectionType')]"
+                    }
+                  },
+                  "triggers": {
+                    "When_a_software_package_is_added_to_storage_account_container_for_AVD": {
+                      "recurrence": {
+                        "frequency": "[parameters('triggerFrequency')]",
+                        "interval": "[parameters('triggerInterval')]"
+                      },
+                      "evaluatedRecurrence": {
+                        "frequency": "[parameters('triggerFrequency')]",
+                        "interval": "[parameters('triggerInterval')]"
+                      },
+                      "splitOn": "@triggerBody()",
+                      "type": "ApiConnection",
+                      "inputs": {
+                        "host": {
+                          "connection": {
+                            "name": "@parameters('$connections')['azureblob']['connectionId']"
+                          }
+                        },
+                        "method": "get",
+                        "path": "[format('/v2/datasets/@{{encodeURIComponent(encodeURIComponent(''{0}''))}}/triggers/batch/onupdatedfile', parameters('storageAccountName'))]",
+                        "queries": {
+                          "checkBothCreatedAndModifiedDateTime": "[parameters('checkBothCreatedAndModifiedDateTime')]",
+                          "folderId": "[format('/{0}', parameters('container'))]",
+                          "maxFileCount": "[parameters('maxFileCount')]"
+                        }
+                      }
+                    }
+                  },
+                  "actions": {
+                    "Condition_Check_for_Approval_Selection_in_Email": {
+                      "actions": {
+                        "Create_Schedule_for_Hostpool_Rip_and_Replace_on_AVD_Environment": {
+                          "runAfter": {},
+                          "type": "ApiConnection",
+                          "inputs": {
+                            "body": {
+                              "properties": {
+                                "parameters": {
+                                  "AutomationAccountName": "[parameters('automationAccountName')]",
+                                  "ResourceGroupName": "[parameters('automationAccountResourceGroup')]",
+                                  "ScheduleName": "[format('{0}-ScheduleForRipAndReplace', parameters('hostPoolName'))]",
+                                  "StartTime": "[parameters('startTime')]",
+                                  "DayOfWeek": "[parameters('dayOfWeek')]",
+                                  "DayOfWeekOccurrence": "[parameters('dayOfWeekOccurrence')]",
+                                  "environment": "[parameters('cloud')]",
+                                  "runbookName": "[parameters('runbookNewHostPoolRipAndReplace')]",
+                                  "HostPoolName": "[parameters('hostPoolName')]",
+                                  "TenantId": "[parameters('tenantId')]",
+                                  "TemplateSpecId": "[parameters('templateSpecId')]",
+                                  "SubscriptionId": "[parameters('subscriptionId')]"
+                                }
+                              }
+                            },
+                            "host": {
+                              "connection": {
+                                "name": "@parameters('$connections')['azureautomation']['connectionId']"
+                              }
+                            },
+                            "method": "put",
+                            "path": "[format('/subscriptions/@{{encodeURIComponent(''{0}'')}}/resourceGroups/@{{encodeURIComponent(''{1}'')}}/providers/Microsoft.Automation/automationAccounts/@{{encodeURIComponent(''{2}'')}}/jobs', parameters('subscriptionId'), parameters('automationAccountResourceGroup'), parameters('automationAccountName'))]",
+                            "queries": {
+                              "runbookName": "New-AutomationSchedule",
+                              "wait": "[parameters('waitForRunBook')]",
+                              "x-ms-api-version": "2015-10-31"
+                            }
+                          }
+                        }
+                      },
+                      "runAfter": {
+                        "Send_Approval_Email_for_Rip_and_Replace_in_AVD_Environment": [
+                          "Succeeded"
+                        ]
+                      },
+                      "else": {
+                        "actions": {
+                          "Terminate": {
+                            "runAfter": {},
+                            "type": "Terminate",
+                            "inputs": {
+                              "runStatus": "Cancelled"
+                            }
+                          }
+                        }
+                      },
+                      "expression": {
+                        "and": [
+                          {
+                            "equals": [
+                              "@body('Send_Approval_Email_for_Rip_and_Replace_in_AVD_Environment')?['SelectedOption']",
+                              "Approve"
+                            ]
+                          }
+                        ]
+                      },
+                      "type": "If"
+                    },
+                    "Send_Approval_Email_for_Rip_and_Replace_in_AVD_Environment": {
+                      "runAfter": {},
+                      "type": "ApiConnectionWebhook",
+                      "inputs": {
+                        "body": {
+                          "Message": {
+                            "HideHTMLMessage": false,
+                            "Importance": "High",
+                            "Options": "Approve, Reject",
+                            "ShowHTMLConfirmationDialog": false,
+                            "Subject": "Software Update Found for AVD Hostpool Environment - Please Approve or Reject the Rip and Replace of the AVD Environment",
+                            "To": "[parameters('emailContact')]"
+                          },
+                          "NotificationUrl": "@{listCallbackUrl()}"
+                        },
+                        "host": {
+                          "connection": {
+                            "name": "@parameters('$connections')['office365']['connectionId']"
+                          }
+                        },
+                        "path": "/approvalmail/$subscriptions"
+                      }
+                    }
+                  },
+                  "outputs": {}
+                },
+                "parameters": {
+                  "$connections": {
+                    "value": {
+                      "azureautomation": {
+                        "connectionId": "[format('/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Web/connections/{2}', parameters('subscriptionId'), resourceGroup().name, parameters('automationAccountConnectionName'))]",
+                        "connectionName": "[parameters('automationAccountConnectionName')]",
+                        "connectionProperties": {
+                          "authentication": {
+                            "type": "ManagedServiceIdentity"
+                          }
+                        },
+                        "id": "[format('/subscriptions/{0}/providers/Microsoft.Web/locations/{1}/managedApis/azureautomation', parameters('subscriptionId'), parameters('location'))]"
+                      },
+                      "azureblob": {
+                        "connectionId": "[format('/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Web/connections/{2}', parameters('subscriptionId'), resourceGroup().name, parameters('blobConnectionName'))]",
+                        "connectionName": "[parameters('blobConnectionName')]",
+                        "id": "[format('/subscriptions/{0}/providers/Microsoft.Web/locations/{1}/managedApis/azureblob', parameters('subscriptionId'), parameters('location'))]"
+                      },
+                      "office365": {
+                        "connectionId": "[format('/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Web/connections/{2}', parameters('subscriptionId'), resourceGroup().name, parameters('officeConnectionName'))]",
+                        "connectionName": "[parameters('officeConnectionName')]",
+                        "id": "[format('/subscriptions/{0}/providers/Microsoft.Web/locations/{1}/managedApis/office365', parameters('subscriptionId'), parameters('automationAccountLocation'))]"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "outputs": {
+            "blobPrincipalId": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Logic/workflows', parameters('workflows_GetBlobUpdate_name')), '2017-07-01', 'full').identity.principalId]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix')))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('blobConnection-deployment-{0}', parameters('deploymentNameSuffix')))]"
+      ]
+    },
+    {
+      "condition": "[variables('blobWithOutConnector')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "[format('getBlobUpdateLogicAppWAlerts-deployment-{0}', parameters('deploymentNameSuffix'))]",
       "subscriptionId": "[variables('subscriptionId')]",
       "resourceGroup": "[parameters('existingAutomationAccountRg')]",
       "properties": {
@@ -2980,397 +3451,6 @@
       ]
     },
     {
-      "condition": "[parameters('deployBlobUpdateLogicApp')]",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-10-01",
-      "name": "[format('getBlobUpdateLogicApp-deployment-{0}', parameters('deploymentNameSuffix'))]",
-      "subscriptionId": "[variables('subscriptionId')]",
-      "resourceGroup": "[parameters('existingAutomationAccountRg')]",
-      "properties": {
-        "expressionEvaluationOptions": {
-          "scope": "inner"
-        },
-        "mode": "Incremental",
-        "parameters": {
-          "location": {
-            "value": "[parameters('location')]"
-          },
-          "cloud": {
-            "value": "[variables('cloud')]"
-          },
-          "dayOfWeek": {
-            "value": "[parameters('dayOfWeek')]"
-          },
-          "dayOfWeekOccurrence": {
-            "value": "[parameters('dayOfWeekOccurrence')]"
-          },
-          "emailContact": {
-            "value": "[parameters('emailContact')]"
-          },
-          "officeConnectionName": {
-            "value": "[variables('officeConnectionName')]"
-          },
-          "startTime": {
-            "value": "[parameters('startTime')]"
-          },
-          "templateSpecId": {
-            "value": "[parameters('templateSpecId')]"
-          },
-          "tenantId": {
-            "value": "[variables('tenantId')]"
-          },
-          "waitForRunBook": {
-            "value": "[variables('waitForRunBook')]"
-          },
-          "workflows_GetBlobUpdate_name": {
-            "value": "[variables('workflows_GetBlobUpdate_name')]"
-          },
-          "automationAccountConnectionName": {
-            "value": "[variables('automationAccountConnectionName')]"
-          },
-          "automationAccountName": {
-            "value": "[variables('automationAccountNameValue')]"
-          },
-          "automationAccountResourceGroup": {
-            "value": "[parameters('existingAutomationAccountRg')]"
-          },
-          "automationAccountLocation": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix')))).outputs.aaLocation.value]"
-          },
-          "blobConnectionName": {
-            "value": "[variables('blobConnectionName')]"
-          },
-          "identityType": {
-            "value": "[variables('identityType')]"
-          },
-          "state": {
-            "value": "[variables('state')]"
-          },
-          "schema": {
-            "value": "[variables('schema')]"
-          },
-          "contentVersion": {
-            "value": "[variables('contentVersion')]"
-          },
-          "connectionType": {
-            "value": "[variables('connectionType')]"
-          },
-          "triggerFrequency": {
-            "value": "[parameters('triggerFrequency')]"
-          },
-          "triggerInterval": {
-            "value": "[parameters('triggerInterval')]"
-          },
-          "storageAccountName": {
-            "value": "[if(parameters('deployBlobUpdateLogicApp'), parameters('exisitingStorageAccount'), 'None')]"
-          },
-          "container": {
-            "value": "[if(parameters('deployBlobUpdateLogicApp'), parameters('container'), 'None')]"
-          },
-          "hostPoolName": {
-            "value": "[parameters('hostPoolName')]"
-          },
-          "checkBothCreatedAndModifiedDateTime": {
-            "value": "[variables('checkBothCreatedAndModifiedDateTime')]"
-          },
-          "maxFileCount": {
-            "value": "[variables('maxFileCount')]"
-          },
-          "subscriptionId": {
-            "value": "[variables('subscriptionId')]"
-          },
-          "runbookNewHostPoolRipAndReplace": {
-            "value": "[variables('runbookNewHostPoolRipAndReplace')]"
-          }
-        },
-        "template": {
-          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-          "contentVersion": "1.0.0.0",
-          "metadata": {
-            "_generator": {
-              "name": "bicep",
-              "version": "0.7.4.23292",
-              "templateHash": "14168866856196095368"
-            }
-          },
-          "parameters": {
-            "subscriptionId": {
-              "type": "string"
-            },
-            "workflows_GetBlobUpdate_name": {
-              "type": "string"
-            },
-            "automationAccountConnectionName": {
-              "type": "string"
-            },
-            "automationAccountResourceGroup": {
-              "type": "string"
-            },
-            "automationAccountLocation": {
-              "type": "string"
-            },
-            "automationAccountName": {
-              "type": "string"
-            },
-            "blobConnectionName": {
-              "type": "string"
-            },
-            "location": {
-              "type": "string"
-            },
-            "identityType": {
-              "type": "string"
-            },
-            "state": {
-              "type": "string"
-            },
-            "schema": {
-              "type": "string"
-            },
-            "contentVersion": {
-              "type": "string"
-            },
-            "connectionType": {
-              "type": "string"
-            },
-            "triggerFrequency": {
-              "type": "string"
-            },
-            "triggerInterval": {
-              "type": "int"
-            },
-            "container": {
-              "type": "string"
-            },
-            "hostPoolName": {
-              "type": "string"
-            },
-            "checkBothCreatedAndModifiedDateTime": {
-              "type": "bool"
-            },
-            "maxFileCount": {
-              "type": "int"
-            },
-            "runbookNewHostPoolRipAndReplace": {
-              "type": "string"
-            },
-            "storageAccountName": {
-              "type": "string"
-            },
-            "waitForRunBook": {
-              "type": "bool"
-            },
-            "emailContact": {
-              "type": "string"
-            },
-            "officeConnectionName": {
-              "type": "string"
-            },
-            "startTime": {
-              "type": "string"
-            },
-            "dayOfWeek": {
-              "type": "string"
-            },
-            "dayOfWeekOccurrence": {
-              "type": "string"
-            },
-            "cloud": {
-              "type": "string"
-            },
-            "tenantId": {
-              "type": "string"
-            },
-            "templateSpecId": {
-              "type": "string"
-            }
-          },
-          "resources": [
-            {
-              "type": "Microsoft.Logic/workflows",
-              "apiVersion": "2017-07-01",
-              "name": "[parameters('workflows_GetBlobUpdate_name')]",
-              "location": "[parameters('location')]",
-              "tags": {},
-              "identity": {
-                "type": "[parameters('identityType')]"
-              },
-              "properties": {
-                "state": "[parameters('state')]",
-                "definition": {
-                  "$schema": "[parameters('schema')]",
-                  "contentVersion": "[parameters('contentVersion')]",
-                  "parameters": {
-                    "$connections": {
-                      "defaultValue": {},
-                      "type": "[parameters('connectionType')]"
-                    }
-                  },
-                  "triggers": {
-                    "When_a_software_package_is_added_to_storage_account_container_for_AVD": {
-                      "recurrence": {
-                        "frequency": "[parameters('triggerFrequency')]",
-                        "interval": "[parameters('triggerInterval')]"
-                      },
-                      "evaluatedRecurrence": {
-                        "frequency": "[parameters('triggerFrequency')]",
-                        "interval": "[parameters('triggerInterval')]"
-                      },
-                      "splitOn": "@triggerBody()",
-                      "type": "ApiConnection",
-                      "inputs": {
-                        "host": {
-                          "connection": {
-                            "name": "@parameters('$connections')['azureblob']['connectionId']"
-                          }
-                        },
-                        "method": "get",
-                        "path": "[format('/v2/datasets/@{{encodeURIComponent(encodeURIComponent(''{0}''))}}/triggers/batch/onupdatedfile', parameters('storageAccountName'))]",
-                        "queries": {
-                          "checkBothCreatedAndModifiedDateTime": "[parameters('checkBothCreatedAndModifiedDateTime')]",
-                          "folderId": "[format('/{0}', parameters('container'))]",
-                          "maxFileCount": "[parameters('maxFileCount')]"
-                        }
-                      }
-                    }
-                  },
-                  "actions": {
-                    "Condition_Check_for_Approval_Selection_in_Email": {
-                      "actions": {
-                        "Create_Schedule_for_Hostpool_Rip_and_Replace_on_AVD_Environment": {
-                          "runAfter": {},
-                          "type": "ApiConnection",
-                          "inputs": {
-                            "body": {
-                              "properties": {
-                                "parameters": {
-                                  "AutomationAccountName": "[parameters('automationAccountName')]",
-                                  "ResourceGroupName": "[parameters('automationAccountResourceGroup')]",
-                                  "ScheduleName": "[format('{0}-ScheduleForRipAndReplace', parameters('hostPoolName'))]",
-                                  "StartTime": "[parameters('startTime')]",
-                                  "DayOfWeek": "[parameters('dayOfWeek')]",
-                                  "DayOfWeekOccurrence": "[parameters('dayOfWeekOccurrence')]",
-                                  "environment": "[parameters('cloud')]",
-                                  "runbookName": "[parameters('runbookNewHostPoolRipAndReplace')]",
-                                  "HostPoolName": "[parameters('hostPoolName')]",
-                                  "TenantId": "[parameters('tenantId')]",
-                                  "TemplateSpecId": "[parameters('templateSpecId')]",
-                                  "SubscriptionId": "[parameters('subscriptionId')]"
-                                }
-                              }
-                            },
-                            "host": {
-                              "connection": {
-                                "name": "@parameters('$connections')['azureautomation']['connectionId']"
-                              }
-                            },
-                            "method": "put",
-                            "path": "[format('/subscriptions/@{{encodeURIComponent(''{0}'')}}/resourceGroups/@{{encodeURIComponent(''{1}'')}}/providers/Microsoft.Automation/automationAccounts/@{{encodeURIComponent(''{2}'')}}/jobs', parameters('subscriptionId'), parameters('automationAccountResourceGroup'), parameters('automationAccountName'))]",
-                            "queries": {
-                              "runbookName": "New-AutomationSchedule",
-                              "wait": "[parameters('waitForRunBook')]",
-                              "x-ms-api-version": "2015-10-31"
-                            }
-                          }
-                        }
-                      },
-                      "runAfter": {
-                        "Send_Approval_Email_for_Rip_and_Replace_in_AVD_Environment": [
-                          "Succeeded"
-                        ]
-                      },
-                      "else": {
-                        "actions": {
-                          "Terminate": {
-                            "runAfter": {},
-                            "type": "Terminate",
-                            "inputs": {
-                              "runStatus": "Cancelled"
-                            }
-                          }
-                        }
-                      },
-                      "expression": {
-                        "and": [
-                          {
-                            "equals": [
-                              "@body('Send_Approval_Email_for_Rip_and_Replace_in_AVD_Environment')?['SelectedOption']",
-                              "Approve"
-                            ]
-                          }
-                        ]
-                      },
-                      "type": "If"
-                    },
-                    "Send_Approval_Email_for_Rip_and_Replace_in_AVD_Environment": {
-                      "runAfter": {},
-                      "type": "ApiConnectionWebhook",
-                      "inputs": {
-                        "body": {
-                          "Message": {
-                            "HideHTMLMessage": false,
-                            "Importance": "High",
-                            "Options": "Approve, Reject",
-                            "ShowHTMLConfirmationDialog": false,
-                            "Subject": "Software Update Found for AVD Hostpool Environment - Please Approve or Reject the Rip and Replace of the AVD Environment",
-                            "To": "[parameters('emailContact')]"
-                          },
-                          "NotificationUrl": "@{listCallbackUrl()}"
-                        },
-                        "host": {
-                          "connection": {
-                            "name": "@parameters('$connections')['office365']['connectionId']"
-                          }
-                        },
-                        "path": "/approvalmail/$subscriptions"
-                      }
-                    }
-                  },
-                  "outputs": {}
-                },
-                "parameters": {
-                  "$connections": {
-                    "value": {
-                      "azureautomation": {
-                        "connectionId": "[format('/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Web/connections/{2}', parameters('subscriptionId'), resourceGroup().name, parameters('automationAccountConnectionName'))]",
-                        "connectionName": "[parameters('automationAccountConnectionName')]",
-                        "connectionProperties": {
-                          "authentication": {
-                            "type": "ManagedServiceIdentity"
-                          }
-                        },
-                        "id": "[format('/subscriptions/{0}/providers/Microsoft.Web/locations/{1}/managedApis/azureautomation', parameters('subscriptionId'), parameters('location'))]"
-                      },
-                      "azureblob": {
-                        "connectionId": "[format('/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Web/connections/{2}', parameters('subscriptionId'), resourceGroup().name, parameters('blobConnectionName'))]",
-                        "connectionName": "[parameters('blobConnectionName')]",
-                        "id": "[format('/subscriptions/{0}/providers/Microsoft.Web/locations/{1}/managedApis/azureblob', parameters('subscriptionId'), parameters('location'))]"
-                      },
-                      "office365": {
-                        "connectionId": "[format('/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Web/connections/{2}', parameters('subscriptionId'), resourceGroup().name, parameters('officeConnectionName'))]",
-                        "connectionName": "[parameters('officeConnectionName')]",
-                        "id": "[format('/subscriptions/{0}/providers/Microsoft.Web/locations/{1}/managedApis/office365', parameters('subscriptionId'), parameters('automationAccountLocation'))]"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          ],
-          "outputs": {
-            "blobPrincipalId": {
-              "type": "string",
-              "value": "[reference(resourceId('Microsoft.Logic/workflows', parameters('workflows_GetBlobUpdate_name')), '2017-07-01', 'full').identity.principalId]"
-            }
-          }
-        }
-      },
-      "dependsOn": [
-        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix')))]",
-        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('blobConnection-deployment-{0}', parameters('deploymentNameSuffix')))]"
-      ]
-    },
-    {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
       "name": "[format('notifications-deployment-{0}', parameters('deploymentNameSuffix'))]",
@@ -3577,7 +3657,7 @@
       }
     },
     {
-      "condition": "[parameters('deployBlobUpdateLogicApp')]",
+      "condition": "[variables('blobWithOutConnector')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
       "name": "[format('blobNotifications-deployment-{0}', parameters('deploymentNameSuffix'))]",
@@ -3731,6 +3811,26 @@
     "automationAccountName": {
       "type": "string",
       "value": "[variables('automationAccountNameValue')]"
+    },
+    "deployBlobUpdateLogicApp": {
+      "type": "bool",
+      "value": "[parameters('deployBlobUpdateLogicApp')]"
+    },
+    "deployWithO365Connector": {
+      "type": "bool",
+      "value": "[not(parameters('deployWithO365Connector'))]"
+    },
+    "deployWithO365Connector2": {
+      "type": "bool",
+      "value": "[parameters('deployWithO365Connector')]"
+    },
+    "blobWithConnector": {
+      "type": "bool",
+      "value": "[and(parameters('deployBlobUpdateLogicApp'), parameters('deployWithO365Connector'))]"
+    },
+    "blobWithOutConnector": {
+      "type": "bool",
+      "value": "[and(parameters('deployBlobUpdateLogicApp'), not(parameters('deployWithO365Connector')))]"
     }
   }
 }
