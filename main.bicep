@@ -565,11 +565,3 @@ module blobNotifications 'modules/blobNotifications.bicep' = if(blobWithOutConne
     }
   }
 }
-
-output automationAccountName string = automationAccountNameValue
-output deployBlobUpdateLogicApp bool = deployBlobUpdateLogicApp
-output deployWithO365Connector bool = !deployWithO365Connector
-output deployWithO365Connector2 bool = deployWithO365Connector
-output blobWithConnector bool = deployBlobUpdateLogicApp && deployWithO365Connector
-output blobWithOutConnector bool = deployBlobUpdateLogicApp && !deployWithO365Connector
-
