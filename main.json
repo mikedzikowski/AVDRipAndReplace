@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.7.4.23292",
-      "templateHash": "4472174499761542898"
+      "templateHash": "3242288769286703929"
     }
   },
   "parameters": {
@@ -3679,10 +3679,10 @@
             "value": "[parameters('location')]"
           },
           "storageAccount": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingStorageAccountRg')), 'Microsoft.Resources/deployments', format('sa-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.storageAccountName.value]"
+            "value": "[if(variables('blobWithOutConnector'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingStorageAccountRg')), 'Microsoft.Resources/deployments', format('sa-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.storageAccountName.value, 'none')]"
           },
           "storageAccountId": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingStorageAccountRg')), 'Microsoft.Resources/deployments', format('sa-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.storageAccountId.value]"
+            "value": "[if(variables('blobWithOutConnector'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingStorageAccountRg')), 'Microsoft.Resources/deployments', format('sa-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.storageAccountId.value, 'none')]"
           },
           "tags": {
             "value": {}

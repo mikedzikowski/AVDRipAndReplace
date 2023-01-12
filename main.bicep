@@ -559,8 +559,8 @@ module blobNotifications 'modules/blobNotifications.bicep' = if(blobWithOutConne
     actionGroupName: actionGroupName
     emailContact: emailContact
     location: location
-    storageAccount: storageAccount.outputs.storageAccountName
-    storageAccountId: storageAccount.outputs.storageAccountId
+    storageAccount: blobWithOutConnector ? storageAccount.outputs.storageAccountName : 'none'
+    storageAccountId: blobWithOutConnector ? storageAccount.outputs.storageAccountId : 'none'
     tags: {
     }
   }
