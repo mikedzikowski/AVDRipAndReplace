@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.7.4.23292",
-      "templateHash": "2661590770362252297"
+      "templateHash": "5025379349456055466"
     }
   },
   "parameters": {
@@ -53,15 +53,15 @@
     },
     "exisitingStorageAccount": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "none"
     },
     "existingStorageAccountRg": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "none"
     },
     "container": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "none"
     },
     "triggerFrequency": {
       "type": "string",
