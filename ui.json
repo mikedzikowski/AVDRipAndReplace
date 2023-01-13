@@ -338,7 +338,7 @@
                             "name": "container",
                             "type": "Microsoft.Common.TextBox",
                             "label": "Container",
-                            "defaultValue": "container",
+                            "defaultValue": "",
                             "toolTip": "",
                             "constraints": {
                                 "required": false,
