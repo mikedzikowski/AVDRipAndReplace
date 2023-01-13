@@ -19,9 +19,9 @@ param existingAutomationAccountRg string
 @description('To be used with AVD solutions that deploy post configuration software. Set the following values if there is a storage account that should be targeted. If values are not set a default naming convention will be used by resources created.')
 param deployBlobUpdateLogicApp bool
 param newStorageAccount bool
-param exisitingStorageAccount string = ''
-param existingStorageAccountRg string = ''
-param container string = ''
+param exisitingStorageAccount string = 'none'
+param existingStorageAccountRg string = 'none'
+param container string = 'none'
 @allowed([
   'Month'
   'Week'
@@ -383,11 +383,11 @@ module storageAccount 'modules/storageAccount.bicep' = if(deployBlobUpdateLogicA
   name: 'sa-deployment-${deploymentNameSuffix}'
   scope: resourceGroup(subscriptionId, existingStorageAccountRg)
   params: {
-    storageAccountName: exisitingStorageAccount
-    containerName: container
-    location: location
-    new: newStorageAccount
-    logAnalyticsWorkspaceId: logAnalyticsWorkspaceResourceId
+    storageAccountName: deployBlobUpdateLogicApp ? exisitingStorageAccount : 'None'
+    containerName: deployBlobUpdateLogicApp ? container  : 'None'
+    location: deployBlobUpdateLogicApp ? location  : 'None'
+    new: deployBlobUpdateLogicApp ? newStorageAccount  : false
+    logAnalyticsWorkspaceId: deployBlobUpdateLogicApp ? logAnalyticsWorkspaceResourceId  : 'None'
   }
 }
 
@@ -427,11 +427,9 @@ module blobConnection 'modules/blobConnection.bicep' = if (deployBlobUpdateLogic
     location: location
     storageName: deployBlobUpdateLogicApp ? storageAccount.outputs.storageAccountName : 'None'
     name: blobConnectionName
-    saResourceGroup: existingStorageAccountRg
+    saResourceGroup: deployBlobUpdateLogicApp ? existingStorageAccountRg : 'None'
     subscriptionId: subscriptionId
   }
-  dependsOn: [
-  ]
 }
 
 module rbacBlobPermissionConnector 'modules/rbacPermissions.bicep' = if(blobWithConnector) {
@@ -489,8 +487,8 @@ module getBlobUpdateLogicApps 'modules/logicAppGetBlobUpdate.bicep' = if (blobWi
     connectionType: connectionType
     triggerFrequency: triggerFrequency
     triggerInterval: triggerInterval
-    storageAccountName: deployBlobUpdateLogicApp ? exisitingStorageAccount: 'None'
-    container: deployBlobUpdateLogicApp ? container : 'None'
+    storageAccountName: blobWithConnector ? exisitingStorageAccount: 'None'
+    container: blobWithConnector ? container : 'None'
     hostPoolName: hostPoolName
     checkBothCreatedAndModifiedDateTime: checkBothCreatedAndModifiedDateTime
     maxFileCount: maxFileCount
@@ -526,8 +524,8 @@ module getBlobUpdateLogicAppUsingAzureMonitorAlerts 'modules/logicAppGetBlobUpda
     connectionType: connectionType
     triggerFrequency: triggerFrequency
     triggerInterval: triggerInterval
-    storageAccountName: deployBlobUpdateLogicApp ? exisitingStorageAccount: 'None'
-    container: deployBlobUpdateLogicApp ? container : 'None'
+    storageAccountName: blobWithOutConnector ? exisitingStorageAccount: 'None'
+    container: blobWithOutConnector ? container : 'None'
     hostPoolName: hostPoolName
     checkBothCreatedAndModifiedDateTime: checkBothCreatedAndModifiedDateTime
     maxFileCount: maxFileCount
@@ -552,15 +550,15 @@ module notifications 'modules/notifications.bicep' = {
   }
 }
 
-module blobNotifications 'modules/blobNotifications.bicep' = if(blobWithOutConnector) {
+module blobNotifications 'modules/blobNotifications.bicep' = if(deployBlobUpdateLogicApp) {
   scope: resourceGroup(subscriptionId, existingStorageAccountRg)
   name: 'blobNotifications-deployment-${deploymentNameSuffix}'
   params: {
     actionGroupName: actionGroupName
     emailContact: emailContact
     location: location
-    storageAccount: blobWithOutConnector ? storageAccount.outputs.storageAccountName : 'none'
-    storageAccountId: blobWithOutConnector ? storageAccount.outputs.storageAccountId : 'none'
+    storageAccount: deployBlobUpdateLogicApp ? storageAccount.outputs.storageAccountName : 'None'
+    storageAccountId: deployBlobUpdateLogicApp ? storageAccount.outputs.storageAccountId : 'None'
     tags: {
     }
   }

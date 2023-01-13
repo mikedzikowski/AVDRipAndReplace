@@ -242,7 +242,7 @@
                             "name": "deployBlobUpdateLogicApp",
                             "type": "Microsoft.Common.DropDown",
                             "label": "Deploy Blob Update Logic App",
-                            "defaultValue": ["false"],
+                            "defaultValue": [false],
                             "toolTip": "To be used with AVD solutions that deploy post configuration software. Set the following values if there is a storage account that should be targeted. If values are not set a default naming convention will be used by resources created.",
                             "constraints": {
                                 "required": false,
@@ -264,7 +264,7 @@
                             "type": "Microsoft.Common.OptionsGroup",
                             "visible": "[equals(steps('blobUpdate').deployBlobUpdateLogicApp, true)]",
                             "label": "Existing Storage Account",
-                            "defaultValue": "No",
+                            "defaultValue": [false],
                             "toolTip": "New or exisiting storage account",
                             "constraints": {
                                 "required": true,
@@ -285,7 +285,7 @@
                             "type": "Microsoft.Solutions.ResourceSelector",
                             "visible": "[equals(steps('blobUpdate').existingStorageAccount, true)]",
                             "label": "Existing Storage Account Name",
-                            "defaultValue": ["NONE"],
+                            "defaultValue": ["testrg"],
                             "resourceType": "Microsoft.Storage/storageAccounts",
                             "options": {
                                 "filter": {
@@ -312,7 +312,7 @@
                             "label": "New Storage Account Name",
                             "visible": "[equals(steps('blobUpdate').existingStorageAccount, false)]",
                             "toolTip": "Input a name for the Storage Account.",
-                            "defaultValue": ["NONE"],
+                            "defaultValue": ["sa"],
                             "placeholder": "Example: storage01",
                             "constraints": {
                                 "required": true,
@@ -328,7 +328,7 @@
                             "name": "saResourceGroup",
                             "type": "Microsoft.Common.DropDown",
                             "visible": "[equals(steps('blobUpdate').existingStorageAccount, false)]",
-                            "defaultValue": ["NONE"],
+                            "defaultValue": ["sa"],
                             "label": "Storage Account Resource Group",
                             "constraints": {
                                 "allowedValues": "[map(steps('basics').ResourceGroupApi.value, (item) => parse(concat('{\"label\":\"', item.name, '\",\"value\":\"', item.name, '\"}')))]"
@@ -338,7 +338,7 @@
                             "name": "container",
                             "type": "Microsoft.Common.TextBox",
                             "label": "Container",
-                            "defaultValue": [""],
+                            "defaultValue": ["container"],
                             "toolTip": "",
                             "constraints": {
                                 "required": false,
@@ -597,7 +597,7 @@
                 "deploymentNameSuffix": "[steps('basics').deploymentNameSuffix]",
                 "exisitingAutomationAccount": "[if(equals(steps('AutomationEnvironment').existingAutomationAccount, true), steps('AutomationEnvironment').automationAccounts.name, steps('AutomationEnvironment').automationAccount.name)]",
                 "existingAutomationAccountRg": "[if(equals(steps('AutomationEnvironment').existingAutomationAccount, true), first(skip(split(steps('AutomationEnvironment').automationAccounts.id, '/'), 4)), steps('AutomationEnvironment').aaResourceGroup)]",
-                "deployBlobUpdateLogicApp": "[if(equals(steps('blobUpdate').deployBlobUpdateLogicApp, true), true, false)]",
+                "deployBlobUpdateLogicApp": "[steps('blobUpdate').deployBlobUpdateLogicApp]",
                 "exisitingStorageAccount": "[if(equals(steps('blobUpdate').existingStorageAccount, true), steps('blobUpdate').storageAccounts.name, steps('blobUpdate').storageAccount.name)]",
                 "existingStorageAccountRg": "[if(equals(steps('blobUpdate').existingStorageAccount, true), first(skip(split(steps('blobUpdate').storageAccounts.id, '/'), 4)), steps('blobUpdate').saResourceGroup)]",
                 "container": "[steps('blobUpdate').container]",

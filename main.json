@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.7.4.23292",
-      "templateHash": "3242288769286703929"
+      "templateHash": "1685003597727956159"
     }
   },
   "parameters": {
@@ -51,15 +51,15 @@
     },
     "exisitingStorageAccount": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "none"
     },
     "existingStorageAccountRg": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "none"
     },
     "container": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "none"
     },
     "triggerFrequency": {
       "type": "string",
@@ -2102,19 +2102,19 @@
         "mode": "Incremental",
         "parameters": {
           "storageAccountName": {
-            "value": "[parameters('exisitingStorageAccount')]"
+            "value": "[if(parameters('deployBlobUpdateLogicApp'), parameters('exisitingStorageAccount'), 'None')]"
           },
           "containerName": {
-            "value": "[parameters('container')]"
+            "value": "[if(parameters('deployBlobUpdateLogicApp'), parameters('container'), 'None')]"
           },
           "location": {
-            "value": "[parameters('location')]"
+            "value": "[if(parameters('deployBlobUpdateLogicApp'), parameters('location'), 'None')]"
           },
           "new": {
-            "value": "[parameters('newStorageAccount')]"
+            "value": "[if(parameters('deployBlobUpdateLogicApp'), parameters('newStorageAccount'), false())]"
           },
           "logAnalyticsWorkspaceId": {
-            "value": "[parameters('logAnalyticsWorkspaceResourceId')]"
+            "value": "[if(parameters('deployBlobUpdateLogicApp'), parameters('logAnalyticsWorkspaceResourceId'), 'None')]"
           }
         },
         "template": {
@@ -2423,7 +2423,7 @@
             "value": "[variables('blobConnectionName')]"
           },
           "saResourceGroup": {
-            "value": "[parameters('existingStorageAccountRg')]"
+            "value": "[if(parameters('deployBlobUpdateLogicApp'), parameters('existingStorageAccountRg'), 'None')]"
           },
           "subscriptionId": {
             "value": "[variables('subscriptionId')]"
@@ -2734,10 +2734,10 @@
             "value": "[parameters('triggerInterval')]"
           },
           "storageAccountName": {
-            "value": "[if(parameters('deployBlobUpdateLogicApp'), parameters('exisitingStorageAccount'), 'None')]"
+            "value": "[if(variables('blobWithConnector'), parameters('exisitingStorageAccount'), 'None')]"
           },
           "container": {
-            "value": "[if(parameters('deployBlobUpdateLogicApp'), parameters('container'), 'None')]"
+            "value": "[if(variables('blobWithConnector'), parameters('container'), 'None')]"
           },
           "hostPoolName": {
             "value": "[parameters('hostPoolName')]"
@@ -3116,10 +3116,10 @@
             "value": "[parameters('triggerInterval')]"
           },
           "storageAccountName": {
-            "value": "[if(parameters('deployBlobUpdateLogicApp'), parameters('exisitingStorageAccount'), 'None')]"
+            "value": "[if(variables('blobWithOutConnector'), parameters('exisitingStorageAccount'), 'None')]"
           },
           "container": {
-            "value": "[if(parameters('deployBlobUpdateLogicApp'), parameters('container'), 'None')]"
+            "value": "[if(variables('blobWithOutConnector'), parameters('container'), 'None')]"
           },
           "hostPoolName": {
             "value": "[parameters('hostPoolName')]"
@@ -3657,7 +3657,7 @@
       }
     },
     {
-      "condition": "[variables('blobWithOutConnector')]",
+      "condition": "[parameters('deployBlobUpdateLogicApp')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
       "name": "[format('blobNotifications-deployment-{0}', parameters('deploymentNameSuffix'))]",
@@ -3679,10 +3679,10 @@
             "value": "[parameters('location')]"
           },
           "storageAccount": {
-            "value": "[if(variables('blobWithOutConnector'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingStorageAccountRg')), 'Microsoft.Resources/deployments', format('sa-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.storageAccountName.value, 'none')]"
+            "value": "[if(parameters('deployBlobUpdateLogicApp'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingStorageAccountRg')), 'Microsoft.Resources/deployments', format('sa-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.storageAccountName.value, 'None')]"
           },
           "storageAccountId": {
-            "value": "[if(variables('blobWithOutConnector'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingStorageAccountRg')), 'Microsoft.Resources/deployments', format('sa-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.storageAccountId.value, 'none')]"
+            "value": "[if(parameters('deployBlobUpdateLogicApp'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingStorageAccountRg')), 'Microsoft.Resources/deployments', format('sa-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.storageAccountId.value, 'None')]"
           },
           "tags": {
             "value": {}
