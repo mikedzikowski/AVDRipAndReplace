@@ -242,7 +242,7 @@
                             "name": "deployBlobUpdateLogicApp",
                             "type": "Microsoft.Common.DropDown",
                             "label": "Deploy Blob Update Logic App",
-                            "defaultValue": "false",
+                            "defaultValue": ["false"],
                             "toolTip": "To be used with AVD solutions that deploy post configuration software. Set the following values if there is a storage account that should be targeted. If values are not set a default naming convention will be used by resources created.",
                             "constraints": {
                                 "required": false,
@@ -265,7 +265,7 @@
                             "visible": "[equals(steps('blobUpdate').deployBlobUpdateLogicApp, true)]",
                             "label": "Existing Storage Account",
                             "defaultValue": "No",
-                            "toolTip": "Use an storage account",
+                            "toolTip": "New or exisiting storage account",
                             "constraints": {
                                 "required": true,
                                 "allowedValues": [
@@ -285,7 +285,7 @@
                             "type": "Microsoft.Solutions.ResourceSelector",
                             "visible": "[equals(steps('blobUpdate').existingStorageAccount, true)]",
                             "label": "Existing Storage Account Name",
-                            "defaultValue": "storage01",
+                            "defaultValue": ["NONE"],
                             "resourceType": "Microsoft.Storage/storageAccounts",
                             "options": {
                                 "filter": {
@@ -312,7 +312,7 @@
                             "label": "New Storage Account Name",
                             "visible": "[equals(steps('blobUpdate').existingStorageAccount, false)]",
                             "toolTip": "Input a name for the Storage Account.",
-                            "defaultValue": "",
+                            "defaultValue": ["NONE"],
                             "placeholder": "Example: storage01",
                             "constraints": {
                                 "required": true,
@@ -328,7 +328,7 @@
                             "name": "saResourceGroup",
                             "type": "Microsoft.Common.DropDown",
                             "visible": "[equals(steps('blobUpdate').existingStorageAccount, false)]",
-                            "defaultValue": "sa-rg",
+                            "defaultValue": ["NONE"],
                             "label": "Storage Account Resource Group",
                             "constraints": {
                                 "allowedValues": "[map(steps('basics').ResourceGroupApi.value, (item) => parse(concat('{\"label\":\"', item.name, '\",\"value\":\"', item.name, '\"}')))]"
@@ -338,7 +338,7 @@
                             "name": "container",
                             "type": "Microsoft.Common.TextBox",
                             "label": "Container",
-                            "defaultValue": "",
+                            "defaultValue": [""],
                             "toolTip": "",
                             "constraints": {
                                 "required": false,
@@ -367,7 +367,7 @@
                             "type": "Microsoft.Common.OptionsGroup",
                             "visible": true,
                             "label": "Existing Automation Account",
-                            "defaultValue": "No",
+                            "defaultValue": ["No"],
                             "toolTip": "Select an existing automation account",
                             "constraints": {
                                 "required": true,
@@ -459,7 +459,7 @@
                             "name": "sessionHostResourceGroup",
                             "type": "Microsoft.Common.DropDown",
                             "label": "Existing Session Host Resource Group",
-                            "defaultValue": "",
+                            "defaultValue": [""],
                             "constraints": {
                                 "allowedValues": "[map(steps('basics').ResourceGroupApi.value, (item) => parse(concat('{\"label\":\"', item.name, '\",\"value\":\"', item.name, '\"}')))]"
                             }
@@ -597,9 +597,9 @@
                 "deploymentNameSuffix": "[steps('basics').deploymentNameSuffix]",
                 "exisitingAutomationAccount": "[if(equals(steps('AutomationEnvironment').existingAutomationAccount, true), steps('AutomationEnvironment').automationAccounts.name, steps('AutomationEnvironment').automationAccount.name)]",
                 "existingAutomationAccountRg": "[if(equals(steps('AutomationEnvironment').existingAutomationAccount, true), first(skip(split(steps('AutomationEnvironment').automationAccounts.id, '/'), 4)), steps('AutomationEnvironment').aaResourceGroup)]",
-                "deployBlobUpdateLogicApp": "[steps('blobUpdate').deployBlobUpdateLogicApp]",
-                "exisitingStorageAccount": "[if(equals(steps('blobUpdate').existingStorageAccount, true), steps('blobUpdate').storageAccounts.name, steps('blobUpdate').storageAccount)]",
-                "existingStorageAccountRg": "[if(equals(steps('blobUpdate').deployBlobUpdateLogicApp, true), steps('blobUpdate').saResourceGroup, 'none')]",
+                "deployBlobUpdateLogicApp": "[if(equals(steps('blobUpdate').deployBlobUpdateLogicApp, true), true, false)]",
+                "exisitingStorageAccount": "[if(equals(steps('blobUpdate').existingStorageAccount, true), steps('blobUpdate').storageAccounts.name, steps('blobUpdate').storageAccount.name)]",
+                "existingStorageAccountRg": "[if(equals(steps('blobUpdate').existingStorageAccount, true), first(skip(split(steps('blobUpdate').storageAccounts.id, '/'), 4)), steps('blobUpdate').saResourceGroup)]",
                 "container": "[steps('blobUpdate').container]",
                 "triggerFrequency": "[steps('basics').triggerFrequency]",
                 "triggerInterval": "[steps('basics').triggerInterval]",
