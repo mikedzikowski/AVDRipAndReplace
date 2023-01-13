@@ -53,15 +53,15 @@
     },
     "exisitingStorageAccount": {
       "type": "string",
-      "defaultValue": "none"
+      "defaultValue": ""
     },
     "existingStorageAccountRg": {
       "type": "string",
-      "defaultValue": "none"
+      "defaultValue": ""
     },
     "container": {
       "type": "string",
-      "defaultValue": "none"
+      "defaultValue": ""
     },
     "triggerFrequency": {
       "type": "string",
