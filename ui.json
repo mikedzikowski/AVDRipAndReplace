@@ -242,7 +242,7 @@
                             "name": "deployBlobUpdateLogicApp",
                             "type": "Microsoft.Common.DropDown",
                             "label": "Deploy Blob Update Logic App",
-                            "defaultValue": [false],
+                            "defaultValue": ["false"],
                             "toolTip": "To be used with AVD solutions that deploy post configuration software. Set the following values if there is a storage account that should be targeted. If values are not set a default naming convention will be used by resources created.",
                             "constraints": {
                                 "required": false,
@@ -264,7 +264,7 @@
                             "type": "Microsoft.Common.OptionsGroup",
                             "visible": "[equals(steps('blobUpdate').deployBlobUpdateLogicApp, true)]",
                             "label": "Existing Storage Account",
-                            "defaultValue": [false],
+                            "defaultValue": ["No"],
                             "toolTip": "New or exisiting storage account",
                             "constraints": {
                                 "required": true,
@@ -338,7 +338,7 @@
                             "name": "container",
                             "type": "Microsoft.Common.TextBox",
                             "label": "Container",
-                            "defaultValue": ["container"],
+                            "defaultValue": "container",
                             "toolTip": "",
                             "constraints": {
                                 "required": false,
