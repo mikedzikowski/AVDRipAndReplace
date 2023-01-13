@@ -19,9 +19,9 @@ param existingAutomationAccountRg string
 @description('To be used with AVD solutions that deploy post configuration software. Set the following values if there is a storage account that should be targeted. If values are not set a default naming convention will be used by resources created.')
 param deployBlobUpdateLogicApp bool = false
 param newStorageAccount bool = false
-param exisitingStorageAccount string = ''
-param existingStorageAccountRg string = ''
-param container string = ''
+param exisitingStorageAccount string = 'none'
+param existingStorageAccountRg string = 'none'
+param container string = 'none'
 @allowed([
   'Month'
   'Week'
