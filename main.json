@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.7.4.23292",
-      "templateHash": "1685003597727956159"
+      "templateHash": "2661590770362252297"
     }
   },
   "parameters": {
@@ -42,24 +42,26 @@
     },
     "deployBlobUpdateLogicApp": {
       "type": "bool",
+      "defaultValue": false,
       "metadata": {
         "description": "To be used with AVD solutions that deploy post configuration software. Set the following values if there is a storage account that should be targeted. If values are not set a default naming convention will be used by resources created."
       }
     },
     "newStorageAccount": {
-      "type": "bool"
+      "type": "bool",
+      "defaultValue": false
     },
     "exisitingStorageAccount": {
       "type": "string",
-      "defaultValue": "none"
+      "defaultValue": ""
     },
     "existingStorageAccountRg": {
       "type": "string",
-      "defaultValue": "none"
+      "defaultValue": ""
     },
     "container": {
       "type": "string",
-      "defaultValue": "none"
+      "defaultValue": ""
     },
     "triggerFrequency": {
       "type": "string",
