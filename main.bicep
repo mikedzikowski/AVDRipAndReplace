@@ -340,6 +340,7 @@ module getImageVersionlogicAppUsingAzureMonitorAlerts 'modules/logicappGetImageV
   dependsOn: [
     automationAccount
     automationAccountConnection
+    blobConnection
   ]
 }
 
@@ -376,6 +377,7 @@ module getImageVersionlogicApp 'modules/logicappGetImageVersion.bicep' = if(imag
   }
   dependsOn: [
     o365Connection
+    blobConnection
   ]
 }
 
