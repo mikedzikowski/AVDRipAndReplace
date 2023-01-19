@@ -284,8 +284,6 @@
                             "defaultValue": ["testrg"],
                             "resourceType": "Microsoft.Storage/storageAccounts",
                             "options": {
-                                "filter": {
-                                }
                             }
                         },
                         {
