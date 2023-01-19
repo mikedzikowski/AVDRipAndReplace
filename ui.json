@@ -218,8 +218,6 @@
                             "resourceType": "Microsoft.OperationalInsights/workspaces",
                             "options": {
                                 "filter": {
-                                    "subscription": "onBasics",
-                                    "location": "onBasics"
                                 }
                             }
                         }
