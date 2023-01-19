@@ -535,6 +535,7 @@ module getBlobUpdateLogicAppUsingAzureMonitorAlerts 'modules/logicAppGetBlobUpda
   }
   dependsOn: [
     blobConnection
+    automationAccount
   ]
 }
 
