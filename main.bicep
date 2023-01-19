@@ -377,7 +377,6 @@ module getImageVersionlogicApp 'modules/logicappGetImageVersion.bicep' = if(imag
   }
   dependsOn: [
     o365Connection
-    blobConnection
   ]
 }
 
