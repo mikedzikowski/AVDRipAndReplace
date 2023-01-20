@@ -428,13 +428,13 @@ module rbacPermissionAzureAutomationConnector 'modules/rbacPermissions.bicep' = 
 
 module blobConnection 'modules/blobConnection.bicep' = if (deployBlobUpdateLogicApp) {
   name: 'blobConnection-deployment-${deploymentNameSuffix}'
-  scope: resourceGroup(storageAccountSubscriptionId, existingStorageAccountRg)
+  scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
   params: {
     location: location
     storageName: deployBlobUpdateLogicApp ? storageAccount.outputs.storageAccountName : 'None'
     name: blobConnectionName
-    saResourceGroup: deployBlobUpdateLogicApp ? existingStorageAccountRg : 'None'
-    subscriptionId: storageAccountSubscriptionId
+    saResourceGroup: deployBlobUpdateLogicApp ? storageAccount.outputs.storageAccountRg : 'None'
+    storageSubscriptionId: deployBlobUpdateLogicApp ? storageAccount.outputs.storageAccountSubscriptionId : 'None'
   }
 }
 

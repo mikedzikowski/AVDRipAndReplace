@@ -1,12 +1,12 @@
 param storageName string
 param location string
 param name string
-param subscriptionId string
+param storageSubscriptionId string
 param saResourceGroup string
 
 resource storage 'Microsoft.Storage/storageAccounts@2021-06-01' existing = {
   name: storageName
-  scope: resourceGroup(subscriptionId, saResourceGroup)
+  scope: resourceGroup(storageSubscriptionId, saResourceGroup)
 }
 resource blobStorageConnection 'Microsoft.Web/connections@2016-06-01' = {
   name: name

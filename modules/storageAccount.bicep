@@ -76,3 +76,5 @@ resource existingContainer 'Microsoft.Storage/storageAccounts/blobServices/conta
 output storageAccountName string = sa.name
 output storageAccountId string = sa.id
 output container string = new ? container.name : existingContainer.name
+output storageAccountSubscriptionId string = subscription().subscriptionId
+output storageAccountRg string = resourceGroup().name
