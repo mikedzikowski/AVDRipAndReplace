@@ -28,6 +28,9 @@ param dayOfWeekOccurrence string
 param cloud string
 param tenantId string
 param templateSpecId string
+param blobConnectId string
+param office365ConnectionId string
+param automationAccountConnectId   string
 
 resource workflows_GetBlobUpdate_name_resource 'Microsoft.Logic/workflows@2017-07-01' = {
   name: workflows_GetBlobUpdate_name
@@ -178,7 +181,7 @@ resource workflows_GetBlobUpdate_name_resource 'Microsoft.Logic/workflows@2017-0
       '$connections': {
         value: {
           azureautomation: {
-            connectionId: '/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Web/connections/${automationAccountConnectionName}'
+            connectionId: automationAccountConnectId
             connectionName: automationAccountConnectionName
             connectionProperties: {
               authentication: {
@@ -188,12 +191,12 @@ resource workflows_GetBlobUpdate_name_resource 'Microsoft.Logic/workflows@2017-0
             id: '/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis/azureautomation'
           }
           azureblob: {
-            connectionId: '/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Web/connections/${blobConnectionName}'
+            connectionId: blobConnectId
             connectionName: blobConnectionName
             id: '/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis/azureblob'
           }
           office365: {
-            connectionId: '/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Web/connections/${officeConnectionName}'
+            connectionId: office365ConnectionId
             connectionName: officeConnectionName
             id: '/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${automationAccountLocation}/managedApis/office365'
           }

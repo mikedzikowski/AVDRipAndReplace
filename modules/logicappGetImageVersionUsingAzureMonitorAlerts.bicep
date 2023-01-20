@@ -22,6 +22,7 @@ param tenantId string
 param subscriptionId string
 param hostPoolName string
 param templateSpecId string
+param automationAccountConnectId   string
 
 resource workflows_GetImageVersion_name_resource 'Microsoft.Logic/workflows@2017-07-01' = {
   name: workflows_GetImageVersion_name
@@ -429,7 +430,7 @@ resource workflows_GetImageVersion_name_resource 'Microsoft.Logic/workflows@2017
       '$connections': {
         value: {
           azureautomation: {
-            connectionId: '/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Web/connections/${automationAccountConnectionName}'
+            connectionId: automationAccountConnectId
             connectionName: automationAccountConnectionName
             connectionProperties:{
             authentication: {

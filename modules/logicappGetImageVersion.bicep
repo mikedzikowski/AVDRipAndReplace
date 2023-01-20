@@ -24,6 +24,8 @@ param tenantId string
 param subscriptionId string
 param hostPoolName string
 param templateSpecId string
+param office365ConnectionId string
+param automationAccountConnectId   string
 
 resource workflows_GetImageVersion_name_resource 'Microsoft.Logic/workflows@2017-07-01' = {
   name: workflows_GetImageVersion_name
@@ -414,7 +416,7 @@ parameters: {
       '$connections': {
         value: {
           azureautomation: {
-            connectionId: '/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Web/connections/${automationAccountConnectionName}'
+            connectionId: automationAccountConnectId
             connectionName: automationAccountConnectionName
             connectionProperties:{
             authentication: {
@@ -424,7 +426,7 @@ parameters: {
             id: concat('/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${automationAccountLocation}/managedApis/azureautomation')
           }
           office365: {
-            connectionId: '/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Web/connections/${officeConnectionName}'
+            connectionId: office365ConnectionId
             connectionName: officeConnectionName
             id: '/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${automationAccountLocation}/managedApis/office365'
           }

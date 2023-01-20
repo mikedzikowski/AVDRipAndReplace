@@ -17,3 +17,4 @@ resource connection_azureautomation_name_resource 'Microsoft.Web/connections@201
   }
 }
 
+output office365ConnectionId string = connection_azureautomation_name_resource.id

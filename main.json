@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.7.4.23292",
-      "templateHash": "12584153729863735071"
+      "templateHash": "5523243884189651922"
     }
   },
   "parameters": {
@@ -563,7 +563,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.7.4.23292",
-              "templateHash": "16463077532820351799"
+              "templateHash": "16750812602606904063"
             }
           },
           "parameters": {
@@ -597,7 +597,13 @@
                 "testLinks": []
               }
             }
-          ]
+          ],
+          "outputs": {
+            "automationConnectId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Web/connections', parameters('connection_azureautomation_name'))]"
+            }
+          }
         }
       },
       "dependsOn": [
@@ -637,7 +643,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.7.4.23292",
-              "templateHash": "7922443813728630339"
+              "templateHash": "8068780253450216651"
             }
           },
           "parameters": {
@@ -670,7 +676,13 @@
                 "testLinks": []
               }
             }
-          ]
+          ],
+          "outputs": {
+            "office365ConnectionId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Web/connections', parameters('connection_azureautomation_name'))]"
+            }
+          }
         }
       },
       "dependsOn": [
@@ -985,6 +997,9 @@
           },
           "identityType": {
             "value": "[variables('identityType')]"
+          },
+          "automationAccountConnectId": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('automationAccountConnection-deployment-{0}', parameters('deploymentNameSuffix')))).outputs.automationConnectId.value]"
           }
         },
         "template": {
@@ -994,7 +1009,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.7.4.23292",
-              "templateHash": "9439895683328223574"
+              "templateHash": "16612998825922241751"
             }
           },
           "parameters": {
@@ -1068,6 +1083,9 @@
               "type": "string"
             },
             "templateSpecId": {
+              "type": "string"
+            },
+            "automationAccountConnectId": {
               "type": "string"
             }
           },
@@ -1475,7 +1493,7 @@
                   "$connections": {
                     "value": {
                       "azureautomation": {
-                        "connectionId": "[format('/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Web/connections/{2}', parameters('subscriptionId'), resourceGroup().name, parameters('automationAccountConnectionName'))]",
+                        "connectionId": "[parameters('automationAccountConnectId')]",
                         "connectionName": "[parameters('automationAccountConnectionName')]",
                         "connectionProperties": {
                           "authentication": {
@@ -1594,6 +1612,12 @@
           },
           "identityType": {
             "value": "[variables('identityType')]"
+          },
+          "automationAccountConnectId": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('automationAccountConnection-deployment-{0}', parameters('deploymentNameSuffix')))).outputs.automationConnectId.value]"
+          },
+          "office365ConnectionId": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('o365Connection-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.office365ConnectionId.value]"
           }
         },
         "template": {
@@ -1603,7 +1627,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.7.4.23292",
-              "templateHash": "17352015172784058023"
+              "templateHash": "10929838978352948224"
             }
           },
           "parameters": {
@@ -1683,6 +1707,12 @@
               "type": "string"
             },
             "templateSpecId": {
+              "type": "string"
+            },
+            "office365ConnectionId": {
+              "type": "string"
+            },
+            "automationAccountConnectId": {
               "type": "string"
             }
           },
@@ -2071,7 +2101,7 @@
                   "$connections": {
                     "value": {
                       "azureautomation": {
-                        "connectionId": "[format('/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Web/connections/{2}', parameters('subscriptionId'), resourceGroup().name, parameters('automationAccountConnectionName'))]",
+                        "connectionId": "[parameters('automationAccountConnectId')]",
                         "connectionName": "[parameters('automationAccountConnectionName')]",
                         "connectionProperties": {
                           "authentication": {
@@ -2081,7 +2111,7 @@
                         "id": "[concat(format('/subscriptions/{0}/providers/Microsoft.Web/locations/{1}/managedApis/azureautomation', parameters('subscriptionId'), parameters('automationAccountLocation')))]"
                       },
                       "office365": {
-                        "connectionId": "[format('/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Web/connections/{2}', parameters('subscriptionId'), resourceGroup().name, parameters('officeConnectionName'))]",
+                        "connectionId": "[parameters('office365ConnectionId')]",
                         "connectionName": "[parameters('officeConnectionName')]",
                         "id": "[format('/subscriptions/{0}/providers/Microsoft.Web/locations/{1}/managedApis/office365', parameters('subscriptionId'), parameters('automationAccountLocation'))]"
                       }
@@ -2101,6 +2131,7 @@
       },
       "dependsOn": [
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('automationAccountSubscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix')))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('automationAccountConnection-deployment-{0}', parameters('deploymentNameSuffix')))]",
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('o365Connection-deployment-{0}', parameters('deploymentNameSuffix')))]"
       ]
     },
@@ -2769,6 +2800,15 @@
           },
           "runbookNewHostPoolRipAndReplace": {
             "value": "[variables('runbookNewHostPoolRipAndReplace')]"
+          },
+          "office365ConnectionId": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('o365Connection-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.office365ConnectionId.value]"
+          },
+          "automationAccountConnectId": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('automationAccountConnection-deployment-{0}', parameters('deploymentNameSuffix')))).outputs.automationConnectId.value]"
+          },
+          "blobConnectId": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('storageAccountSubscriptionId'), parameters('existingStorageAccountRg')), 'Microsoft.Resources/deployments', format('blobConnection-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.blobConnectionId.value]"
           }
         },
         "template": {
@@ -2778,7 +2818,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.7.4.23292",
-              "templateHash": "14168866856196095368"
+              "templateHash": "2559638193640532482"
             }
           },
           "parameters": {
@@ -2870,6 +2910,15 @@
               "type": "string"
             },
             "templateSpecId": {
+              "type": "string"
+            },
+            "blobConnectId": {
+              "type": "string"
+            },
+            "office365ConnectionId": {
+              "type": "string"
+            },
+            "automationAccountConnectId": {
               "type": "string"
             }
           },
@@ -3020,7 +3069,7 @@
                   "$connections": {
                     "value": {
                       "azureautomation": {
-                        "connectionId": "[format('/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Web/connections/{2}', parameters('subscriptionId'), resourceGroup().name, parameters('automationAccountConnectionName'))]",
+                        "connectionId": "[parameters('automationAccountConnectId')]",
                         "connectionName": "[parameters('automationAccountConnectionName')]",
                         "connectionProperties": {
                           "authentication": {
@@ -3030,12 +3079,12 @@
                         "id": "[format('/subscriptions/{0}/providers/Microsoft.Web/locations/{1}/managedApis/azureautomation', parameters('subscriptionId'), parameters('location'))]"
                       },
                       "azureblob": {
-                        "connectionId": "[format('/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Web/connections/{2}', parameters('subscriptionId'), resourceGroup().name, parameters('blobConnectionName'))]",
+                        "connectionId": "[parameters('blobConnectId')]",
                         "connectionName": "[parameters('blobConnectionName')]",
                         "id": "[format('/subscriptions/{0}/providers/Microsoft.Web/locations/{1}/managedApis/azureblob', parameters('subscriptionId'), parameters('location'))]"
                       },
                       "office365": {
-                        "connectionId": "[format('/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Web/connections/{2}', parameters('subscriptionId'), resourceGroup().name, parameters('officeConnectionName'))]",
+                        "connectionId": "[parameters('office365ConnectionId')]",
                         "connectionName": "[parameters('officeConnectionName')]",
                         "id": "[format('/subscriptions/{0}/providers/Microsoft.Web/locations/{1}/managedApis/office365', parameters('subscriptionId'), parameters('automationAccountLocation'))]"
                       }
@@ -3055,7 +3104,9 @@
       },
       "dependsOn": [
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('automationAccountSubscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix')))]",
-        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('storageAccountSubscriptionId'), parameters('existingStorageAccountRg')), 'Microsoft.Resources/deployments', format('blobConnection-deployment-{0}', parameters('deploymentNameSuffix')))]"
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('automationAccountConnection-deployment-{0}', parameters('deploymentNameSuffix')))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('storageAccountSubscriptionId'), parameters('existingStorageAccountRg')), 'Microsoft.Resources/deployments', format('blobConnection-deployment-{0}', parameters('deploymentNameSuffix')))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('o365Connection-deployment-{0}', parameters('deploymentNameSuffix')))]"
       ]
     },
     {
@@ -3151,6 +3202,12 @@
           },
           "runbookNewHostPoolRipAndReplace": {
             "value": "[variables('runbookNewHostPoolRipAndReplace')]"
+          },
+          "automationAccountConnectId": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('automationAccountConnection-deployment-{0}', parameters('deploymentNameSuffix')))).outputs.automationConnectId.value]"
+          },
+          "blobConnectId": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('storageAccountSubscriptionId'), parameters('existingStorageAccountRg')), 'Microsoft.Resources/deployments', format('blobConnection-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.blobConnectionId.value]"
           }
         },
         "template": {
@@ -3160,7 +3217,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.7.4.23292",
-              "templateHash": "11933186219244855112"
+              "templateHash": "8299886159444071764"
             }
           },
           "parameters": {
@@ -3243,6 +3300,12 @@
               "type": "string"
             },
             "templateSpecId": {
+              "type": "string"
+            },
+            "blobConnectId": {
+              "type": "string"
+            },
+            "automationAccountConnectId": {
               "type": "string"
             }
           },
@@ -3434,7 +3497,7 @@
                   "$connections": {
                     "value": {
                       "azureautomation": {
-                        "connectionId": "[format('/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Web/connections/{2}', parameters('subscriptionId'), resourceGroup().name, parameters('automationAccountConnectionName'))]",
+                        "connectionId": "[parameters('automationAccountConnectId')]",
                         "connectionName": "[parameters('automationAccountConnectionName')]",
                         "connectionProperties": {
                           "authentication": {
@@ -3444,7 +3507,7 @@
                         "id": "[format('/subscriptions/{0}/providers/Microsoft.Web/locations/{1}/managedApis/azureautomation', parameters('subscriptionId'), parameters('location'))]"
                       },
                       "azureblob": {
-                        "connectionId": "[format('/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Web/connections/{2}', parameters('subscriptionId'), resourceGroup().name, parameters('blobConnectionName'))]",
+                        "connectionId": "[parameters('blobConnectId')]",
                         "connectionName": "[parameters('blobConnectionName')]",
                         "id": "[format('/subscriptions/{0}/providers/Microsoft.Web/locations/{1}/managedApis/azureblob', parameters('subscriptionId'), parameters('location'))]"
                       }
@@ -3464,6 +3527,7 @@
       },
       "dependsOn": [
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('automationAccountSubscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix')))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('automationAccountConnection-deployment-{0}', parameters('deploymentNameSuffix')))]",
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('storageAccountSubscriptionId'), parameters('existingStorageAccountRg')), 'Microsoft.Resources/deployments', format('blobConnection-deployment-{0}', parameters('deploymentNameSuffix')))]"
       ]
     },

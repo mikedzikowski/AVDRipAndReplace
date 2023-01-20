@@ -341,6 +341,7 @@ module getImageVersionlogicAppUsingAzureMonitorAlerts 'modules/logicappGetImageV
     waitForRunBook: waitForRunBook
     hostPoolName: hostPoolName
     identityType: identityType
+    automationAccountConnectId: automationAccountConnection.outputs.automationConnectId
   }
   dependsOn: [
     automationAccount
@@ -379,6 +380,8 @@ module getImageVersionlogicApp 'modules/logicappGetImageVersion.bicep' = if(imag
     waitForRunBook: waitForRunBook
     hostPoolName: hostPoolName
     identityType: identityType
+    automationAccountConnectId: automationAccountConnection.outputs.automationConnectId
+    office365ConnectionId: o365Connection.outputs.office365ConnectionId
   }
   dependsOn: [
     o365Connection
@@ -500,6 +503,9 @@ module getBlobUpdateLogicApps 'modules/logicAppGetBlobUpdate.bicep' = if (blobWi
     maxFileCount: maxFileCount
     subscriptionId: subscriptionId
     runbookNewHostPoolRipAndReplace: runbookNewHostPoolRipAndReplace
+    office365ConnectionId: o365Connection.outputs.office365ConnectionId
+    automationAccountConnectId: automationAccountConnection.outputs.automationConnectId
+    blobConnectId: blobConnection.outputs.blobConnectionId
   }
   dependsOn: [
     blobConnection
@@ -537,6 +543,8 @@ module getBlobUpdateLogicAppUsingAzureMonitorAlerts 'modules/logicAppGetBlobUpda
     maxFileCount: maxFileCount
     subscriptionId: subscriptionId
     runbookNewHostPoolRipAndReplace: runbookNewHostPoolRipAndReplace
+    automationAccountConnectId: automationAccountConnection.outputs.automationConnectId
+    blobConnectId: blobConnection.outputs.blobConnectionId
   }
   dependsOn: [
     blobConnection
