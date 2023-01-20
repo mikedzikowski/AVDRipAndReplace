@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.7.4.23292",
-      "templateHash": "4982575540013695250"
+      "templateHash": "14621529327436896815"
     }
   },
   "parameters": {
@@ -1620,7 +1620,7 @@
             "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('automationAccountConnection-deployment-{0}', parameters('deploymentNameSuffix')))).outputs.automationConnectId.value]"
           },
           "office365ConnectionId": {
-            "value": "[if(variables('blobWithConnector'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('o365Connection-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.office365ConnectionId.value, 'None')]"
+            "value": "[if(variables('imageWithConnector'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('o365Connection-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.office365ConnectionId.value, 'None')]"
           }
         },
         "template": {
@@ -2472,13 +2472,13 @@
         "mode": "Incremental",
         "parameters": {
           "location": {
-            "value": "[parameters('location')]"
+            "value": "[if(parameters('deployBlobUpdateLogicApp'), parameters('location'), 'None')]"
           },
           "storageName": {
             "value": "[if(parameters('deployBlobUpdateLogicApp'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('storageAccountSubscriptionId'), parameters('existingStorageAccountRg')), 'Microsoft.Resources/deployments', format('sa-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.storageAccountName.value, 'None')]"
           },
           "name": {
-            "value": "[variables('blobConnectionName')]"
+            "value": "[if(parameters('deployBlobUpdateLogicApp'), variables('blobConnectionName'), 'None')]"
           },
           "saResourceGroup": {
             "value": "[if(parameters('deployBlobUpdateLogicApp'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('storageAccountSubscriptionId'), parameters('existingStorageAccountRg')), 'Microsoft.Resources/deployments', format('sa-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.storageAccountRg.value, 'None')]"
@@ -2568,7 +2568,7 @@
             "value": "[if(variables('blobWithConnector'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('getBlobUpdateLogicApps-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.blobPrincipalId.value, 'None')]"
           },
           "roleId": {
-            "value": "[variables('roleId')]"
+            "value": "[if(variables('blobWithConnector'), variables('roleId'), 'None')]"
           }
         },
         "template": {
@@ -2819,7 +2819,7 @@
             "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('automationAccountConnection-deployment-{0}', parameters('deploymentNameSuffix')))).outputs.automationConnectId.value]"
           },
           "blobConnectId": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('blobConnection-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.blobConnectionId.value]"
+            "value": "[if(variables('blobWithConnector'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('blobConnection-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.blobConnectionId.value, 'None')]"
           }
         },
         "template": {
@@ -3218,7 +3218,7 @@
             "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('automationAccountConnection-deployment-{0}', parameters('deploymentNameSuffix')))).outputs.automationConnectId.value]"
           },
           "blobConnectId": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('blobConnection-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.blobConnectionId.value]"
+            "value": "[if(variables('blobWithOutConnector'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('blobConnection-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.blobConnectionId.value, 'None')]"
           }
         },
         "template": {

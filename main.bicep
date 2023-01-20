@@ -381,7 +381,7 @@ module getImageVersionlogicApp 'modules/logicappGetImageVersion.bicep' = if(imag
     hostPoolName: hostPoolName
     identityType: identityType
     automationAccountConnectId: automationAccountConnection.outputs.automationConnectId
-    office365ConnectionId: blobWithConnector ? o365Connection.outputs.office365ConnectionId : 'None'
+    office365ConnectionId: imageWithConnector ? o365Connection.outputs.office365ConnectionId : 'None'
   }
 }
 
@@ -430,9 +430,9 @@ module blobConnection 'modules/blobConnection.bicep' = if (deployBlobUpdateLogic
   name: 'blobConnection-deployment-${deploymentNameSuffix}'
   scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
   params: {
-    location: location
+    location: deployBlobUpdateLogicApp ? location : 'None'
     storageName: deployBlobUpdateLogicApp ? storageAccount.outputs.storageAccountName : 'None'
-    name: blobConnectionName
+    name: deployBlobUpdateLogicApp ? blobConnectionName : 'None'
     saResourceGroup: deployBlobUpdateLogicApp ? storageAccount.outputs.storageAccountRg : 'None'
     storageSubscriptionId: deployBlobUpdateLogicApp ? storageAccount.outputs.storageAccountSubscriptionId : 'None'
   }
@@ -443,7 +443,7 @@ module rbacBlobPermissionConnector 'modules/rbacPermissions.bicep' = if(blobWith
   scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
   params: {
     principalId: blobWithConnector ? getBlobUpdateLogicApps.outputs.blobPrincipalId  : 'None'
-    roleId: roleId
+    roleId: blobWithConnector ? roleId : 'None'
   }
   dependsOn: [
     automationAccount
@@ -502,7 +502,7 @@ module getBlobUpdateLogicApps 'modules/logicAppGetBlobUpdate.bicep' = if (blobWi
     runbookNewHostPoolRipAndReplace: runbookNewHostPoolRipAndReplace
     office365ConnectionId: blobWithConnector ? o365Connection.outputs.office365ConnectionId : 'None'
     automationAccountConnectId: automationAccountConnection.outputs.automationConnectId
-    blobConnectId: blobConnection.outputs.blobConnectionId
+    blobConnectId: blobWithConnector ? blobConnection.outputs.blobConnectionId : 'None'
   }
   dependsOn: [
     blobConnection
@@ -541,7 +541,7 @@ module getBlobUpdateLogicAppUsingAzureMonitorAlerts 'modules/logicAppGetBlobUpda
     subscriptionId: subscriptionId
     runbookNewHostPoolRipAndReplace: runbookNewHostPoolRipAndReplace
     automationAccountConnectId: automationAccountConnection.outputs.automationConnectId
-    blobConnectId: blobConnection.outputs.blobConnectionId
+    blobConnectId: blobWithOutConnector ? blobConnection.outputs.blobConnectionId : 'None'
   }
   dependsOn: [
     blobConnection
