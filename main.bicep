@@ -94,6 +94,11 @@ param startTime string = '23:00'
 
 param newAutomationAccount bool
 
+param storageAccountSubscriptionId string = subscription().subscriptionId
+param automationAccountSubscriptionId string = subscription().subscriptionId
+param lawAccountSubscriptionId string = subscription().subscriptionId
+param lawResourceGroup string
+
 // Variables
 var cloud = environment().name
 var tenantId = tenant().tenantId
@@ -226,7 +231,7 @@ var imageWithOutConnector = !deployWithO365Connector
 
 module automationAccount 'modules/automationAccount.bicep' = {
   name: 'aa-deployment-${deploymentNameSuffix}'
-  scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
+  scope: resourceGroup(automationAccountSubscriptionId, existingAutomationAccountRg)
   params: {
     automationAccountName: automationAccountNameValue
     location: location
@@ -382,7 +387,7 @@ module getImageVersionlogicApp 'modules/logicappGetImageVersion.bicep' = if(imag
 
 module storageAccount 'modules/storageAccount.bicep' = if(deployBlobUpdateLogicApp) {
   name: 'sa-deployment-${deploymentNameSuffix}'
-  scope: resourceGroup(subscriptionId, existingStorageAccountRg)
+  scope: resourceGroup(storageAccountSubscriptionId, existingStorageAccountRg)
   params: {
     storageAccountName: deployBlobUpdateLogicApp ? exisitingStorageAccount : 'None'
     containerName: deployBlobUpdateLogicApp ? container  : 'None'
@@ -423,13 +428,13 @@ module rbacPermissionAzureAutomationConnector 'modules/rbacPermissions.bicep' = 
 
 module blobConnection 'modules/blobConnection.bicep' = if (deployBlobUpdateLogicApp) {
   name: 'blobConnection-deployment-${deploymentNameSuffix}'
-  scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
+  scope: resourceGroup(storageAccountSubscriptionId, existingStorageAccountRg)
   params: {
     location: location
     storageName: deployBlobUpdateLogicApp ? storageAccount.outputs.storageAccountName : 'None'
     name: blobConnectionName
     saResourceGroup: deployBlobUpdateLogicApp ? existingStorageAccountRg : 'None'
-    subscriptionId: subscriptionId
+    subscriptionId: storageAccountSubscriptionId
   }
 }
 
@@ -507,7 +512,7 @@ module getBlobUpdateLogicAppUsingAzureMonitorAlerts 'modules/logicAppGetBlobUpda
   params: {
     location: location
     cloud: cloud
-    dayOfWeek:dayOfWeek
+    dayOfWeek: dayOfWeek
     dayOfWeekOccurrence: dayOfWeekOccurrence
     startTime: startTime
     templateSpecId: templateSpecId
@@ -540,7 +545,7 @@ module getBlobUpdateLogicAppUsingAzureMonitorAlerts 'modules/logicAppGetBlobUpda
 }
 
 module notifications 'modules/notifications.bicep' = {
-  scope: resourceGroup(subscriptionId, hostPoolResourceGroupName)
+  scope: resourceGroup(lawAccountSubscriptionId, lawResourceGroup)
   name: 'notifications-deployment-${deploymentNameSuffix}'
   params: {
     actionGroupName: actionGroupName
@@ -553,7 +558,7 @@ module notifications 'modules/notifications.bicep' = {
 }
 
 module blobNotifications 'modules/blobNotifications.bicep' = if(deployBlobUpdateLogicApp) {
-  scope: resourceGroup(subscriptionId, existingStorageAccountRg)
+  scope: resourceGroup(storageAccountSubscriptionId, existingStorageAccountRg)
   name: 'blobNotifications-deployment-${deploymentNameSuffix}'
   params: {
     actionGroupName: actionGroupName

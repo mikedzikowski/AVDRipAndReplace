@@ -441,10 +441,6 @@
                             "label": "Existing Hostpool",
                             "resourceType": "Microsoft.DesktopVirtualization/hostpools",
                             "options": {
-                                "filter": {
-                                    "subscription": "onBasics",
-                                    "location": "onBasics"
-                                }
                             }
                         },
                         {
@@ -579,6 +575,7 @@
                 "location": "[steps('basics').location]",
                 "sessionHostResourceGroupName": "[steps('AvdEnvironment').sessionHostResourceGroup]",
                 "hostPoolResourceGroupName": "[first(skip(split(steps('AvdEnvironment').hostPoolSelector.id, '/'), 4))]",
+                "lawResourceGroup"  : "[first(skip(split(steps('notifications').lawSelector.id, '/'), 4))]",
                 "hostPoolName": "[steps('AvdEnvironment').hostPoolSelector.name]",
                 "deployWithO365Connector": "[steps('notifications').o365Connector]",
                 "dayOfWeek": "[steps('maintenaceWindow').dayOfWeek]",
@@ -599,7 +596,10 @@
                 "recurrenceInterval": "[steps('basics').recurrenceInterval]",
                 "emailContact": "[steps('notifications').emailAddress]",
                 "newStorageAccount":"[if(equals(steps('blobUpdate').existingStorageAccount, false), true, false)]",
-                "newAutomationAccount":"[if(equals(steps('AutomationEnvironment').existingAutomationAccount, false), true, false)]"
+                "newAutomationAccount":"[if(equals(steps('AutomationEnvironment').existingAutomationAccount, false), true, false)]",
+                "automationAccountSubscriptionId":"[if(equals(steps('AutomationEnvironment').existingAutomationAccount, true), first(skip(split(steps('AutomationEnvironment').automationAccounts.id, '/'), 2)), first(skip(split(steps('basics').resourceScope.subscription.id, '/'), 2)))]",
+                "storageAccountSubscriptionId":"[if(equals(steps('blobUpdate').existingStorageAccount, true), first(skip(split(steps('blobUpdate').storageAccounts.id, '/'), 2)), first(skip(split(steps('basics').resourceScope.subscription.id, '/'), 2)))]",
+                "lawAccountSubscriptionId":"[first(skip(split(steps('notifications').lawSelector.id, '/'), 2))]"
             },
             "kind": "Subscription",
             "location": "[steps('basics').resourceScope.location.name]",
