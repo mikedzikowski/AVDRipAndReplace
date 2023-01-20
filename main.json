@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.7.4.23292",
-      "templateHash": "5523243884189651922"
+      "templateHash": "15838122888884508017"
     }
   },
   "parameters": {
@@ -17,7 +17,8 @@
       }
     },
     "deployWithO365Connector": {
-      "type": "bool"
+      "type": "bool",
+      "defaultValue": false
     },
     "logAnalyticsWorkspaceResourceId": {
       "type": "string",
@@ -42,12 +43,14 @@
     },
     "deployBlobUpdateLogicApp": {
       "type": "bool",
+      "defaultValue": false,
       "metadata": {
         "description": "To be used with AVD solutions that deploy post configuration software. Set the following values if there is a storage account that should be targeted. If values are not set a default naming convention will be used by resources created."
       }
     },
     "newStorageAccount": {
-      "type": "bool"
+      "type": "bool",
+      "defaultValue": false
     },
     "exisitingStorageAccount": {
       "type": "string",
@@ -611,7 +614,7 @@
       ]
     },
     {
-      "condition": "[variables('imageWithConnector')]",
+      "condition": "[parameters('deployWithO365Connector')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
       "name": "[format('o365Connection-deployment-{0}', parameters('deploymentNameSuffix'))]",
@@ -624,16 +627,16 @@
         "mode": "Incremental",
         "parameters": {
           "displayName": {
-            "value": "[variables('officeConnectionName')]"
+            "value": "[if(parameters('deployWithO365Connector'), variables('officeConnectionName'), 'None')]"
           },
           "location": {
-            "value": "[parameters('location')]"
+            "value": "[if(parameters('deployWithO365Connector'), parameters('location'), 'None')]"
           },
           "subscriptionId": {
-            "value": "[variables('subscriptionId')]"
+            "value": "[if(parameters('deployWithO365Connector'), variables('subscriptionId'), 'None')]"
           },
           "connection_azureautomation_name": {
-            "value": "[variables('officeConnectionName')]"
+            "value": "[if(parameters('deployWithO365Connector'), variables('officeConnectionName'), 'None')]"
           }
         },
         "template": {
@@ -1617,7 +1620,7 @@
             "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('automationAccountConnection-deployment-{0}', parameters('deploymentNameSuffix')))).outputs.automationConnectId.value]"
           },
           "office365ConnectionId": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('o365Connection-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.office365ConnectionId.value]"
+            "value": "[if(variables('blobWithConnector'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('o365Connection-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.office365ConnectionId.value, 'None')]"
           }
         },
         "template": {
@@ -2802,7 +2805,7 @@
             "value": "[variables('runbookNewHostPoolRipAndReplace')]"
           },
           "office365ConnectionId": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('o365Connection-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.office365ConnectionId.value]"
+            "value": "[if(variables('blobWithConnector'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('o365Connection-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.office365ConnectionId.value, 'None')]"
           },
           "automationAccountConnectId": {
             "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('automationAccountConnection-deployment-{0}', parameters('deploymentNameSuffix')))).outputs.automationConnectId.value]"

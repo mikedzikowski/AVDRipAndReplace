@@ -3,7 +3,7 @@ targetScope = 'subscription'
 @description('The location for the resources deployed in this solution.')
 param location string = deployment().location
 
-param deployWithO365Connector bool
+param deployWithO365Connector bool = false
 
 @description('The resource ID to an existing log analytics workspace. Ideally, utilizing the same workspace used for AVD Insights.')
 param logAnalyticsWorkspaceResourceId string
@@ -17,8 +17,8 @@ param existingAutomationAccountRg string
 
 // Start Blob Check Params
 @description('To be used with AVD solutions that deploy post configuration software. Set the following values if there is a storage account that should be targeted. If values are not set a default naming convention will be used by resources created.')
-param deployBlobUpdateLogicApp bool
-param newStorageAccount bool
+param deployBlobUpdateLogicApp bool = false
+param newStorageAccount bool = false
 param exisitingStorageAccount string = 'none'
 param existingStorageAccountRg string = 'none'
 param container string = 'none'
@@ -260,14 +260,14 @@ module automationAccountConnection 'modules/automationAccountConnection.bicep' =
   ]
 }
 
-module o365Connection 'modules/officeConnection.bicep' = if(imageWithConnector) {
+module o365Connection 'modules/officeConnection.bicep' = if(deployWithO365Connector) {
   name: 'o365Connection-deployment-${deploymentNameSuffix}'
   scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
   params: {
-    displayName: officeConnectionName
-    location: location
-    subscriptionId: subscriptionId
-    connection_azureautomation_name: officeConnectionName
+    displayName: deployWithO365Connector ? officeConnectionName : 'None'
+    location: deployWithO365Connector ? location : 'None'
+    subscriptionId: deployWithO365Connector ? subscriptionId : 'None'
+    connection_azureautomation_name: deployWithO365Connector ? officeConnectionName : 'None'
   }
   dependsOn: [
     automationAccount
@@ -381,11 +381,8 @@ module getImageVersionlogicApp 'modules/logicappGetImageVersion.bicep' = if(imag
     hostPoolName: hostPoolName
     identityType: identityType
     automationAccountConnectId: automationAccountConnection.outputs.automationConnectId
-    office365ConnectionId: o365Connection.outputs.office365ConnectionId
+    office365ConnectionId: blobWithConnector ? o365Connection.outputs.office365ConnectionId : 'None'
   }
-  dependsOn: [
-    o365Connection
-  ]
 }
 
 module storageAccount 'modules/storageAccount.bicep' = if(deployBlobUpdateLogicApp) {
@@ -503,7 +500,7 @@ module getBlobUpdateLogicApps 'modules/logicAppGetBlobUpdate.bicep' = if (blobWi
     maxFileCount: maxFileCount
     subscriptionId: subscriptionId
     runbookNewHostPoolRipAndReplace: runbookNewHostPoolRipAndReplace
-    office365ConnectionId: o365Connection.outputs.office365ConnectionId
+    office365ConnectionId: blobWithConnector ? o365Connection.outputs.office365ConnectionId : 'None'
     automationAccountConnectId: automationAccountConnection.outputs.automationConnectId
     blobConnectId: blobConnection.outputs.blobConnectionId
   }
