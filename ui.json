@@ -463,6 +463,14 @@
                                     "location": "onBasics"
                                 }
                             }
+                        },
+                        {
+                            "name": "avdTempSpecVersion",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "TemplateSpec Version",
+                            "defaultValue": "1.0",
+                            "toolTip": "The version of the Template Spec",
+                            "visible": true
                         }
                     ]
                 },
@@ -582,7 +590,7 @@
                 "dayOfWeekOccurrence": "[steps('maintenaceWindow').dayOfWeekOccurrence]",
                 "startTime": "[steps('maintenaceWindow').startTime]",
                 "logAnalyticsWorkspaceResourceId": "[steps('notifications').lawSelector.id]",
-                "templateSpecId": "[steps('AvdEnvironment').avdTempSpec.id]",
+                "templateSpecId": "[concat(steps('AvdEnvironment').avdTempSpec.id,'/versions/', steps('AvdEnvironment').avdTempSpecVersion)]",
                 "deploymentNameSuffix": "[steps('basics').deploymentNameSuffix]",
                 "exisitingAutomationAccount": "[if(equals(steps('AutomationEnvironment').existingAutomationAccount, true), steps('AutomationEnvironment').automationAccounts.name, steps('AutomationEnvironment').automationAccount.name)]",
                 "existingAutomationAccountRg": "[if(equals(steps('AutomationEnvironment').existingAutomationAccount, true), first(skip(split(steps('AutomationEnvironment').automationAccounts.id, '/'), 4)), steps('AutomationEnvironment').aaResourceGroup)]",

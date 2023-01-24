@@ -1,36 +1,57 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "emailContact": {
-            "value": "" // TODO: Fill in parameter value
+            "value": "micdz@microsoft.com"
         },
         "exisitingAutomationAccount": {
-            "value": "" // TODO: Fill in parameter value
+            "value": "aa-fs-peo-va-d-00-rar"
         },
         "existingAutomationAccountRg": {
-            "value": "" // TODO: Fill in parameter value
+            "value": "rg-fs-peo-va-d-management-01"
         },
         "hostPoolName": {
-            "value": "" // TODO: Fill in parameter value
+            "value": "hp-fs-peo-va-d-01"
         },
         "hostPoolResourceGroupName": {
-            "value": "" // TODO: Fill in parameter value
+            "value": "rg-fs-peo-va-d-management-01"
         },
         "logAnalyticsWorkspaceResourceId": {
-            "value": "" // TODO: Fill in parameter value
+            "value": "/subscriptions/f4972a61-1083-4904-a4e2-a790107320bf/resourcegroups/rg-fs-peo-va-d-management-01/providers/microsoft.operationalinsights/workspaces/avd-laws"
         },
         "sessionHostResourceGroupName": {
-            "value": "" // TODO: Fill in parameter value
+            "value": "rg-fs-peo-va-d-host-01"
         },
         "templateSpecId": {
-            "value": "" // TODO: Fill in parameter value
+            "value": "/subscriptions/f4972a61-1083-4904-a4e2-a790107320bf/resourceGroups/rg-fs-peo-va-d-management-01/providers/Microsoft.Resources/templateSpecs/avdui/versions/1.0"
         },
         "deployBlobUpdateLogicApp": {
             "value": false
         },
-        "deployWithoutConnector": {
+        "deployWithO365Connector": {
             "value": true
+        },
+        "location":{
+            "value": "usgovvirginia"
+        },
+        "exisitingStorageAccount":
+        {
+            "value": "t"
+        },
+        "existingStorageAccountRg":
+        {
+            "value": "t"
+        },
+        "container":
+        {
+            "value": "t"
+        },
+        "newStorageAccount": {
+            "value": false
+        },
+        "newAutomationAccount": {
+            "value": false
         }
     }
 }
