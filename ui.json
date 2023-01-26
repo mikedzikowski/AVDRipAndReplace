@@ -471,6 +471,18 @@
                             "defaultValue": "1.0",
                             "toolTip": "The version of the Template Spec",
                             "visible": true
+                        },
+                        {
+                            "name": "image",
+                            "type": "Microsoft.Solutions.ResourceSelector",
+                            "label": "image versions",
+                            "resourceType": "Microsoft.Compute/galleries/images/versions",
+                            "options": {
+                                "filter": {
+                                    "subscription": "onBasics",
+                                    "location": "onBasics"
+                                }
+                            }
                         }
                     ]
                 },
