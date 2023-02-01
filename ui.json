@@ -473,16 +473,25 @@
                             "visible": true
                         },
                         {
-                            "name": "image",
-                            "type": "Microsoft.Solutions.ResourceSelector",
-                            "label": "image versions",
-                            "resourceType": "Microsoft.Compute/galleries/images/versions",
-                            "options": {
-                                "filter": {
-                                    "subscription": "onBasics",
-                                    "location": "onBasics"
-                                }
-                            }
+                            "name": "imageSource",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Image Source",
+                            "defaultValue": "Value two",
+                            "toolTip": "Please select the image source for your AVD environment",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Azure Marketplace",
+                                        "value": "marketplace"
+                                    },
+                                    {
+                                        "label": "Azure Image Builder",
+                                        "value": "aib"
+                                    }
+                                ],
+                                "required": true
+                            },
+                            "visible": true
                         }
                     ]
                 },
@@ -619,7 +628,8 @@
                 "newAutomationAccount":"[if(equals(steps('AutomationEnvironment').existingAutomationAccount, false), true, false)]",
                 "automationAccountSubscriptionId":"[if(equals(steps('AutomationEnvironment').existingAutomationAccount, true), first(skip(split(steps('AutomationEnvironment').automationAccounts.id, '/'), 2)), first(skip(split(steps('basics').resourceScope.subscription.id, '/'), 2)))]",
                 "storageAccountSubscriptionId":"[if(equals(steps('blobUpdate').existingStorageAccount, true), first(skip(split(steps('blobUpdate').storageAccounts.id, '/'), 2)), first(skip(split(steps('basics').resourceScope.subscription.id, '/'), 2)))]",
-                "lawAccountSubscriptionId":"[first(skip(split(steps('notifications').lawSelector.id, '/'), 2))]"
+                "lawAccountSubscriptionId":"[first(skip(split(steps('notifications').lawSelector.id, '/'), 2))]",
+                "imageSource": "[steps('AvdEnvironment').imageSource]"
             },
             "kind": "Subscription",
             "location": "[steps('basics').resourceScope.location.name]",

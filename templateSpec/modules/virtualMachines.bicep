@@ -3,10 +3,10 @@ param AvailabilitySetNamePrefix string
 param AvailabilityZones array
 param DiskNamePrefix string
 param DiskSku string
-param ImageOffer string
-param ImagePublisher string
-param ImageSku string
-param ImageVersion string
+param ImageOffer string = ''
+param ImagePublisher string = ''
+param ImageSku string = ''
+param ImageVersion string = ''
 param Location string
 param NetworkInterfaceNamePrefix string
 param SessionHostCount int
@@ -20,7 +20,24 @@ param VirtualMachinePassword string
 param VirtualMachineSize string
 @secure()
 param VirtualMachineUsername string
+@allowed([
+  'marketplace'
+  'aib'
+])
+param imageSource string = 'marketplace'
+param ImageId string = ''
 
+var imageSrc = {
+  aib: {
+    id: ImageId
+  }
+  marketplace: {
+      publisher: ImagePublisher
+      offer: ImageOffer
+      sku: ImageSku
+      version: ImageVersion
+  }
+}
 
 resource virtualMachines 'Microsoft.Compute/virtualMachines@2021-11-01' = [for i in range(0, SessionHostCount): {
   name: '${VirtualMachineNamePrefix}${padLeft((i + SessionHostIndex), 3, '0')}'
@@ -38,12 +55,7 @@ resource virtualMachines 'Microsoft.Compute/virtualMachines@2021-11-01' = [for i
       vmSize: VirtualMachineSize
     }
     storageProfile: {
-      imageReference: {
-        publisher: ImagePublisher
-        offer: ImageOffer
-        sku: ImageSku
-        version: ImageVersion
-      }
+      imageReference: ((imageSource == 'aib') ? imageSrc.aib : imageSrc.marketplace)
       osDisk: {
         deleteOption: 'Delete'
         createOption: 'FromImage'

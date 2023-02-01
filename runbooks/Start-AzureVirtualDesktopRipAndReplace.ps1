@@ -22,12 +22,15 @@ Param (
     [string]$AutomationAccountResourceGroupName,
 
     [Parameter(mandatory = $true)]
-    [string]$ScheduleName
+    [string]$ScheduleName,
+    
+    [Parameter(mandatory = $true)]
+    [string]$ImageSource
 )
 
 $ErrorActionPreference = 'Stop'
 
-try 
+try
 {
     Disable-AzContextAutosave `
         –Scope Process
@@ -52,10 +55,22 @@ try
     $SessionHostsCount = $SessionHosts.count
 
     # Get details for deployment params
-    $Params = @{
-        ImageVersion = 'latest'
-        SessionHostCount = $SessionHostsCount
-        Timestamp = $TimeStamp
+    if($ImageSource -eq "marketplace")
+    {
+        $Params = @{
+            ImageVersion = 'latest'
+            SessionHostCount = $SessionHostsCount
+            Timestamp = $TimeStamp
+            ImageSource = $ImageSource
+        }
+    }
+    else {
+        $Params = @{
+            ImageReference = ((Get-AzGalleryImageVersion -ResourceGroupName $aibRg -GalleryName $computeGallery -GalleryImageDefinitionName $imageDef) | Where-Object {$_.PublishingProfile.PublishedDate -eq $date}).Id
+            SessionHostCount = $SessionHostsCount
+            Timestamp = $
+            ImageSource = $ImageSource
+        }
     }
 
 

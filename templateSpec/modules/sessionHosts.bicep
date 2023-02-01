@@ -27,6 +27,7 @@ param UserAssignedIdentity string = ''
 param VirtualMachineNamePrefix string
 param VirtualMachineSize string
 param VirtualMachineTags object
+param ImageId string = ''
 
 var Intune = DomainServices == 'NoneWithIntune' ? true : false
 var VmIdentityType = (contains(DomainServices, 'None') ? ((!empty(UserAssignedIdentity)) ? 'SystemAssigned, UserAssigned' : 'SystemAssigned') : ((!empty(UserAssignedIdentity)) ? 'UserAssigned' : 'None'))
@@ -101,6 +102,7 @@ module virtualMachines 'virtualMachines.bicep' = {
     VirtualMachinePassword: keyVault.getSecret('LocalAdminPassword')
     VirtualMachineSize: VirtualMachineSize
     VirtualMachineUsername: keyVault.getSecret('LocalAdminUsername')
+    ImageId  : ImageId
   }
   dependsOn: [
     networkInterfaces
