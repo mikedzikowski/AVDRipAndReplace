@@ -98,7 +98,7 @@ param storageAccountSubscriptionId string = subscription().subscriptionId
 param automationAccountSubscriptionId string = subscription().subscriptionId
 param lawAccountSubscriptionId string = subscription().subscriptionId
 param lawResourceGroup string
-param ImageSource string 
+param ImageSource string = 'marketplace'
 
 // Variables
 var cloud = environment().name
