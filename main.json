@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.7.4.23292",
-      "templateHash": "14621529327436896815"
+      "templateHash": "12431460802104297235"
     }
   },
   "parameters": {
@@ -192,6 +192,9 @@
       "defaultValue": "[subscription().subscriptionId]"
     },
     "lawResourceGroup": {
+      "type": "string"
+    },
+    "ImageSource": {
       "type": "string"
     }
   },
@@ -1003,6 +1006,9 @@
           },
           "automationAccountConnectId": {
             "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('automationAccountConnection-deployment-{0}', parameters('deploymentNameSuffix')))).outputs.automationConnectId.value]"
+          },
+          "imageSource": {
+            "value": "[parameters('ImageSource')]"
           }
         },
         "template": {
@@ -1012,7 +1018,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.7.4.23292",
-              "templateHash": "16612998825922241751"
+              "templateHash": "6281211290258073043"
             }
           },
           "parameters": {
@@ -1089,6 +1095,9 @@
               "type": "string"
             },
             "automationAccountConnectId": {
+              "type": "string"
+            },
+            "imageSource": {
               "type": "string"
             }
           },
@@ -1300,7 +1309,8 @@
                             "parameters": {
                               "ResourceGroupName": "@body('Parse_Session_Host_VM_and_RG')?['productionVmRg']",
                               "VMName": "@body('Parse_Session_Host_VM_and_RG')?['productionVm']",
-                              "environment": "[parameters('cloud')]"
+                              "environment": "[parameters('cloud')]",
+                              "ImageSource": "[parameters('imageSource')]"
                             }
                           }
                         },
@@ -1621,6 +1631,9 @@
           },
           "office365ConnectionId": {
             "value": "[if(variables('imageWithConnector'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('o365Connection-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.office365ConnectionId.value, 'None')]"
+          },
+          "imageSource": {
+            "value": "[parameters('ImageSource')]"
           }
         },
         "template": {
@@ -1630,7 +1643,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.7.4.23292",
-              "templateHash": "10929838978352948224"
+              "templateHash": "10177905373915727704"
             }
           },
           "parameters": {
@@ -1716,6 +1729,9 @@
               "type": "string"
             },
             "automationAccountConnectId": {
+              "type": "string"
+            },
+            "imageSource": {
               "type": "string"
             }
           },
@@ -1927,7 +1943,8 @@
                             "parameters": {
                               "ResourceGroupName": "@body('Parse_Session_Host_VM_and_RG')?['productionVmRg']",
                               "VMName": "@body('Parse_Session_Host_VM_and_RG')?['productionVm']",
-                              "Environment": "[parameters('cloud')]"
+                              "Environment": "[parameters('cloud')]",
+                              "ImageSource": "[parameters('imageSource')]"
                             }
                           }
                         },

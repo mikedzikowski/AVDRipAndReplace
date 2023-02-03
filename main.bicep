@@ -98,6 +98,7 @@ param storageAccountSubscriptionId string = subscription().subscriptionId
 param automationAccountSubscriptionId string = subscription().subscriptionId
 param lawAccountSubscriptionId string = subscription().subscriptionId
 param lawResourceGroup string
+param ImageSource string 
 
 // Variables
 var cloud = environment().name
@@ -342,6 +343,7 @@ module getImageVersionlogicAppUsingAzureMonitorAlerts 'modules/logicappGetImageV
     hostPoolName: hostPoolName
     identityType: identityType
     automationAccountConnectId: automationAccountConnection.outputs.automationConnectId
+    imageSource: ImageSource
   }
   dependsOn: [
     automationAccount
@@ -382,6 +384,7 @@ module getImageVersionlogicApp 'modules/logicappGetImageVersion.bicep' = if(imag
     identityType: identityType
     automationAccountConnectId: automationAccountConnection.outputs.automationConnectId
     office365ConnectionId: imageWithConnector ? o365Connection.outputs.office365ConnectionId : 'None'
+    imageSource: ImageSource
   }
 }
 
