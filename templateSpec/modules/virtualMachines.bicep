@@ -20,12 +20,8 @@ param VirtualMachinePassword string
 param VirtualMachineSize string
 @secure()
 param VirtualMachineUsername string
-@allowed([
-  'marketplace'
-  'aib'
-])
-param imageSource string = 'marketplace'
-param ImageId string = ''
+param imageSource string 
+param ImageId string 
 
 var imageSrc = {
   aib: {

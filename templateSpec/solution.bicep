@@ -50,6 +50,7 @@ param VirtualMachineResourceGroupName string = ''
 param VirtualMachineSize string = ''
 param VirtualMachineTags object = {}
 param ImageId string = ''
+param ImageSource string = ''
 
 
 /*  BEGIN BATCHING VARIABLES */
@@ -128,6 +129,7 @@ module sessionHosts 'modules/sessionHosts.bicep' = [for i in range(1, SessionHos
     VirtualMachineSize: VirtualMachineSize
     VirtualMachineTags: VirtualMachineTags
     ImageId : ImageId
+    ImageSource: ImageSource
   }
   dependsOn: [
     hostPool

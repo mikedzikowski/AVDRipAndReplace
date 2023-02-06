@@ -159,6 +159,8 @@ try
     $Template.parameters.ImageSku.defaultValue = $VirtualMachine.StorageProfile.ImageReference.SKU
     $Template.parameters.ImageVersion.defaultValue = 'latest'
     $Template.parameters.ImageId.defaultValue = ''
+    $Template.parameters.ImageId.defaultValue = ''
+    $Template.parameters.ImageSource.default = $ImageSource
     }
     if($ImageSource -eq "aib")
     {
@@ -167,6 +169,7 @@ try
     $Template.parameters.ImagePublisher.defaultValue = ''
     $Template.parameters.ImageSku.defaultValue = ''
     $Template.parameters.ImageVersion.defaultValue = ''
+    $Template.parameters.ImageSource.defaultValue = $ImageSource
     }
     $Template.parameters.KeyVaultResourceId.defaultValue = $KeyVaultResourceId
     $Template.parameters.NetworkInterfaceNamePrefix.defaultValue = $NetworkInterfaceNamePrefix

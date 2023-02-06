@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.7.4.23292",
-      "templateHash": "9339776271547252144"
+      "templateHash": "6487866929145641976"
     }
   },
   "parameters": {
@@ -103,23 +103,23 @@
     },
     "HostPoolVmTemplate": {
       "type": "string",
-      "defaultValue": "{\"domain\":\"mvdlab.onmicrosoft.us\",\"galleryImageOffer\":\"windows-11\",\"galleryImagePublisher\":\"microsoftwindowsdesktop\",\"galleryImageSKU\":\"win11-21h2-avd\",\"imageType\":\"Gallery\",\"customImageId\":null,\"namePrefix\":\"vmfspevad\",\"osDiskType\":\"Standard_LRS\",\"vmSize\":{\"id\":\"Standard_D2s_v4\",\"cores\":null,\"ram\":null},\"galleryItemId\":\"microsoftwindowsdesktop.windows-11win11-21h2-avd\",\"diskSizeGB\":0,\"securityType\":\"Standard\",\"secureBoot\":false,\"vTPM\":false}"
+      "defaultValue": "{\"domain\":\"mvdlab.onmicrosoft.us\",\"galleryImageOffer\":null,\"galleryImagePublisher\":null,\"galleryImageSKU\":null,\"imageType\":\"CustomImage\",\"customImageId\":\"/subscriptions/f4972a61-1083-4904-a4e2-a790107320bf/resourceGroups/rg-aib-d-va/providers/Microsoft.Compute/galleries/cg_aib_d_va_t/images/Win10-21h2-o365/versions/1.1.2\",\"namePrefix\":\"vmfspevad\",\"osDiskType\":\"Standard_LRS\",\"vmSize\":{\"id\":\"Standard_D2s_v4\",\"cores\":null,\"ram\":null},\"galleryItemId\":null,\"diskSizeGB\":0,\"securityType\":\"Standard\",\"secureBoot\":false,\"vTPM\":false}"
     },
     "ImageOffer": {
       "type": "string",
-      "defaultValue": "windows-11"
+      "defaultValue": ""
     },
     "ImagePublisher": {
       "type": "string",
-      "defaultValue": "microsoftwindowsdesktop"
+      "defaultValue": ""
     },
     "ImageSku": {
       "type": "string",
-      "defaultValue": "win11-21h2-avd"
+      "defaultValue": ""
     },
     "ImageVersion": {
       "type": "string",
-      "defaultValue": "latest"
+      "defaultValue": ""
     },
     "KeyVaultResourceId": {
       "type": "string",
@@ -178,7 +178,11 @@
     },
     "ImageId": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "/subscriptions/f4972a61-1083-4904-a4e2-a790107320bf/resourceGroups/rg-aib-d-va/providers/Microsoft.Compute/galleries/cg_aib_d_va_t/images/Win10-21h2-o365/versions/1.1.2"
+    },
+    "ImageSource": {
+      "type": "string",
+      "defaultValue": "aib"
     }
   },
   "variables": {
@@ -433,6 +437,9 @@
           },
           "ImageId": {
             "value": "[parameters('ImageId')]"
+          },
+          "ImageSource": {
+            "value": "[parameters('ImageSource')]"
           }
         },
         "template": {
@@ -442,7 +449,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.7.4.23292",
-              "templateHash": "16308442890982091827"
+              "templateHash": "18275249926034239719"
             }
           },
           "parameters": {
@@ -537,6 +544,9 @@
             "ImageId": {
               "type": "string",
               "defaultValue": ""
+            },
+            "ImageSource": {
+              "type": "string"
             }
           },
           "variables": {
@@ -786,6 +796,9 @@
                   },
                   "ImageId": {
                     "value": "[parameters('ImageId')]"
+                  },
+                  "imageSource": {
+                    "value": "[parameters('ImageSource')]"
                   }
                 },
                 "template": {
@@ -795,7 +808,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.7.4.23292",
-                      "templateHash": "14402251728970542061"
+                      "templateHash": "6299793690537774511"
                     }
                   },
                   "parameters": {
@@ -864,16 +877,10 @@
                       "type": "secureString"
                     },
                     "imageSource": {
-                      "type": "string",
-                      "defaultValue": "marketplace",
-                      "allowedValues": [
-                        "marketplace",
-                        "aib"
-                      ]
+                      "type": "string"
                     },
                     "ImageId": {
-                      "type": "string",
-                      "defaultValue": ""
+                      "type": "string"
                     }
                   },
                   "variables": {

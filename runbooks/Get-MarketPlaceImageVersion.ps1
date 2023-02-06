@@ -66,7 +66,6 @@ else
             $aibImageFound = $true
             Write-Host "true"
             $LatestVersion = ((Get-AzGalleryImageVersion -ResourceGroupName $aibRg -GalleryName $computeGallery -GalleryImageDefinitionName $imageDef) | Where-Object {$_.PublishingProfile.PublishedDate -eq $date}).name
-
         }
         else
         {

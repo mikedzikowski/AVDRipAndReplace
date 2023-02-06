@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.7.4.23292",
-      "templateHash": "3867011281229443226"
+      "templateHash": "7876149008144406144"
     }
   },
   "parameters": {
@@ -194,9 +194,12 @@
     "lawResourceGroup": {
       "type": "string"
     },
-    "ImageSource": {
+    "imageSource": {
       "type": "string",
-      "defaultValue": "marketplace"
+      "allowedValues": [
+        "marketplace",
+        "aib"
+      ]
     }
   },
   "variables": {
@@ -1009,7 +1012,7 @@
             "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('automationAccountConnection-deployment-{0}', parameters('deploymentNameSuffix')))).outputs.automationConnectId.value]"
           },
           "imageSource": {
-            "value": "[parameters('ImageSource')]"
+            "value": "[parameters('imageSource')]"
           }
         },
         "template": {
@@ -1634,7 +1637,7 @@
             "value": "[if(variables('imageWithConnector'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('o365Connection-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.office365ConnectionId.value, 'None')]"
           },
           "imageSource": {
-            "value": "[parameters('ImageSource')]"
+            "value": "[parameters('imageSource')]"
           }
         },
         "template": {

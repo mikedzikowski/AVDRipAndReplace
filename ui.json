@@ -476,7 +476,7 @@
                             "name": "imageSource",
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Image Source",
-                            "defaultValue": "Value two",
+                            "defaultValue": "Azure Marketplace",
                             "toolTip": "Please select the image source for your AVD environment",
                             "constraints": {
                                 "allowedValues": [
