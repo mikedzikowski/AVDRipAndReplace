@@ -100,7 +100,7 @@ param lawAccountSubscriptionId string = subscription().subscriptionId
 param lawResourceGroup string
 @allowed([
   'marketplace'
-  'aib'
+  'gallery'
 ])
 param imageSource string
 

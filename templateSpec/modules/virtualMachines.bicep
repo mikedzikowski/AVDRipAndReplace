@@ -24,7 +24,7 @@ param imageSource string
 param ImageId string 
 
 var imageSrc = {
-  aib: {
+  gallery: {
     id: ImageId
   }
   marketplace: {
@@ -51,7 +51,7 @@ resource virtualMachines 'Microsoft.Compute/virtualMachines@2021-11-01' = [for i
       vmSize: VirtualMachineSize
     }
     storageProfile: {
-      imageReference: ((imageSource == 'aib') ? imageSrc.aib : imageSrc.marketplace)
+      imageReference: ((imageSource == 'gallery') ? imageSrc.gallery : imageSrc.marketplace)
       osDisk: {
         deleteOption: 'Delete'
         createOption: 'FromImage'

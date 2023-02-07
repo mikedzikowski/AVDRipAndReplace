@@ -54,18 +54,18 @@ else
     $computeGallery= $id.Split("/")[8]
     $version = $id.Split("/")[12]
     $imageDef = $id.Split("/")[10]
-    $aibRg = $id.Split("/")[4]
-    $vmImagePublishdate = (Get-AzGalleryImageVersion -ResourceGroupName $aibRg -GalleryName $computeGallery -GalleryImageDefinitionName $imageDef -name $version).PublishingProfile.PublishedDate
+    $galleryRg = $id.Split("/")[4]
+    $vmImagePublishdate = (Get-AzGalleryImageVersion -ResourceGroupName $galleryRg -GalleryName $computeGallery -GalleryImageDefinitionName $imageDef -name $version).PublishingProfile.PublishedDate
 
-    $imageVersionPublishDate = (Get-AzGalleryImageVersion -ResourceGroupName $aibRg -GalleryName $computeGallery -GalleryImageDefinitionName $imageDef)
+    $imageVersionPublishDate = (Get-AzGalleryImageVersion -ResourceGroupName $galleryRg -GalleryName $computeGallery -GalleryImageDefinitionName $imageDef)
 
     foreach($date in $imageVersionPublishDate.PublishingProfile.PublishedDate)
     {
         if ($date -gt $vmImagePublishdate)
         {
-            $aibImageFound = $true
+            $galleryImageFound = $true
             Write-Host "true"
-            $LatestVersion = ((Get-AzGalleryImageVersion -ResourceGroupName $aibRg -GalleryName $computeGallery -GalleryImageDefinitionName $imageDef) | Where-Object {$_.PublishingProfile.PublishedDate -eq $date}).name
+            $LatestVersion = ((Get-AzGalleryImageVersion -ResourceGroupName $galleryRg -GalleryName $computeGallery -GalleryImageDefinitionName $imageDef) | Where-Object {$_.PublishingProfile.PublishedDate -eq $date}).name
         }
         else
         {
@@ -74,7 +74,7 @@ else
         }
     }
 }
-if($aibImageFound)
+if($galleryImageFound)
 {
     $newImageFound = $true
 }

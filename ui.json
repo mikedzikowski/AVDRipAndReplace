@@ -485,8 +485,8 @@
                                         "value": "marketplace"
                                     },
                                     {
-                                        "label": "Azure Image Builder",
-                                        "value": "aib"
+                                        "label": "Gallery Image",
+                                        "value": "gallery"
                                     }
                                 ],
                                 "required": true

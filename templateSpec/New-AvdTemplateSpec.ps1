@@ -162,9 +162,9 @@ try
     $Template.parameters.ImageId.defaultValue = ''
     $Template.parameters.ImageSource.default = $ImageSource
     }
-    if($ImageSource -eq "aib")
+    if($ImageSource -eq "gallery")
     {
-    $Template.parameters.ImageId.defaultValue = $VirtualMachine.StorageProfile.ImageReference.Id
+    $Template.parameters.ImageId.defaultValue = ''
     $Template.parameters.ImageOffer.defaultValue = ''
     $Template.parameters.ImagePublisher.defaultValue = ''
     $Template.parameters.ImageSku.defaultValue = ''

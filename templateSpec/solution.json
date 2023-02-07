@@ -880,7 +880,7 @@
                   },
                   "variables": {
                     "imageSrc": {
-                      "aib": {
+                      "gallery": {
                         "id": "[parameters('ImageId')]"
                       },
                       "marketplace": {
@@ -910,7 +910,7 @@
                           "vmSize": "[parameters('VirtualMachineSize')]"
                         },
                         "storageProfile": {
-                          "imageReference": "[if(equals(parameters('imageSource'), 'aib'), variables('imageSrc').aib, variables('imageSrc').marketplace)]",
+                          "imageReference": "[if(equals(parameters('imageSource'), 'gallery'), variables('imageSrc').gallery, variables('imageSrc').marketplace)]",
                           "osDisk": {
                             "deleteOption": "Delete",
                             "createOption": "FromImage",
