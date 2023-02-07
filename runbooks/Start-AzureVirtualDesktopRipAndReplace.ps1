@@ -23,7 +23,6 @@ Param (
 
     [Parameter(mandatory = $true)]
     [string]$ScheduleName,
-    
     [Parameter(mandatory = $true)]
     [string]$ImageSource
 )
@@ -74,7 +73,6 @@ try
         -ResourceGroupName $HostPoolResourceGroup `
         -HostPoolName $HostPoolName
 
-
     if($ImageSource -eq "aib")
     {
         $hostpoolVm = Get-AzVM -ResourceGroupName $SessionHostsResourceGroup -Name $VmName
@@ -83,6 +81,7 @@ try
         $computeGallery= $id.Split("/")[8]
         $imageDef = $id.Split("/")[10]
         $aibRg = $id.Split("/")[4]
+        $ImageId = (Get-AzGalleryImageVersion -ResourceGroupName $aibRg -GalleryName $computeGallery -GalleryImageDefinitionName $imageDef).id[-1]
     }
 
     # Get details for deployment params
@@ -97,10 +96,11 @@ try
     }
     else {
         $Params = @{
-            ImageReference = ((Get-AzGalleryImageVersion -ResourceGroupName $aibRg -GalleryName $computeGallery -GalleryImageDefinitionName $imageDef)).id[-1]
+            ImageId = ((Get-AzGalleryImageVersion -ResourceGroupName $aibRg -GalleryName $computeGallery -GalleryImageDefinitionName $imageDef)).id[-1]
             SessionHostCount = $SessionHostsCount
             Timestamp = $TimeStamp
             ImageSource = 'aib'
+            HostPoolVmTemplate = ''
         }
     }
 

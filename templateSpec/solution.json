@@ -11,7 +11,7 @@
   "parameters": {
     "Availability": {
       "type": "string",
-      "defaultValue": "AvailabilitySet",
+      "defaultValue": "None",
       "allowedValues": [
         "AvailabilitySet",
         "AvailabilityZones",
@@ -28,15 +28,15 @@
     },
     "DiskNamePrefix": {
       "type": "string",
-      "defaultValue": "dsk"
+      "defaultValue": ""
     },
     "DiskSku": {
       "type": "string",
-      "defaultValue": "Standard_LRS"
+      "defaultValue": "Premium_LRS"
     },
     "DomainName": {
       "type": "string",
-      "defaultValue": "mvdlab.onmicrosoft.us"
+      "defaultValue": ""
     },
     "DomainServices": {
       "type": "string",
@@ -49,7 +49,7 @@
     },
     "HostPoolCustomRdpProperty": {
       "type": "string",
-      "defaultValue": "audiocapturemode:i:1;camerastoredirect:s:*;devicestoredirect:s:;redirectclipboard:i:1;redirectprinters:i:0;usbdevicestoredirect:s:;drivestoredirect:s:;redirectsmartcards:i:1;redirectcomports:i:0;use multimon:i:0;"
+      "defaultValue": ""
     },
     "HostPoolDescription": {
       "type": "string",
@@ -61,41 +61,39 @@
     },
     "HostPoolLoadBalancerType": {
       "type": "string",
-      "defaultValue": "DepthFirst"
+      "defaultValue": ""
     },
     "HostPoolLocation": {
       "type": "string",
-      "defaultValue": "usgovvirginia"
+      "defaultValue": "[deployment().location]"
     },
     "HostPoolMaxSessionLimit": {
       "type": "int",
-      "defaultValue": 4
+      "defaultValue": 1
     },
     "HostPoolName": {
       "type": "string",
-      "defaultValue": "hp-fs-peo-va-d-01"
+      "defaultValue": ""
     },
     "HostPoolPreferredAppGroupType": {
       "type": "string",
-      "defaultValue": "Desktop"
+      "defaultValue": ""
     },
     "HostPoolResourceGroupName": {
       "type": "string",
-      "defaultValue": "rg-fs-peo-va-d-management-01"
+      "defaultValue": ""
     },
     "HostPoolStartVmOnConnect": {
       "type": "bool",
-      "defaultValue": true
+      "defaultValue": false
     },
     "HostPoolTags": {
       "type": "object",
-      "defaultValue": {
-        "Environment": "Production"
-      }
+      "defaultValue": {}
     },
     "HostPoolType": {
       "type": "string",
-      "defaultValue": "Pooled"
+      "defaultValue": ""
     },
     "HostPoolValidationEnvironment": {
       "type": "bool",
@@ -103,7 +101,7 @@
     },
     "HostPoolVmTemplate": {
       "type": "string",
-      "defaultValue": "{\"domain\":\"mvdlab.onmicrosoft.us\",\"galleryImageOffer\":null,\"galleryImagePublisher\":null,\"galleryImageSKU\":null,\"imageType\":\"CustomImage\",\"customImageId\":\"/subscriptions/f4972a61-1083-4904-a4e2-a790107320bf/resourceGroups/rg-aib-d-va/providers/Microsoft.Compute/galleries/cg_aib_d_va_t/images/Win10-21h2-o365/versions/1.1.2\",\"namePrefix\":\"vmfspevad\",\"osDiskType\":\"Standard_LRS\",\"vmSize\":{\"id\":\"Standard_D2s_v4\",\"cores\":null,\"ram\":null},\"galleryItemId\":null,\"diskSizeGB\":0,\"securityType\":\"Standard\",\"secureBoot\":false,\"vTPM\":false}"
+      "defaultValue": ""
     },
     "ImageOffer": {
       "type": "string",
@@ -119,15 +117,15 @@
     },
     "ImageVersion": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "latest"
     },
     "KeyVaultResourceId": {
       "type": "string",
-      "defaultValue": "/subscriptions/f4972a61-1083-4904-a4e2-a790107320bf/resourceGroups/rg-fs-peo-va-d-management-01/providers/Microsoft.KeyVault/vaults/kv-fs-peo-va-d-05"
+      "defaultValue": ""
     },
     "NetworkInterfaceNamePrefix": {
       "type": "string",
-      "defaultValue": "nic"
+      "defaultValue": ""
     },
     "SessionHostCount": {
       "type": "int",
@@ -143,7 +141,7 @@
     },
     "SubnetResourceId": {
       "type": "string",
-      "defaultValue": "/subscriptions/f4972a61-1083-4904-a4e2-a790107320bf/resourceGroups/rg-shd-net-d-va/providers/Microsoft.Network/virtualNetworks/vnet-shd-net-d-va/subnets/Clients"
+      "defaultValue": ""
     },
     "Timestamp": {
       "type": "string",
@@ -155,34 +153,31 @@
     },
     "VirtualMachineLocation": {
       "type": "string",
-      "defaultValue": "usgovvirginia"
+      "defaultValue": "[deployment().location]"
     },
     "VirtualMachineNamePrefix": {
       "type": "string",
-      "defaultValue": "avdvm"
+      "defaultValue": ""
     },
     "VirtualMachineResourceGroupName": {
       "type": "string",
-      "defaultValue": "rg-fs-peo-va-d-management-01"
+      "defaultValue": ""
     },
     "VirtualMachineSize": {
       "type": "string",
-      "defaultValue": "Standard_D2s_v4"
+      "defaultValue": ""
     },
     "VirtualMachineTags": {
       "type": "object",
-      "defaultValue": {
-        "cm-resource-parent": "/subscriptions/f4972a61-1083-4904-a4e2-a790107320bf/resourceGroups/rg-fs-peo-va-d-management-01/providers/Microsoft.DesktopVirtualization/hostpools/hp-fs-peo-va-d-01",
-        "Environment": "Production"
-      }
+      "defaultValue": {}
     },
     "ImageId": {
       "type": "string",
-      "defaultValue": "/subscriptions/f4972a61-1083-4904-a4e2-a790107320bf/resourceGroups/rg-aib-d-va/providers/Microsoft.Compute/galleries/cg_aib_d_va_t/images/Win10-21h2-o365/versions/1.1.2"
+      "defaultValue": ""
     },
     "ImageSource": {
       "type": "string",
-      "defaultValue": "aib"
+      "defaultValue": ""
     }
   },
   "variables": {
