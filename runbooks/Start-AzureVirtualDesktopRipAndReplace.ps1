@@ -97,7 +97,7 @@ try
     }
     else {
         $Params = @{
-            ImageReference = ((Get-AzGalleryImageVersion -ResourceGroupName $aibRg -GalleryName $computeGallery -GalleryImageDefinitionName $imageDef) | Where-Object {$_.PublishingProfile.PublishedDate -eq $date}).Id
+            ImageReference = ((Get-AzGalleryImageVersion -ResourceGroupName $aibRg -GalleryName $computeGallery -GalleryImageDefinitionName $imageDef)).id[-1]
             SessionHostCount = $SessionHostsCount
             Timestamp = $TimeStamp
             ImageSource = 'aib'
