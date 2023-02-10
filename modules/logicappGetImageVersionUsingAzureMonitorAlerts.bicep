@@ -160,6 +160,7 @@ resource  workflows_GetImageVersion_name_resource  'Microsoft.Logic/workflows@20
                           TenantId: tenantId
                           TemplateSpecId: templateSpecId
                           SubscriptionId: subscriptionId
+                          ImageSource: imageSource
                         }
                       }
                     }
