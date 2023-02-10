@@ -32,7 +32,6 @@ if($ImageSource -eq "marketplace")
     }
 
     $LatestVersionDate = $VersionDates | Sort-Object -Descending | Select-Object -First 1
-    
     [string]$LatestVersion = $Versions -like "*$LatestVersionDate"
 
     if ($LatestVersion.Split('.')[-1] -gt $hostpoolVm.StorageProfile.ImageReference.ExactVersion.Split('.')[-1])
@@ -49,7 +48,6 @@ else
     $hostpoolVm = Get-AzVM -ResourceGroupName $ResourceGroupName -Name $VmName
 
     $imageId = $hostpoolVm.StorageProfile.ImageReference.Id
-    
     $id = $imageId
     $computeGallery= $id.Split("/")[8]
     $version = $id.Split("/")[12]
@@ -71,6 +69,7 @@ else
         {
             $newImageFound = $false
             Write-Host "false"
+            $LatestVersion = ((Get-AzGalleryImageVersion -ResourceGroupName $galleryRg -GalleryName $computeGallery -GalleryImageDefinitionName $imageDef) | Where-Object {$_.PublishingProfile.PublishedDate -eq $date}).name
         }
     }
 }

@@ -318,7 +318,7 @@ module rbacPermissionAzureAutomationAccountRg 'modules/rbacPermissionsSubscripti
   ]
 }
 
-module getImageVersionlogicAppUsingAzureMonitorAlerts 'modules/logicappGetImageVersionUsingAzureMonitorAlerts.bicep'  = if(imageWithOutConnector) {
+module getImageVersionlogicAppUsingAzureMonitorAlerts 'modules/logicappGetImageVersionUsingAzureMonitorAlerts_Test.bicep'  = if(imageWithOutConnector) {
   name: 'getImageVersionlogicAppWOConnectpr-deployment-${deploymentNameSuffix}'
   scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
   params: {
