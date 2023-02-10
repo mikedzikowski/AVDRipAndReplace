@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.7.4.23292",
-      "templateHash": "12078718307607451746"
+      "templateHash": "241725523847664028"
     }
   },
   "parameters": {
@@ -1022,7 +1022,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.7.4.23292",
-              "templateHash": "5613032364498967370"
+              "templateHash": "13460166033687172145"
             }
           },
           "parameters": {
@@ -1239,7 +1239,8 @@
                                       "HostPoolName": "[parameters('hostPoolName')]",
                                       "TenantId": "[parameters('tenantId')]",
                                       "TemplateSpecId": "[parameters('templateSpecId')]",
-                                      "SubscriptionId": "[parameters('subscriptionId')]"
+                                      "SubscriptionId": "[parameters('subscriptionId')]",
+                                      "ImageSource": "[parameters('imageSource')]"
                                     }
                                   }
                                 },
@@ -1668,7 +1669,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.7.4.23292",
-              "templateHash": "10177905373915727704"
+              "templateHash": "1227542128169388133"
             }
           },
           "parameters": {
@@ -1849,7 +1850,8 @@
                                       "HostPoolName": "[parameters('hostPoolName')]",
                                       "TenantId": "[parameters('tenantId')]",
                                       "TemplateSpecId": "[parameters('templateSpecId')]",
-                                      "SubscriptionId": "[parameters('subscriptionId')]"
+                                      "SubscriptionId": "[parameters('subscriptionId')]",
+                                      "ImageSource": "[parameters('imageSource')]"
                                     }
                                   }
                                 },
@@ -2862,6 +2864,9 @@
           },
           "blobConnectId": {
             "value": "[if(variables('blobWithConnector'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('blobConnection-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.blobConnectionId.value, 'None')]"
+          },
+          "imageSource": {
+            "value": "[parameters('imageSource')]"
           }
         },
         "template": {
@@ -2871,7 +2876,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.7.4.23292",
-              "templateHash": "2559638193640532482"
+              "templateHash": "17105532769395694660"
             }
           },
           "parameters": {
@@ -2973,6 +2978,9 @@
             },
             "automationAccountConnectId": {
               "type": "string"
+            },
+            "imageSource": {
+              "type": "string"
             }
           },
           "resources": [
@@ -3045,7 +3053,8 @@
                                   "HostPoolName": "[parameters('hostPoolName')]",
                                   "TenantId": "[parameters('tenantId')]",
                                   "TemplateSpecId": "[parameters('templateSpecId')]",
-                                  "SubscriptionId": "[parameters('subscriptionId')]"
+                                  "SubscriptionId": "[parameters('subscriptionId')]",
+                                  "ImageSource": "[parameters('imageSource')]"
                                 }
                               }
                             },
@@ -3261,6 +3270,9 @@
           },
           "blobConnectId": {
             "value": "[if(variables('blobWithOutConnector'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('blobConnection-deployment-{0}', parameters('deploymentNameSuffix'))), '2020-10-01').outputs.blobConnectionId.value, 'None')]"
+          },
+          "imageSource": {
+            "value": "[parameters('imageSource')]"
           }
         },
         "template": {
@@ -3270,7 +3282,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.7.4.23292",
-              "templateHash": "8299886159444071764"
+              "templateHash": "11433381895456334183"
             }
           },
           "parameters": {
@@ -3360,6 +3372,9 @@
             },
             "automationAccountConnectId": {
               "type": "string"
+            },
+            "imageSource": {
+              "type": "string"
             }
           },
           "resources": [
@@ -3432,7 +3447,8 @@
                                   "HostPoolName": "[parameters('hostPoolName')]",
                                   "TenantId": "[parameters('tenantId')]",
                                   "TemplateSpecId": "[parameters('templateSpecId')]",
-                                  "SubscriptionId": "[parameters('subscriptionId')]"
+                                  "SubscriptionId": "[parameters('subscriptionId')]",
+                                  "ImageSource": "[parameters('imageSource')]"
                                 }
                               }
                             },

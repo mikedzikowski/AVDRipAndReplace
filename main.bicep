@@ -510,6 +510,7 @@ module getBlobUpdateLogicApps 'modules/logicAppGetBlobUpdate.bicep' = if (blobWi
     office365ConnectionId: blobWithConnector ? o365Connection.outputs.office365ConnectionId : 'None'
     automationAccountConnectId: automationAccountConnection.outputs.automationConnectId
     blobConnectId: blobWithConnector ? blobConnection.outputs.blobConnectionId : 'None'
+    imageSource: imageSource
   }
   dependsOn: [
     blobConnection
@@ -549,6 +550,7 @@ module getBlobUpdateLogicAppUsingAzureMonitorAlerts 'modules/logicAppGetBlobUpda
     runbookNewHostPoolRipAndReplace: runbookNewHostPoolRipAndReplace
     automationAccountConnectId: automationAccountConnection.outputs.automationConnectId
     blobConnectId: blobWithOutConnector ? blobConnection.outputs.blobConnectionId : 'None'
+    imageSource: imageSource
   }
   dependsOn: [
     blobConnection
