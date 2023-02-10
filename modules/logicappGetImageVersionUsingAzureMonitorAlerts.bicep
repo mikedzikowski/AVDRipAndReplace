@@ -23,15 +23,16 @@ param subscriptionId string
 param hostPoolName string
 param templateSpecId string
 param automationAccountConnectId   string
+param imageSource       string
 
-resource workflows_GetImageVersion_name_resource 'Microsoft.Logic/workflows@2017-07-01' = {
+resource  workflows_GetImageVersion_name_resource  'Microsoft.Logic/workflows@2017-07-01' = {
   name: workflows_GetImageVersion_name
   location: location
   identity: {
     type: identityType
   }
   properties: {
-   state: state
+    state: 'Enabled'
     definition: {
       '$schema': 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#'
       contentVersion: '1.0.0.0'
@@ -43,68 +44,19 @@ resource workflows_GetImageVersion_name_resource 'Microsoft.Logic/workflows@2017
         }
       }
       triggers: {
-        Recurrence: {
-          recurrence: {
-            frequency: recurrenceFrequency
-            interval: recurrenceInterval
-          }
-          evaluatedRecurrence: {
-            frequency: recurrenceFrequency
-            interval: recurrenceInterval
-          }
-          type: recurrenceType
-        }
-      }
+       Recurrence: {
+         recurrence: {
+           frequency: recurrenceFrequency
+           interval: recurrenceInterval
+         }
+         evaluatedRecurrence: {
+           frequency: recurrenceFrequency
+           interval: recurrenceInterval
+         }
+         type: recurrenceType
+       }
+     }
       actions: {
-        Alert_Status: {
-          runAfter: {
-            Parse_image_version: [
-              'Succeeded'
-            ]
-          }
-          type: 'ApiConnection'
-          inputs: {
-            body: {
-              properties: {
-                parameters: {
-                  environment: cloud
-                }
-              }
-            }
-            host: {
-              connection: {
-                name: '@parameters(\'$connections\')[\'azureautomation\'][\'connectionId\']'
-              }
-            }
-            method: 'put'
-            path: concat('/subscriptions/@{encodeURIComponent(\'${subscriptionId}\')}/resourceGroups/@{encodeURIComponent(\'${automationAccountResourceGroup}\')}/providers/Microsoft.Automation/automationAccounts/@{encodeURIComponent(\'${automationAccountName}\')}/jobs')
-            queries: {
-              runbookName: 'Get-NewImageAlertStatus'
-              wait: true
-              'x-ms-api-version': '2015-10-31'
-            }
-          }
-        }
-        Alert_Status_Output: {
-          runAfter: {
-            Alert_Status: [
-              'Succeeded'
-            ]
-          }
-          type: 'ApiConnection'
-          inputs: {
-            host: {
-              connection: {
-                name: '@parameters(\'$connections\')[\'azureautomation\'][\'connectionId\']'
-              }
-            }
-            method: 'get'
-            path: '/subscriptions/@{encodeURIComponent(\'${subscriptionId}\')}/resourceGroups/@{encodeURIComponent(\'${automationAccountResourceGroup}\')}/providers/Microsoft.Automation/automationAccounts/@{encodeURIComponent(\'${automationAccountName}\')}/jobs/@{encodeURIComponent(body(\'Alert_Status\')?[\'properties\']?[\'jobId\'])}/output'
-            queries: {
-              'x-ms-api-version': '2015-10-31'
-            }
-          }
-        }
         Check_for_Exisiting_Runbook_Schedule_for_Hostpool_AVD_Environment: {
           runAfter: {
             Parse_Session_Host_VM_and_RG: [
@@ -140,7 +92,7 @@ resource workflows_GetImageVersion_name_resource 'Microsoft.Logic/workflows@2017
         }
         Condition_Check_for_Runbook_Schedule_and_Image_Version_on_AVD_Environment: {
           actions: {
-            Create_Schedule_for_Hostpool_Rip_and_Replace_on_AVD_Environment: {
+            Alert_Status: {
               runAfter: {
               }
               type: 'ApiConnection'
@@ -148,18 +100,7 @@ resource workflows_GetImageVersion_name_resource 'Microsoft.Logic/workflows@2017
                 body: {
                   properties: {
                     parameters: {
-                      AutomationAccountName: automationAccountName
-                      ResourceGroupName: automationAccountResourceGroup
-                      ScheduleName: '${hostPoolName}-ScheduleForRipAndReplace'
-                      StartTime: startTime
-                      DayOfWeek: dayOfWeek
-                      DayOfWeekOccurrence: dayOfWeekOccurrence
                       environment: cloud
-                      runbookName: runbookNewHostPoolRipAndReplace
-                      HostPoolName: hostPoolName
-                      TenantId: tenantId
-                      TemplateSpecId: templateSpecId
-                      SubscriptionId: subscriptionId
                     }
                   }
                 }
@@ -169,17 +110,126 @@ resource workflows_GetImageVersion_name_resource 'Microsoft.Logic/workflows@2017
                   }
                 }
                 method: 'put'
-                path: '/subscriptions/@{encodeURIComponent(\'${subscriptionId}\')}/resourceGroups/@{encodeURIComponent(\'${automationAccountResourceGroup}\')}/providers/Microsoft.Automation/automationAccounts/@{encodeURIComponent(\'${automationAccountName}\')}/jobs'
+                path: concat('/subscriptions/@{encodeURIComponent(\'${subscriptionId}\')}/resourceGroups/@{encodeURIComponent(\'${automationAccountResourceGroup}\')}/providers/Microsoft.Automation/automationAccounts/@{encodeURIComponent(\'${automationAccountName}\')}/jobs')
                 queries: {
-                  runbookName: 'New-AutomationSchedule'
+                  runbookName: 'Get-NewImageAlertStatus'
                   wait: true
                   'x-ms-api-version': '2015-10-31'
                 }
               }
             }
+            Alert_Status_Output: {
+              runAfter: {
+                Alert_Status: [
+                  'Succeeded'
+                ]
+              }
+              type: 'ApiConnection'
+              inputs: {
+                host: {
+                  connection: {
+                    name: '@parameters(\'$connections\')[\'azureautomation\'][\'connectionId\']'
+                  }
+                }
+                method: 'get'
+                path: '/subscriptions/@{encodeURIComponent(\'${subscriptionId}\')}/resourceGroups/@{encodeURIComponent(\'${automationAccountResourceGroup}\')}/providers/Microsoft.Automation/automationAccounts/@{encodeURIComponent(\'${automationAccountName}\')}/jobs/@{encodeURIComponent(body(\'Alert_Status\')?[\'properties\']?[\'jobId\'])}/output'
+                queries: {
+                  'x-ms-api-version': '2015-10-31'
+                }
+              }
+            }
+            Condition: {
+              actions: {
+                Create_Schedule_for_Hostpool_Rip_and_Replace_on_AVD_Environment: {
+                  runAfter: {
+                  }
+                  type: 'ApiConnection'
+                  inputs: {
+                    body: {
+                      properties: {
+                        parameters: {
+                          AutomationAccountName: automationAccountName
+                          ResourceGroupName: automationAccountResourceGroup
+                          ScheduleName: '${hostPoolName}-ScheduleForRipAndReplace'
+                          StartTime: startTime
+                          DayOfWeek: dayOfWeek
+                          DayOfWeekOccurrence: dayOfWeekOccurrence
+                          environment: cloud
+                          runbookName: runbookNewHostPoolRipAndReplace
+                          HostPoolName: hostPoolName
+                          TenantId: tenantId
+                          TemplateSpecId: templateSpecId
+                          SubscriptionId: subscriptionId
+                          ImageSource: imageSource
+                        }
+                      }
+                    }
+                    host: {
+                      connection: {
+                        name: '@parameters(\'$connections\')[\'azureautomation\'][\'connectionId\']'
+                      }
+                    }
+                    method: 'put'
+                    path: '/subscriptions/@{encodeURIComponent(\'${subscriptionId}\')}/resourceGroups/@{encodeURIComponent(\'${automationAccountResourceGroup}\')}/providers/Microsoft.Automation/automationAccounts/@{encodeURIComponent(\'${automationAccountName}\')}/jobs'
+                    queries: {
+                      runbookName: 'New-AutomationSchedule'
+                      wait: true
+                      'x-ms-api-version': '2015-10-31'
+                    }
+                  }
+                }
+              }
+              runAfter: {
+                Parse_JSON: [
+                  'Succeeded'
+                ]
+              }
+              else: {
+                actions: {
+                  Terminate_2: {
+                    runAfter: {
+                    }
+                    type: 'Terminate'
+                    inputs: {
+                      runStatus: 'Cancelled'
+                    }
+                  }
+                }
+              }
+              expression: {
+                and: [
+                  {
+                    equals: [
+                      '@body(\'Parse_JSON\')?[\'Approval\']'
+                      true
+                    ]
+                  }
+                ]
+              }
+              type: 'If'
+            }
+            Parse_JSON: {
+              runAfter: {
+                Alert_Status_Output: [
+                  'Succeeded'
+                ]
+              }
+              type: 'ParseJson'
+              inputs: {
+                content: '@body(\'Alert_Status_Output\')'
+                schema: {
+                  properties: {
+                    Approval: {
+                      type: 'boolean'
+                    }
+                  }
+                  type: 'object'
+                }
+              }
+            }
           }
           runAfter: {
-            Parse_JSON: [
+            Parse_image_version: [
               'Succeeded'
             ]
           }
@@ -209,12 +259,6 @@ resource workflows_GetImageVersion_name_resource 'Microsoft.Logic/workflows@2017
                   true
                 ]
               }
-              {
-                equals: [
-                  '@body(\'Parse_JSON\')?[\'Approval\']'
-                  true
-                ]
-              }
             ]
           }
           type: 'If'
@@ -233,6 +277,7 @@ resource workflows_GetImageVersion_name_resource 'Microsoft.Logic/workflows@2017
                   ResourceGroupName: '@body(\'Parse_Session_Host_VM_and_RG\')?[\'productionVmRg\']'
                   VMName: '@body(\'Parse_Session_Host_VM_and_RG\')?[\'productionVm\']'
                   environment: cloud
+                  ImageSource      : imageSource
                 }
               }
             }
@@ -337,25 +382,6 @@ resource workflows_GetImageVersion_name_resource 'Microsoft.Logic/workflows@2017
             }
           }
         }
-        Parse_JSON: {
-          runAfter: {
-            Alert_Status_Output: [
-              'Succeeded'
-            ]
-          }
-          type: 'ParseJson'
-          inputs: {
-            content: '@body(\'Alert_Status_Output\')'
-            schema: {
-              properties: {
-                Approval: {
-                  type: 'boolean'
-                }
-              }
-              type: 'object'
-            }
-          }
-        }
         Parse_Schedule: {
           runAfter: {
             'Get_Output_from_Runbook_Get-RunBookSchedule': [
@@ -445,4 +471,3 @@ resource workflows_GetImageVersion_name_resource 'Microsoft.Logic/workflows@2017
   }
 }
 output imagePrincipalId string = workflows_GetImageVersion_name_resource.identity.principalId
-

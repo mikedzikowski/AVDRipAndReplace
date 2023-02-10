@@ -27,6 +27,7 @@ param tenantId string
 param templateSpecId string
 param blobConnectId string
 param automationAccountConnectId   string
+param imageSource string
 
 resource workflows_GetBlobUpdate_name_resource 'Microsoft.Logic/workflows@2017-07-01' = {
   name: workflows_GetBlobUpdate_name
@@ -98,6 +99,7 @@ resource workflows_GetBlobUpdate_name_resource 'Microsoft.Logic/workflows@2017-0
                       TenantId: tenantId
                       TemplateSpecId: templateSpecId
                       SubscriptionId: subscriptionId
+                      ImageSource: imageSource
                     }
                   }
                 }

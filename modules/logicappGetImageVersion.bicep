@@ -26,6 +26,7 @@ param hostPoolName string
 param templateSpecId string
 param office365ConnectionId string
 param automationAccountConnectId   string
+param imageSource       string
 
 resource workflows_GetImageVersion_name_resource 'Microsoft.Logic/workflows@2017-07-01' = {
   name: workflows_GetImageVersion_name
@@ -116,6 +117,7 @@ resource workflows_GetImageVersion_name_resource 'Microsoft.Logic/workflows@2017
                           TenantId: tenantId
                           TemplateSpecId: templateSpecId
                           SubscriptionId: subscriptionId
+                          ImageSource: imageSource
                         }
                       }
                     }
@@ -238,6 +240,7 @@ resource workflows_GetImageVersion_name_resource 'Microsoft.Logic/workflows@2017
                   ResourceGroupName: '@body(\'Parse_Session_Host_VM_and_RG\')?[\'productionVmRg\']'
                   VMName: '@body(\'Parse_Session_Host_VM_and_RG\')?[\'productionVm\']'
                   Environment: cloud
+                  ImageSource      : imageSource
                 }
               }
             }

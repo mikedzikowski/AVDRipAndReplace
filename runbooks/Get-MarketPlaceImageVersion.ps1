@@ -1,8 +1,9 @@
 [CmdletBinding()]
 param (
-    [parameter(mandatory = $true)]$VmName,
-	[parameter(mandatory = $true)]$ResourceGroupName,
-    [parameter(mandatory = $true)]$Environment
+    [parameter(mandatory = $false)]$VmName,
+	[parameter(mandatory = $false)]$ResourceGroupName,
+    [parameter(mandatory = $true)]$Environment,
+    [parameter(mandatory = $false)]$ImageSource
 )
 
 # Connect using a Managed Service Identity
@@ -18,27 +19,63 @@ catch
 
 $AzureContext = Set-AzContext -SubscriptionName $AzureContext.Subscription -DefaultProfile $AzureContext
 
-$hostpoolVm = Get-AzVM -ResourceGroupName $ResourceGroupName -Name $VmName
-
-$Versions = (Get-AzVMImage -Location $hostpoolVm.Location -PublisherName $hostpoolVm.StorageProfile.ImageReference.Publisher -Offer $hostpoolVm.StorageProfile.ImageReference.Offer -Sku $hostpoolVm.StorageProfile.ImageReference.Sku).Version
-
-$VersionDates = @()
-foreach($Version in $Versions)
+if($ImageSource -eq "marketplace")
 {
-    $VersionDates += $Version.Split('.')[-1]
-}
+    $hostpoolVm = Get-AzVM -ResourceGroupName $ResourceGroupName -Name $VmName
 
-$LatestVersionDate = $VersionDates | Sort-Object -Descending | Select-Object -First 1
+    $versions = (Get-AzVMImage -Location $hostpoolVm.Location -PublisherName $hostpoolVm.StorageProfile.ImageReference.Publisher -Offer $hostpoolVm.StorageProfile.ImageReference.Offer -Sku $hostpoolVm.StorageProfile.ImageReference.Sku).Version
 
-[string]$LatestVersion = $Versions -like "*$LatestVersionDate"
+    $versionDates = @()
+    foreach($Version in $Versions)
+    {
+        $VersionDates += $Version.Split('.')[-1]
+    }
 
-if ($LatestVersion.Split('.')[-1] -gt $hostpoolVm.StorageProfile.ImageReference.ExactVersion.Split('.')[-1])
-{
-    $newImageFound = $true
+    $LatestVersionDate = $VersionDates | Sort-Object -Descending | Select-Object -First 1
+    [string]$LatestVersion = $Versions -like "*$LatestVersionDate"
+
+    if ($LatestVersion.Split('.')[-1] -gt $hostpoolVm.StorageProfile.ImageReference.ExactVersion.Split('.')[-1])
+    {
+        $newImageFound = $true
+    }
+    else
+    {
+        $newImageFound = $false
+    }
 }
 else
 {
-    $newImageFound = $false
+    $hostpoolVm = Get-AzVM -ResourceGroupName $ResourceGroupName -Name $VmName
+
+    $imageId = $hostpoolVm.StorageProfile.ImageReference.Id
+    $id = $imageId
+    $computeGallery= $id.Split("/")[8]
+    $version = $id.Split("/")[12]
+    $imageDef = $id.Split("/")[10]
+    $galleryRg = $id.Split("/")[4]
+    $vmImagePublishdate = (Get-AzGalleryImageVersion -ResourceGroupName $galleryRg -GalleryName $computeGallery -GalleryImageDefinitionName $imageDef -name $version).PublishingProfile.PublishedDate
+
+    $imageVersionPublishDate = (Get-AzGalleryImageVersion -ResourceGroupName $galleryRg -GalleryName $computeGallery -GalleryImageDefinitionName $imageDef)
+
+    foreach($date in $imageVersionPublishDate.PublishingProfile.PublishedDate)
+    {
+        if ($date -gt $vmImagePublishdate)
+        {
+            $galleryImageFound = $true
+            Write-Host "true"
+            $LatestVersion = ((Get-AzGalleryImageVersion -ResourceGroupName $galleryRg -GalleryName $computeGallery -GalleryImageDefinitionName $imageDef) | Where-Object {$_.PublishingProfile.PublishedDate -eq $date}).name
+        }
+        else
+        {
+            $newImageFound = $false
+            Write-Host "false"
+            $LatestVersion = ((Get-AzGalleryImageVersion -ResourceGroupName $galleryRg -GalleryName $computeGallery -GalleryImageDefinitionName $imageDef) | Where-Object {$_.PublishingProfile.PublishedDate -eq $date}).name
+        }
+    }
+}
+if($galleryImageFound)
+{
+    $newImageFound = $true
 }
 
 $objOut = [PSCustomObject]@{

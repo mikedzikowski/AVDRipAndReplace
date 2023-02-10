@@ -35,13 +35,17 @@ param(
     [string]$TenantId,
 
     [parameter(Mandatory)]
-    [string]$VirtualMachineNamePrefix
+    [string]$VirtualMachineNamePrefix,
+
+    [parameter(Mandatory)]
+    [string]$ImageSource
+
 )
 
 $ErrorActionPreference = 'Stop'
 $WarningPreference = 'SilentlyContinue'
 
-try 
+try
 {
     # Set Context to Subscription for AVD deployment
     Connect-AzAccount -Environment $Environment -Subscription $SubscriptionId -Tenant $TenantId
@@ -148,10 +152,25 @@ try
     $Template.parameters.HostPoolType.defaultValue = $HostPool.HostPoolType.ToString()
     $Template.parameters.HostPoolValidationEnvironment.defaultValue = $HostPool.ValidationEnvironment
     $Template.parameters.HostPoolVmTemplate.defaultValue = $HostPool.VMTemplate
+    if($ImageSource -eq "marketplace")
+    {
     $Template.parameters.ImageOffer.defaultValue = $VirtualMachine.StorageProfile.ImageReference.Offer
     $Template.parameters.ImagePublisher.defaultValue = $VirtualMachine.StorageProfile.ImageReference.Publisher
     $Template.parameters.ImageSku.defaultValue = $VirtualMachine.StorageProfile.ImageReference.SKU
     $Template.parameters.ImageVersion.defaultValue = 'latest'
+    $Template.parameters.ImageId.defaultValue = ''
+    $Template.parameters.ImageId.defaultValue = ''
+    $Template.parameters.ImageSource.default = $ImageSource
+    }
+    if($ImageSource -eq "gallery")
+    {
+    $Template.parameters.ImageId.defaultValue = ''
+    $Template.parameters.ImageOffer.defaultValue = ''
+    $Template.parameters.ImagePublisher.defaultValue = ''
+    $Template.parameters.ImageSku.defaultValue = ''
+    $Template.parameters.ImageVersion.defaultValue = ''
+    $Template.parameters.ImageSource.defaultValue = $ImageSource
+    }
     $Template.parameters.KeyVaultResourceId.defaultValue = $KeyVaultResourceId
     $Template.parameters.NetworkInterfaceNamePrefix.defaultValue = $NetworkInterfaceNamePrefix
     $Template.parameters.SessionHostCount.defaultValue = 1

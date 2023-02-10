@@ -11,8 +11,8 @@ param (
     [parameter(mandatory = $true)]$HostPoolName,
     [parameter(mandatory = $true)]$TenantId,
     [parameter(mandatory = $true)]$SubscriptionId,
-    [parameter(mandatory = $true)]$TemplateSpecId
-    # [parameter(mandatory = $true)]$KeyVault
+    [parameter(mandatory = $true)]$TemplateSpecId,
+    [parameter(mandatory = $true)]$ImageSource
 )
 
 #Connect using a Managed Service Identity
@@ -39,10 +39,10 @@ $Params = @{
 "TenantId"       = $TenantId;
 "SubscriptionId" = $SubscriptionId;
 "TemplateSpecId" = $TemplateSpecId;
-# "KeyVault"       = $KeyVault;
 "AutomationAccountName" = $AutomationAccountName;
 "AutomationAccountResourceGroupName" = $ResourceGroupName;
-"ScheduleName" = $ScheduleName
+"ScheduleName" = $ScheduleName;
+"ImageSource" = $ImageSource
 }
 # Register Automation Schedule to Runbook
 Register-AzAutomationScheduledRunbook -ResourceGroupName $ResourceGroupName -AutomationAccountName $AutomationAccountName -RunbookName $RunbookName -ScheduleName $ScheduleName -Parameters $Params

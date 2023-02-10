@@ -30,7 +30,7 @@ try
     $alert = (Get-AzAlert | Where-Object {($_.Name -like "New Image Found for AVD Environment*") -and ($_.State -eq "Closed")} `
     | Sort-Object -Property StartDateTime | Select-Object -Last 1)
     $comments = (Get-AzAlertObjectHistory -ResourceId $alert.id.split('/')[-1]).Comments
-    if($comments[0].contains("Approved")){
+    if($comments[0] -contains("Approved")){
         $Approval = $true
     }
     else{

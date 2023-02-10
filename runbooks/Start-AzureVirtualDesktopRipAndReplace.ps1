@@ -22,12 +22,15 @@ Param (
     [string]$AutomationAccountResourceGroupName,
 
     [Parameter(mandatory = $true)]
-    [string]$ScheduleName
+    [string]$ScheduleName,
+    
+    [Parameter(mandatory = $true)]
+    [string]$ImageSource
 )
 
 $ErrorActionPreference = 'Stop'
 
-try 
+try
 {
     Disable-AzContextAutosave `
         –Scope Process
@@ -51,14 +54,6 @@ try
 
     $SessionHostsCount = $SessionHosts.count
 
-    # Get details for deployment params
-    $Params = @{
-        ImageVersion = 'latest'
-        SessionHostCount = $SessionHostsCount
-        Timestamp = $TimeStamp
-    }
-
-
     # Put all session hosts in drain mode
     foreach($SessionHost in $SessionHosts)
     {
@@ -78,6 +73,37 @@ try
     $Sessions = Get-AzWvdUserSession `
         -ResourceGroupName $HostPoolResourceGroup `
         -HostPoolName $HostPoolName
+
+    if($ImageSource -eq "gallery")
+    {
+        $hostpoolVm = Get-AzVM -ResourceGroupName $SessionHostsResourceGroup -Name $VmName
+        $imageId = $hostpoolVm.StorageProfile.ImageReference.Id
+        $id = $imageId
+        $computeGallery= $id.Split("/")[8]
+        $imageDef = $id.Split("/")[10]
+        $galleryRg = $id.Split("/")[4]
+        $ImageId = (Get-AzGalleryImageVersion -ResourceGroupName $galleryRg -GalleryName $computeGallery -GalleryImageDefinitionName $imageDef).id[-1]
+    }
+
+    # Get details for deployment params
+    if($ImageSource -eq "marketplace")
+    {
+        $Params = @{
+            ImageVersion = 'latest'
+            SessionHostCount = $SessionHostsCount
+            Timestamp = $TimeStamp
+            ImageSource = 'marketplace'
+        }
+    }
+    else {
+        $Params = @{
+            ImageId = ((Get-AzGalleryImageVersion -ResourceGroupName $galleryRg -GalleryName $computeGallery -GalleryImageDefinitionName $imageDef)).id[-1]
+            SessionHostCount = $SessionHostsCount
+            Timestamp = $TimeStamp
+            ImageSource = 'gallery'
+            HostPoolVmTemplate = ''
+        }
+    }
 
     # Send a message to any user with an active session
     $Time = (Get-Date).ToUniversalTime().AddMinutes(15)
@@ -206,8 +232,10 @@ try
         @params
 
     # Replacing Tags
-    Update-AzTag -ResourceId $SessionHostsResourceGroupId -Tag $HostPoolTags -Operation Replace
-
+    if($HostPoolTags)
+    {
+        Update-AzTag -ResourceId $SessionHostsResourceGroupId -Tag $HostPoolTags -Operation Replace
+    }
     # Removing Azutomation Schedule
     Remove-AzAutomationSchedule -AutomationAccountName $AutomationAccountName -Name $ScheduleName -ResourceGroupName $AutomationAccountResourceGroupName -Force
     Write-Output "$HostPoolName | $HostPoolResourceGroup | AVD Rip & Replace succeeded."

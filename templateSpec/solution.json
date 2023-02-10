@@ -4,14 +4,14 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.12.40.16777",
-      "templateHash": "12916590939933733865"
+      "version": "0.7.4.23292",
+      "templateHash": "6487866929145641976"
     }
   },
   "parameters": {
     "Availability": {
       "type": "string",
-      "defaultValue": "AvailabilitySet",
+      "defaultValue": "None",
       "allowedValues": [
         "AvailabilitySet",
         "AvailabilityZones",
@@ -28,15 +28,15 @@
     },
     "DiskNamePrefix": {
       "type": "string",
-      "defaultValue": "vmfspeova-d"
+      "defaultValue": ""
     },
     "DiskSku": {
       "type": "string",
-      "defaultValue": "Standard_LRS"
+      "defaultValue": "Premium_LRS"
     },
     "DomainName": {
       "type": "string",
-      "defaultValue": "mvdlab.onmicrosoft.us"
+      "defaultValue": ""
     },
     "DomainServices": {
       "type": "string",
@@ -49,7 +49,7 @@
     },
     "HostPoolCustomRdpProperty": {
       "type": "string",
-      "defaultValue": "audiocapturemode:i:1;camerastoredirect:s:*;devicestoredirect:s:;redirectclipboard:i:1;redirectprinters:i:0;usbdevicestoredirect:s:;drivestoredirect:s:;redirectsmartcards:i:1;redirectcomports:i:0;use multimon:i:0;"
+      "defaultValue": ""
     },
     "HostPoolDescription": {
       "type": "string",
@@ -61,41 +61,39 @@
     },
     "HostPoolLoadBalancerType": {
       "type": "string",
-      "defaultValue": "DepthFirst"
+      "defaultValue": ""
     },
     "HostPoolLocation": {
       "type": "string",
-      "defaultValue": "usgovvirginia"
+      "defaultValue": "[deployment().location]"
     },
     "HostPoolMaxSessionLimit": {
       "type": "int",
-      "defaultValue": 4
+      "defaultValue": 1
     },
     "HostPoolName": {
       "type": "string",
-      "defaultValue": "hp-fs-peo-va-d-01"
+      "defaultValue": ""
     },
     "HostPoolPreferredAppGroupType": {
       "type": "string",
-      "defaultValue": "Desktop"
+      "defaultValue": ""
     },
     "HostPoolResourceGroupName": {
       "type": "string",
-      "defaultValue": "rg-fs-peo-va-d-management-01"
+      "defaultValue": ""
     },
     "HostPoolStartVmOnConnect": {
       "type": "bool",
-      "defaultValue": true
+      "defaultValue": false
     },
     "HostPoolTags": {
       "type": "object",
-      "defaultValue": {
-        "Environment": "Production"
-      }
+      "defaultValue": {}
     },
     "HostPoolType": {
       "type": "string",
-      "defaultValue": "Pooled"
+      "defaultValue": ""
     },
     "HostPoolValidationEnvironment": {
       "type": "bool",
@@ -103,19 +101,19 @@
     },
     "HostPoolVmTemplate": {
       "type": "string",
-      "defaultValue": "{\"domain\":\"mvdlab.onmicrosoft.us\",\"galleryImageOffer\":\"windows-11\",\"galleryImagePublisher\":\"microsoftwindowsdesktop\",\"galleryImageSKU\":\"win11-21h2-avd\",\"imageType\":\"Gallery\",\"customImageId\":null,\"namePrefix\":\"vmfspeova-d\",\"osDiskType\":\"Standard_LRS\",\"vmSize\":{\"id\":\"Standard_D2s_v4\",\"cores\":null,\"ram\":null},\"galleryItemId\":\"microsoftwindowsdesktop.windows-11win11-21h2-avd\",\"securityType\":\"Standard\",\"secureBoot\":false,\"vTPM\":false}"
+      "defaultValue": ""
     },
     "ImageOffer": {
       "type": "string",
-      "defaultValue": "windows-11"
+      "defaultValue": ""
     },
     "ImagePublisher": {
       "type": "string",
-      "defaultValue": "microsoftwindowsdesktop"
+      "defaultValue": ""
     },
     "ImageSku": {
       "type": "string",
-      "defaultValue": "win11-21h2-avd"
+      "defaultValue": ""
     },
     "ImageVersion": {
       "type": "string",
@@ -123,11 +121,11 @@
     },
     "KeyVaultResourceId": {
       "type": "string",
-      "defaultValue": "/subscriptions/f4972a61-1083-4904-a4e2-a790107320bf/resourceGroups/rg-fs-peo-va-d-management-01/providers/Microsoft.KeyVault/vaults/kv-fs-peo-va-d-05"
+      "defaultValue": ""
     },
     "NetworkInterfaceNamePrefix": {
       "type": "string",
-      "defaultValue": "nic"
+      "defaultValue": ""
     },
     "SessionHostCount": {
       "type": "int",
@@ -143,7 +141,7 @@
     },
     "SubnetResourceId": {
       "type": "string",
-      "defaultValue": "/subscriptions/f4972a61-1083-4904-a4e2-a790107320bf/resourceGroups/rg-shd-net-d-va/providers/Microsoft.Network/virtualNetworks/vnet-shd-net-d-va/subnets/Clients"
+      "defaultValue": ""
     },
     "Timestamp": {
       "type": "string",
@@ -155,26 +153,31 @@
     },
     "VirtualMachineLocation": {
       "type": "string",
-      "defaultValue": "usgovvirginia"
+      "defaultValue": "[deployment().location]"
     },
     "VirtualMachineNamePrefix": {
       "type": "string",
-      "defaultValue": "vmavd"
+      "defaultValue": ""
     },
     "VirtualMachineResourceGroupName": {
       "type": "string",
-      "defaultValue": "rg-fs-peo-va-d-management-01"
+      "defaultValue": ""
     },
     "VirtualMachineSize": {
       "type": "string",
-      "defaultValue": "Standard_D2s_v4"
+      "defaultValue": ""
     },
     "VirtualMachineTags": {
       "type": "object",
-      "defaultValue": {
-        "cm-resource-parent": "/subscriptions/f4972a61-1083-4904-a4e2-a790107320bf/resourceGroups/rg-fs-peo-va-d-management-01/providers/Microsoft.DesktopVirtualization/hostpools/hp-fs-peo-va-d-01",
-        "Environment": "Production"
-      }
+      "defaultValue": {}
+    },
+    "ImageId": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "ImageSource": {
+      "type": "string",
+      "defaultValue": ""
     }
   },
   "variables": {
@@ -248,8 +251,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "17364571363319644937"
+              "version": "0.7.4.23292",
+              "templateHash": "7197294014693639669"
             }
           },
           "parameters": {
@@ -426,6 +429,12 @@
           },
           "VirtualMachineTags": {
             "value": "[parameters('VirtualMachineTags')]"
+          },
+          "ImageId": {
+            "value": "[parameters('ImageId')]"
+          },
+          "ImageSource": {
+            "value": "[parameters('ImageSource')]"
           }
         },
         "template": {
@@ -434,8 +443,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.12.40.16777",
-              "templateHash": "3092952389248483204"
+              "version": "0.7.4.23292",
+              "templateHash": "18275249926034239719"
             }
           },
           "parameters": {
@@ -526,6 +535,13 @@
             },
             "VirtualMachineTags": {
               "type": "object"
+            },
+            "ImageId": {
+              "type": "string",
+              "defaultValue": ""
+            },
+            "ImageSource": {
+              "type": "string"
             }
           },
           "variables": {
@@ -652,8 +668,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.12.40.16777",
-                      "templateHash": "14614731782765075170"
+                      "version": "0.7.4.23292",
+                      "templateHash": "586041112873922658"
                     }
                   },
                   "parameters": {
@@ -772,6 +788,12 @@
                       },
                       "secretName": "LocalAdminUsername"
                     }
+                  },
+                  "ImageId": {
+                    "value": "[parameters('ImageId')]"
+                  },
+                  "imageSource": {
+                    "value": "[parameters('ImageSource')]"
                   }
                 },
                 "template": {
@@ -780,8 +802,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.12.40.16777",
-                      "templateHash": "8452752908372615261"
+                      "version": "0.7.4.23292",
+                      "templateHash": "6299793690537774511"
                     }
                   },
                   "parameters": {
@@ -801,16 +823,20 @@
                       "type": "string"
                     },
                     "ImageOffer": {
-                      "type": "string"
+                      "type": "string",
+                      "defaultValue": ""
                     },
                     "ImagePublisher": {
-                      "type": "string"
+                      "type": "string",
+                      "defaultValue": ""
                     },
                     "ImageSku": {
-                      "type": "string"
+                      "type": "string",
+                      "defaultValue": ""
                     },
                     "ImageVersion": {
-                      "type": "string"
+                      "type": "string",
+                      "defaultValue": ""
                     },
                     "Location": {
                       "type": "string"
@@ -844,6 +870,25 @@
                     },
                     "VirtualMachineUsername": {
                       "type": "secureString"
+                    },
+                    "imageSource": {
+                      "type": "string"
+                    },
+                    "ImageId": {
+                      "type": "string"
+                    }
+                  },
+                  "variables": {
+                    "imageSrc": {
+                      "gallery": {
+                        "id": "[parameters('ImageId')]"
+                      },
+                      "marketplace": {
+                        "publisher": "[parameters('ImagePublisher')]",
+                        "offer": "[parameters('ImageOffer')]",
+                        "sku": "[parameters('ImageSku')]",
+                        "version": "[parameters('ImageVersion')]"
+                      }
                     }
                   },
                   "resources": [
@@ -865,12 +910,7 @@
                           "vmSize": "[parameters('VirtualMachineSize')]"
                         },
                         "storageProfile": {
-                          "imageReference": {
-                            "publisher": "[parameters('ImagePublisher')]",
-                            "offer": "[parameters('ImageOffer')]",
-                            "sku": "[parameters('ImageSku')]",
-                            "version": "[parameters('ImageVersion')]"
-                          },
+                          "imageReference": "[if(equals(parameters('imageSource'), 'gallery'), variables('imageSrc').gallery, variables('imageSrc').marketplace)]",
                           "osDisk": {
                             "deleteOption": "Delete",
                             "createOption": "FromImage",
@@ -981,8 +1021,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.12.40.16777",
-                      "templateHash": "15288383451180944970"
+                      "version": "0.7.4.23292",
+                      "templateHash": "7893476414716868024"
                     }
                   },
                   "parameters": {

@@ -98,6 +98,11 @@ param storageAccountSubscriptionId string = subscription().subscriptionId
 param automationAccountSubscriptionId string = subscription().subscriptionId
 param lawAccountSubscriptionId string = subscription().subscriptionId
 param lawResourceGroup string
+@allowed([
+  'marketplace'
+  'gallery'
+])
+param imageSource string
 
 // Variables
 var cloud = environment().name
@@ -342,6 +347,7 @@ module getImageVersionlogicAppUsingAzureMonitorAlerts 'modules/logicappGetImageV
     hostPoolName: hostPoolName
     identityType: identityType
     automationAccountConnectId: automationAccountConnection.outputs.automationConnectId
+    imageSource: imageSource
   }
   dependsOn: [
     automationAccount
@@ -382,6 +388,7 @@ module getImageVersionlogicApp 'modules/logicappGetImageVersion.bicep' = if(imag
     identityType: identityType
     automationAccountConnectId: automationAccountConnection.outputs.automationConnectId
     office365ConnectionId: imageWithConnector ? o365Connection.outputs.office365ConnectionId : 'None'
+    imageSource: imageSource
   }
 }
 
@@ -503,6 +510,7 @@ module getBlobUpdateLogicApps 'modules/logicAppGetBlobUpdate.bicep' = if (blobWi
     office365ConnectionId: blobWithConnector ? o365Connection.outputs.office365ConnectionId : 'None'
     automationAccountConnectId: automationAccountConnection.outputs.automationConnectId
     blobConnectId: blobWithConnector ? blobConnection.outputs.blobConnectionId : 'None'
+    imageSource: imageSource
   }
   dependsOn: [
     blobConnection
@@ -542,6 +550,7 @@ module getBlobUpdateLogicAppUsingAzureMonitorAlerts 'modules/logicAppGetBlobUpda
     runbookNewHostPoolRipAndReplace: runbookNewHostPoolRipAndReplace
     automationAccountConnectId: automationAccountConnection.outputs.automationConnectId
     blobConnectId: blobWithOutConnector ? blobConnection.outputs.blobConnectionId : 'None'
+    imageSource: imageSource
   }
   dependsOn: [
     blobConnection
