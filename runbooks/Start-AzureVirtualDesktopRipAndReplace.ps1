@@ -121,8 +121,11 @@ try
     }
 
     # Remove Scaling Plan From Host Pool
-    $sp | Remove-AzWvdScalingPlan
-
+    if($sp)
+    {
+        $sp | Remove-AzWvdScalingPlan
+    }
+    
     # Send a message to any user with an active session
     $Time = (Get-Date).ToUniversalTime().AddMinutes(15)
 
@@ -250,7 +253,10 @@ try
         @params
 
     # Add scaling plan back to hostpool
-    New-AzWvdScalingPlan @scalingParams
+    if($sp)
+    {
+        New-AzWvdScalingPlan @scalingParams
+    }
     # Replacing Tags
     if($HostPoolTags)
     {
