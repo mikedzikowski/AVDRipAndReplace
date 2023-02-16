@@ -108,14 +108,17 @@ try
     # Scaling Plans
     $sp = Get-AzWvdScalingPlan -HostPoolName $HostPoolName -ResourceGroupName $HostPoolResourceGroup
 
-    $scalingParams = @{
-     FriendlyName = $sp.FriendlyName
-     HostPoolType = $sp.HostPoolType
-     Schedule = $sp.Schedule
-     TimeZone = $sp.TimeZone
-     ResourceGroupName = $sp.id.Split('/')[4]
-     Name = $sp.Name
-     Location = $sp.Location
+    if($sp)
+    {
+        $scalingParams = @{
+        FriendlyName = $sp.FriendlyName
+        HostPoolType = $sp.HostPoolType
+        Schedule = $sp.Schedule
+        TimeZone = $sp.TimeZone
+        ResourceGroupName = $sp.id.Split('/')[4]
+        Name = $sp.Name
+        Location = $sp.Location
+        }
     }
 
     # Remove Scaling Plan From Host Pool
