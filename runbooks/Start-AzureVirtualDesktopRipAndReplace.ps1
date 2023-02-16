@@ -265,7 +265,7 @@ try
        -Schedule $scalingParams.Schedule `
        -HostPoolReference @(
         @{'hostPoolArmPath' =  $sp.HostpoolReference.HostPoolArmPath;
-        'scalingPlanEnabled' = $false;
+        'scalingPlanEnabled' = $true;
         }
     )
     }
