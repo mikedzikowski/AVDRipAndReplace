@@ -109,9 +109,7 @@ try
     $sp = Get-AzWvdScalingPlan -HostPoolName $HostPoolName -ResourceGroupName $HostPoolResourceGroup
 
     $scalingParams = @{
-     Description = $sp.Description
      FriendlyName = $sp.FriendlyName
-     HostpoolReference = $sp.HostPoolReference
      HostPoolType = $sp.HostPoolType
      Schedule = $sp.Schedule
      TimeZone = $sp.TimeZone
@@ -123,9 +121,9 @@ try
     # Remove Scaling Plan From Host Pool
     if($sp)
     {
-        $sp | Remove-AzWvdScalingPlan
+        Remove-AzWvdScalingPlan -Name $scalingParams.Name -ResourceGroupName $scalingParams.ResourceGroupName
     }
-    
+
     # Send a message to any user with an active session
     $Time = (Get-Date).ToUniversalTime().AddMinutes(15)
 
@@ -255,7 +253,18 @@ try
     # Add scaling plan back to hostpool
     if($sp)
     {
-        New-AzWvdScalingPlan @scalingParams
+       New-AzWvdScalingPlan `
+       -ResourceGroupName $scalingParams.ResourceGroupName `
+       -Name $scalingParams.Name `
+       -Location $scalingParams.Location `
+       -HostPoolType $scalingParams.HostPoolType `
+       -TimeZone $scalingParams.TimeZone `
+       -Schedule $scalingParams.Schedule `
+       -HostPoolReference @(
+        @{'hostPoolArmPath' =  $sp.HostpoolReference.HostPoolArmPath;
+        'scalingPlanEnabled' = $false;
+        }
+    )
     }
     # Replacing Tags
     if($HostPoolTags)
