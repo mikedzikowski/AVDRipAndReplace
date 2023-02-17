@@ -121,7 +121,6 @@ try
         }
         foreach($hpr in $sp.HostPoolReference)
         {
-            Write-Host $($hpr.HostPoolArmPath)
             if($hpr.HostPoolArmPath.Contains($HostPoolName)) {
                 $disabledSp =@(
                     @{'hostPoolArmPath' =  $hpr.HostPoolArmPath;
@@ -138,6 +137,34 @@ try
                 )
                 $hpreference += $enabledSp
             }
+        }
+    }
+
+    # Disable Scaling Plan on Hostpool
+    if($sp)
+    {
+        Update-AzWvdScalingPlan `
+        -ResourceGroupName $scalingParams.ResourceGroupName `
+        -Name $scalingParams.Name `
+        -HostPoolType $scalingParams.HostPoolType `
+        -TimeZone $scalingParams.TimeZone `
+        -Schedule $scalingParams.Schedule `
+        -HostPoolReference @(
+        $hpreference
+        )
+    }
+
+    # Set parameters for re-enabling scaling plan
+    $hpreference = $null
+    foreach($hpr in $sp.HostPoolReference)
+    {
+        if($sp.HostPoolReference) {
+            $enabledSp= @(
+                @{'hostPoolArmPath' =  $hpr.HostPoolArmPath;
+                'scalingPlanEnabled' = $true;
+            }
+            )
+            $hpreference += $enabledSp
         }
     }
 
