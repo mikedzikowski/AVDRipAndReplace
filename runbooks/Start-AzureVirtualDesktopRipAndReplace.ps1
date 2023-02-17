@@ -23,7 +23,7 @@ Param (
 
     [Parameter(mandatory = $true)]
     [string]$ScheduleName,
-    
+
     [Parameter(mandatory = $true)]
     [string]$ImageSource
 )
@@ -107,7 +107,7 @@ try
 
     # Scaling Plans
     $sp = Get-AzWvdScalingPlan -HostPoolName $HostPoolName -ResourceGroupName $HostPoolResourceGroup
-
+    $hpreference = @()
     if($sp)
     {
         $scalingParams = @{
@@ -119,12 +119,26 @@ try
         Name = $sp.Name
         Location = $sp.Location
         }
-    }
-
-    # Remove Scaling Plan From Host Pool
-    if($sp)
-    {
-        Remove-AzWvdScalingPlan -Name $scalingParams.Name -ResourceGroupName $scalingParams.ResourceGroupName
+        foreach($hpr in $sp.HostPoolReference)
+        {
+            Write-Host $($hpr.HostPoolArmPath)
+            if($hpr.HostPoolArmPath.Contains($HostPoolName)) {
+                $disabledSp =@(
+                    @{'hostPoolArmPath' =  $hpr.HostPoolArmPath;
+                    'scalingPlanEnabled' = $false;
+                }
+                )
+                $hpreference += $disabledSp
+            }
+            else {
+                $enabledSp= @(
+                    @{'hostPoolArmPath' =  $hpr.HostPoolArmPath;
+                    'scalingPlanEnabled' = $true;
+                }
+                )
+                $hpreference += $enabledSp
+            }
+        }
     }
 
     # Send a message to any user with an active session
@@ -256,18 +270,15 @@ try
     # Add scaling plan back to hostpool
     if($sp)
     {
-       New-AzWvdScalingPlan `
+       Update-AzWvdScalingPlan `
        -ResourceGroupName $scalingParams.ResourceGroupName `
        -Name $scalingParams.Name `
-       -Location $scalingParams.Location `
-       -HostPoolType $scalingParams.HostPoolType `
-       -TimeZone $scalingParams.TimeZone `
+        -HostPoolType $scalingParams.HostPoolType `
+        -TimeZone $scalingParams.TimeZone `
        -Schedule $scalingParams.Schedule `
        -HostPoolReference @(
-        @{'hostPoolArmPath' =  $sp.HostpoolReference.HostPoolArmPath;
-        'scalingPlanEnabled' = $true;
-        }
-    )
+        $hpreference
+        )
     }
     # Replacing Tags
     if($HostPoolTags)
