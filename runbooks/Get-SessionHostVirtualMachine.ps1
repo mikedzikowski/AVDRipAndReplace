@@ -27,7 +27,6 @@ if ($null -eq $hostpool)
     exit;
 }
 
-
 $hostpoolRg = ($hostpool).id.split("/")[4]
 
 # Select a VM in hostpool
@@ -40,5 +39,4 @@ $objOut = [PSCustomObject]@{
 	productionVmRg = $productionVirtualMachine.ResourceGroupName
     hostPool = $hostPoolName
 }
-
 Write-Output ( $objOut | ConvertTo-Json)
