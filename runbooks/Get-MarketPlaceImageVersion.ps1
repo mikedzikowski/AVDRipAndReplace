@@ -3,7 +3,8 @@ param (
     [parameter(mandatory = $false)]$VmName,
 	[parameter(mandatory = $false)]$ResourceGroupName,
     [parameter(mandatory = $true)]$Environment,
-    [parameter(mandatory = $false)]$ImageSource
+    [parameter(mandatory = $false)]$ImageSource,
+    [parameter(mandatory = $false)]$aibSubscription,
 )
 
 # Connect using a Managed Service Identity
@@ -46,6 +47,8 @@ if($ImageSource -eq "marketplace")
 else
 {
     $hostpoolVm = Get-AzVM -ResourceGroupName $ResourceGroupName -Name $VmName
+
+    $AzureContext = Set-AzContext -SubscriptionName $aibSubscription
 
     $imageId = $hostpoolVm.StorageProfile.ImageReference.Id
     $id = $imageId
