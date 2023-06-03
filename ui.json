@@ -467,8 +467,8 @@
                         {
                             "name": "aibImageGallery",
                             "type": "Microsoft.Solutions.ResourceSelector",
-                            "label": "Existing AVD TemplateSpec",
-                            "resourceType": "Microsoft.Resources/galleries",
+                            "label": "Existing AIB Gallery",
+                            "resourceType": "Microsoft.Compute/galleries",
                             "options": {
                                 "filter": {
                                 }
