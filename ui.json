@@ -465,6 +465,16 @@
                             }
                         },
                         {
+                            "name": "aibImageGallery",
+                            "type": "Microsoft.Solutions.ResourceSelector",
+                            "label": "Existing AVD TemplateSpec",
+                            "resourceType": "Microsoft.Resources/galleries",
+                            "options": {
+                                "filter": {
+                                }
+                            }
+                        },
+                        {
                             "name": "avdTempSpecVersion",
                             "type": "Microsoft.Common.TextBox",
                             "label": "TemplateSpec Version",
