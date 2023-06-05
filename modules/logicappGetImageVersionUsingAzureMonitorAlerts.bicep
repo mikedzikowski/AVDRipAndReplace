@@ -24,6 +24,7 @@ param hostPoolName string
 param templateSpecId string
 param automationAccountConnectId   string
 param imageSource       string
+param aibSubscription string
 
 resource  workflows_GetImageVersion_name_resource  'Microsoft.Logic/workflows@2017-07-01' = {
   name: workflows_GetImageVersion_name
@@ -278,6 +279,7 @@ resource  workflows_GetImageVersion_name_resource  'Microsoft.Logic/workflows@20
                   VMName: '@body(\'Parse_Session_Host_VM_and_RG\')?[\'productionVm\']'
                   environment: cloud
                   ImageSource      : imageSource
+                  aibSubscription: aibSubscription
                 }
               }
             }

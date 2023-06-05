@@ -18,19 +18,19 @@
             "value": "rg-fs-peo-va-d-management-01"
         },
         "logAnalyticsWorkspaceResourceId": {
-            "value": "/subscriptions/f4972a61-1083-4904-a4e2-a790107320bf/resourcegroups/rg-fs-peo-va-d-management-01/providers/microsoft.operationalinsights/workspaces/avd-laws"
+            "value": "/subscriptions/e121d000-54c3-45ff-bd0e-afd6686e8c1e/resourcegroups/test/providers/microsoft.operationalinsights/workspaces/testui"
         },
         "sessionHostResourceGroupName": {
-            "value": "rg-fs-peo-va-d-host-01"
+            "value": "rg-fs-peo-va-d-hosts-01"
         },
         "templateSpecId": {
-            "value": "/subscriptions/f4972a61-1083-4904-a4e2-a790107320bf/resourceGroups/rg-fs-peo-va-d-management-01/providers/Microsoft.Resources/templateSpecs/avdui/versions/1.0"
+            "value": "/subscriptions/e121d000-54c3-45ff-bd0e-afd6686e8c1e/resourceGroups/rg-fs-peo-va-d-management-01/providers/Microsoft.Resources/templateSpecs/test/versions/1.0"
         },
         "deployBlobUpdateLogicApp": {
             "value": false
         },
         "deployWithO365Connector": {
-            "value": true
+            "value": false
         },
         "location":{
             "value": "usgovvirginia"
@@ -51,7 +51,10 @@
             "value": false
         },
         "newAutomationAccount": {
-            "value": false
+            "value": true
+        },
+        "aibSubscription":{
+            "value": "f4972a61-1083-4904-a4e2-a790107320bf"
         }
     }
 }

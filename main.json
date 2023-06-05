@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.7.4.23292",
-      "templateHash": "241725523847664028"
+      "templateHash": "11083329329867278354"
     }
   },
   "parameters": {
@@ -200,6 +200,9 @@
         "marketplace",
         "gallery"
       ]
+    },
+    "aibSubscription": {
+      "type": "string"
     }
   },
   "variables": {
@@ -924,6 +927,78 @@
       ]
     },
     {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "[format('rbac-automationAccountOwner-deploymentAib-{0}', parameters('deploymentNameSuffix'))]",
+      "subscriptionId": "[parameters('aibSubscription')]",
+      "location": "[deployment().location]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "principalId": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('automationAccountSubscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix')))).outputs.aaIdentityId.value]"
+          },
+          "scope": {
+            "value": "[format('/subscription/{0}', parameters('aibSubscription'))]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.7.4.23292",
+              "templateHash": "15481770122811782419"
+            }
+          },
+          "parameters": {
+            "canDelegate": {
+              "type": "bool",
+              "defaultValue": false
+            },
+            "description": {
+              "type": "string",
+              "defaultValue": "Contributor RBAC permission"
+            },
+            "principalId": {
+              "type": "string"
+            },
+            "scope": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Authorization/roleAssignments",
+              "apiVersion": "2020-04-01-preview",
+              "name": "[guid(parameters('scope'), parameters('principalId'), 'aib')]",
+              "properties": {
+                "canDelegate": "[parameters('canDelegate')]",
+                "description": "[parameters('description')]",
+                "principalId": "[parameters('principalId')]",
+                "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+                "principalType": "ServicePrincipal"
+              }
+            }
+          ],
+          "outputs": {
+            "rbac": {
+              "type": "string",
+              "value": "[reference(subscriptionResourceId('Microsoft.Authorization/roleAssignments', guid(parameters('scope'), parameters('principalId'), 'aib'))).roleDefinitionId]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('automationAccountSubscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix')))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('automationAccountConnection-deployment-{0}', parameters('deploymentNameSuffix')))]"
+      ]
+    },
+    {
       "condition": "[variables('imageWithOutConnector')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
@@ -1013,6 +1088,9 @@
           },
           "imageSource": {
             "value": "[parameters('imageSource')]"
+          },
+          "aibSubscription": {
+            "value": "[parameters('aibSubscription')]"
           }
         },
         "template": {
@@ -1022,7 +1100,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.7.4.23292",
-              "templateHash": "13460166033687172145"
+              "templateHash": "3001777614591599315"
             }
           },
           "parameters": {
@@ -1102,6 +1180,9 @@
               "type": "string"
             },
             "imageSource": {
+              "type": "string"
+            },
+            "aibSubscription": {
               "type": "string"
             }
           },
@@ -1355,7 +1436,8 @@
                               "ResourceGroupName": "@body('Parse_Session_Host_VM_and_RG')?['productionVmRg']",
                               "VMName": "@body('Parse_Session_Host_VM_and_RG')?['productionVm']",
                               "environment": "[parameters('cloud')]",
-                              "ImageSource": "[parameters('imageSource')]"
+                              "ImageSource": "[parameters('imageSource')]",
+                              "aibSubscription": "[parameters('aibSubscription')]"
                             }
                           }
                         },

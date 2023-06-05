@@ -465,6 +465,24 @@
                             }
                         },
                         {
+                            "name": "TemplateSpecApi",
+                            "type": "Microsoft.Solutions.ArmApiControl",
+                            "request": {
+                                "method": "GET",
+                                "path": "[concat(steps('AvdEnvironment').avdTempSpec.id,'/versions?api-version=2021-05-01')]"
+                            }
+                        },
+                        {
+                        "name": "avdTempSpecVersion",
+                        "type": "Microsoft.Common.DropDown",
+                        "visible": true,
+                        "defaultValue": [],
+                        "label": "TemplateSpec Version",
+                        "constraints": {
+                          "allowedValues": "[map(steps('AvdEnvironment').TemplateSpecApi.value, (item) => parse(concat('{\"label\":\"', item.name, '\",\"value\":\"', item.name, '\"}')))]"
+                        }
+                        },
+                        {
                             "name": "aibImageGallery",
                             "type": "Microsoft.Solutions.ResourceSelector",
                             "label": "Existing AIB Gallery",
@@ -473,14 +491,6 @@
                                 "filter": {
                                 }
                             }
-                        },
-                        {
-                            "name": "avdTempSpecVersion",
-                            "type": "Microsoft.Common.TextBox",
-                            "label": "TemplateSpec Version",
-                            "defaultValue": "1.0",
-                            "toolTip": "The version of the Template Spec",
-                            "visible": true
                         },
                         {
                             "name": "imageSource",
@@ -639,7 +649,8 @@
                 "automationAccountSubscriptionId":"[if(equals(steps('AutomationEnvironment').existingAutomationAccount, true), first(skip(split(steps('AutomationEnvironment').automationAccounts.id, '/'), 2)), first(skip(split(steps('basics').resourceScope.subscription.id, '/'), 2)))]",
                 "storageAccountSubscriptionId":"[if(equals(steps('blobUpdate').existingStorageAccount, true), first(skip(split(steps('blobUpdate').storageAccounts.id, '/'), 2)), first(skip(split(steps('basics').resourceScope.subscription.id, '/'), 2)))]",
                 "lawAccountSubscriptionId":"[first(skip(split(steps('notifications').lawSelector.id, '/'), 2))]",
-                "imageSource": "[steps('AvdEnvironment').imageSource]"
+                "imageSource": "[steps('AvdEnvironment').imageSource]",
+                "aibSubscription": "[first(skip(split(steps('AvdEnvironment').aibImageGallery.id, '/'), 2))]"
             },
             "kind": "Subscription",
             "location": "[steps('basics').resourceScope.location.name]",

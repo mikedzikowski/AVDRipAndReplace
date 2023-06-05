@@ -4,8 +4,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.7.4.23292",
-      "templateHash": "6487866929145641976"
+      "version": "0.17.1.54307",
+      "templateHash": "2337417549224913805"
     }
   },
   "parameters": {
@@ -196,7 +196,7 @@
   "resources": [
     {
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-10-01",
+      "apiVersion": "2022-09-01",
       "name": "[format('HostPool_UpdateRegistrationToken_{0}', parameters('Timestamp'))]",
       "resourceGroup": "[parameters('HostPoolResourceGroupName')]",
       "properties": {
@@ -251,8 +251,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.7.4.23292",
-              "templateHash": "7197294014693639669"
+              "version": "0.17.1.54307",
+              "templateHash": "5897005449778757610"
             }
           },
           "parameters": {
@@ -337,7 +337,7 @@
         "batchSize": 1
       },
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-10-01",
+      "apiVersion": "2022-09-01",
       "name": "[format('SessionHosts_{0}_{1}', range(1, variables('SessionHostBatchCount'))[copyIndex()], parameters('Timestamp'))]",
       "resourceGroup": "[parameters('VirtualMachineResourceGroupName')]",
       "properties": {
@@ -406,12 +406,8 @@
           "SessionHostOuPath": {
             "value": "[parameters('SessionHostOuPath')]"
           },
-          "SessionHostCount": {
-            "value": "[if(and(equals(range(1, variables('SessionHostBatchCount'))[copyIndex()], variables('SessionHostBatchCount')), greater(variables('DivisionRemainderValue'), 0)), variables('DivisionRemainderValue'), variables('MaxResourcesPerTemplateDeployment'))]"
-          },
-          "SessionHostIndex": {
-            "value": "[if(equals(range(1, variables('SessionHostBatchCount'))[copyIndex()], 1), parameters('SessionHostIndex'), add(mul(sub(range(1, variables('SessionHostBatchCount'))[copyIndex()], 1), variables('MaxResourcesPerTemplateDeployment')), parameters('SessionHostIndex')))]"
-          },
+          "SessionHostCount": "[if(and(equals(range(1, variables('SessionHostBatchCount'))[copyIndex()], variables('SessionHostBatchCount')), greater(variables('DivisionRemainderValue'), 0)), createObject('value', variables('DivisionRemainderValue')), createObject('value', variables('MaxResourcesPerTemplateDeployment')))]",
+          "SessionHostIndex": "[if(equals(range(1, variables('SessionHostBatchCount'))[copyIndex()], 1), createObject('value', parameters('SessionHostIndex')), createObject('value', add(mul(sub(range(1, variables('SessionHostBatchCount'))[copyIndex()], 1), variables('MaxResourcesPerTemplateDeployment')), parameters('SessionHostIndex'))))]",
           "SubnetResourceId": {
             "value": "[parameters('SubnetResourceId')]"
           },
@@ -443,8 +439,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.7.4.23292",
-              "templateHash": "18275249926034239719"
+              "version": "0.17.1.54307",
+              "templateHash": "16519253574596390991"
             }
           },
           "parameters": {
@@ -616,11 +612,11 @@
               ]
             },
             {
-              "condition": "[contains(parameters('DomainServices'), 'None')]",
               "copy": {
                 "name": "aadLoginForWindows",
                 "count": "[length(range(0, parameters('SessionHostCount')))]"
               },
+              "condition": "[contains(parameters('DomainServices'), 'None')]",
               "type": "Microsoft.Compute/virtualMachines/extensions",
               "apiVersion": "2021-03-01",
               "name": "[format('{0}{1}/AADLoginForWindows', parameters('VirtualMachineNamePrefix'), padLeft(add(range(0, parameters('SessionHostCount'))[copyIndex()], parameters('SessionHostIndex')), 3, '0'))]",
@@ -641,7 +637,7 @@
             {
               "condition": "[equals(parameters('Availability'), 'AvailabilitySet')]",
               "type": "Microsoft.Resources/deployments",
-              "apiVersion": "2020-10-01",
+              "apiVersion": "2022-09-01",
               "name": "[format('AvailabilitySets_{0}', parameters('Timestamp'))]",
               "properties": {
                 "expressionEvaluationOptions": {
@@ -668,8 +664,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.7.4.23292",
-                      "templateHash": "586041112873922658"
+                      "version": "0.17.1.54307",
+                      "templateHash": "671409494918093469"
                     }
                   },
                   "parameters": {
@@ -711,7 +707,7 @@
             },
             {
               "type": "Microsoft.Resources/deployments",
-              "apiVersion": "2020-10-01",
+              "apiVersion": "2022-09-01",
               "name": "[format('VirtualMachines_{0}', parameters('Timestamp'))]",
               "properties": {
                 "expressionEvaluationOptions": {
@@ -802,8 +798,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.7.4.23292",
-                      "templateHash": "6299793690537774511"
+                      "version": "0.17.1.54307",
+                      "templateHash": "9463991228470788362"
                     }
                   },
                   "parameters": {
@@ -863,13 +859,13 @@
                       "type": "string"
                     },
                     "VirtualMachinePassword": {
-                      "type": "secureString"
+                      "type": "securestring"
                     },
                     "VirtualMachineSize": {
                       "type": "string"
                     },
                     "VirtualMachineUsername": {
-                      "type": "secureString"
+                      "type": "securestring"
                     },
                     "imageSource": {
                       "type": "string"
@@ -966,7 +962,7 @@
             {
               "condition": "[contains(parameters('DomainServices'), 'ActiveDirectory')]",
               "type": "Microsoft.Resources/deployments",
-              "apiVersion": "2020-10-01",
+              "apiVersion": "2022-09-01",
               "name": "[format('JsonADDomainExtension_{0}', parameters('Timestamp'))]",
               "properties": {
                 "expressionEvaluationOptions": {
@@ -1021,16 +1017,16 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.7.4.23292",
-                      "templateHash": "7893476414716868024"
+                      "version": "0.17.1.54307",
+                      "templateHash": "9593791160366342622"
                     }
                   },
                   "parameters": {
                     "DomainJoinPassword": {
-                      "type": "secureString"
+                      "type": "securestring"
                     },
                     "DomainJoinUserPrincipalName": {
-                      "type": "secureString"
+                      "type": "securestring"
                     },
                     "DomainName": {
                       "type": "string"

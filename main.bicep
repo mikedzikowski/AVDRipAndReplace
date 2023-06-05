@@ -103,6 +103,8 @@ param lawResourceGroup string
   'gallery'
 ])
 param imageSource string
+param aibSubscription string
+// param aibResourceGroup string
 
 // Variables
 var cloud = environment().name
@@ -318,6 +320,19 @@ module rbacPermissionAzureAutomationAccountRg 'modules/rbacPermissionsSubscripti
   ]
 }
 
+module rbacPermissionAzureAutomationAccountAib 'modules/rbacPermissionsSubscriptionScopeAib.bicep' = {
+  name: 'rbac-automationAccountOwner-deploymentAib-${deploymentNameSuffix}'
+  scope: subscription(aibSubscription)
+  params: {
+    principalId: automationAccount.outputs.aaIdentityId
+    scope: '/subscription/${aibSubscription}'
+  }
+  dependsOn: [
+    automationAccount
+    automationAccountConnection
+  ]
+}
+
 module getImageVersionlogicAppUsingAzureMonitorAlerts 'modules/logicappGetImageVersionUsingAzureMonitorAlerts.bicep'  = if(imageWithOutConnector) {
   name: 'getImageVersionlogicAppWOConnectpr-deployment-${deploymentNameSuffix}'
   scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
@@ -348,6 +363,7 @@ module getImageVersionlogicAppUsingAzureMonitorAlerts 'modules/logicappGetImageV
     identityType: identityType
     automationAccountConnectId: automationAccountConnection.outputs.automationConnectId
     imageSource: imageSource
+    aibSubscription: aibSubscription
   }
   dependsOn: [
     automationAccount
