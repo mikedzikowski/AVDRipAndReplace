@@ -25,22 +25,26 @@ Param (
     [string]$ScheduleName,
 
     [Parameter(mandatory = $true)]
-    [string]$ImageSource
+    [string]$ImageSource,
+
+    [parameter(mandatory = $false)]
+    [string]$aibSubscription
 )
 
 $ErrorActionPreference = 'Stop'
 
 try
 {
-    Disable-AzContextAutosave `
-        –Scope Process
+    $AzureContext = (Connect-AzAccount -Identity -Environment $Environment).context
+}
+catch
+{
+    Write-Output "There is no system-assigned user identity. Aborting.";
+    exit
+}
 
-    Connect-AzAccount `
-        -Environment $Environment `
-        -Identity `
-        -Subscription $SubscriptionId `
-        -Tenant $TenantId
-
+try
+{
     # Get the host pool's info
     $HostPool = Get-AzResource -ResourceType 'Microsoft.DesktopVirtualization/hostpools' | Where-Object {$_.Name -eq $HostPoolName}
     $HostPoolResourceGroup = $HostPool.ResourceGroupName
@@ -77,6 +81,10 @@ try
     if($ImageSource -eq "gallery")
     {
         $hostpoolVm = Get-AzVM -ResourceGroupName $SessionHostsResourceGroup -Name $VmName
+        
+        # Set context to aib subscription
+        Set-AzContext -SubscriptionId $aibSubscription
+
         $imageId = $hostpoolVm.StorageProfile.ImageReference.Id
         $id = $imageId
         $computeGallery= $id.Split("/")[8]
@@ -96,6 +104,11 @@ try
         }
     }
     else {
+        $hostpoolVm = Get-AzVM -ResourceGroupName $SessionHostsResourceGroup -Name $VmName
+        
+        # Set context to aib subscription
+        Set-AzContext -SubscriptionId $aibSubscription
+        
         $Params = @{
             ImageId = ((Get-AzGalleryImageVersion -ResourceGroupName $galleryRg -GalleryName $computeGallery -GalleryImageDefinitionName $imageDef)).id[-1]
             SessionHostCount = $SessionHostsCount
@@ -104,6 +117,9 @@ try
             HostPoolVmTemplate = ''
         }
     }
+
+    # Set context to management subscription 
+    Set-AzContext -SubscriptionId $SubscriptionId
 
     # Scaling Plans
     $sp = Get-AzWvdScalingPlan -HostPoolName $HostPoolName -ResourceGroupName $HostPoolResourceGroup
