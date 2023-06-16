@@ -162,6 +162,7 @@ resource  workflows_GetImageVersion_name_resource  'Microsoft.Logic/workflows@20
                           TemplateSpecId: templateSpecId
                           SubscriptionId: subscriptionId
                           ImageSource: imageSource
+                          aibSubscription: aibSubscription
                         }
                       }
                     }
