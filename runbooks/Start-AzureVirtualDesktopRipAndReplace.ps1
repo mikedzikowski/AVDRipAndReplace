@@ -113,8 +113,6 @@ try
             ImageId = ((Get-AzGalleryImageVersion -ResourceGroupName $galleryRg -GalleryName $computeGallery -GalleryImageDefinitionName $imageDef)).id[-1]
             SessionHostCount = $SessionHostsCount
             Timestamp = $TimeStamp
-            ImageSource = 'gallery'
-            HostPoolVmTemplate = ''
         }
     }
 
@@ -162,9 +160,6 @@ try
         Update-AzWvdScalingPlan `
         -ResourceGroupName $scalingParams.ResourceGroupName `
         -Name $scalingParams.Name `
-        -HostPoolType $scalingParams.HostPoolType `
-        -TimeZone $scalingParams.TimeZone `
-        -Schedule $scalingParams.Schedule `
         -HostPoolReference @(
         $hpreference
         )
@@ -316,9 +311,6 @@ try
        Update-AzWvdScalingPlan `
        -ResourceGroupName $scalingParams.ResourceGroupName `
        -Name $scalingParams.Name `
-        -HostPoolType $scalingParams.HostPoolType `
-        -TimeZone $scalingParams.TimeZone `
-       -Schedule $scalingParams.Schedule `
        -HostPoolReference @(
         $hpreference
         )
