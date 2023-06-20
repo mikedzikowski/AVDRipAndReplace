@@ -158,13 +158,12 @@ try
     $Template.parameters.ImagePublisher.defaultValue = $VirtualMachine.StorageProfile.ImageReference.Publisher
     $Template.parameters.ImageSku.defaultValue = $VirtualMachine.StorageProfile.ImageReference.SKU
     $Template.parameters.ImageVersion.defaultValue = 'latest'
-    $Template.parameters.ImageId.defaultValue = ''
-    $Template.parameters.ImageId.defaultValue = ''
+    $Template.parameters.ImageVersionResourceId.defaultValue = ''
     $Template.parameters.ImageSource.default = $ImageSource
     }
     if($ImageSource -eq "gallery")
     {
-    $Template.parameters.ImageId.defaultValue = ''
+    $Template.parameters.ImageVersionResourceId.defaultValue = ''
     $Template.parameters.ImageOffer.defaultValue = ''
     $Template.parameters.ImagePublisher.defaultValue = ''
     $Template.parameters.ImageSku.defaultValue = ''
