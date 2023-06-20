@@ -36,6 +36,7 @@ $ErrorActionPreference = 'Stop'
 try
 {
     $AzureContext = (Connect-AzAccount -Identity -Environment $Environment).context
+    Set-AzContext -SubscriptionId $SubscriptionId
 }
 catch
 {
@@ -90,7 +91,7 @@ try
         $computeGallery= $id.Split("/")[8]
         $imageDef = $id.Split("/")[10]
         $galleryRg = $id.Split("/")[4]
-        $ImageId = (Get-AzGalleryImageVersion -ResourceGroupName $galleryRg -GalleryName $computeGallery -GalleryImageDefinitionName $imageDef).id[-1]
+        $ImageVersionResourceId = (Get-AzGalleryImageVersion -ResourceGroupName $galleryRg -GalleryName $computeGallery -GalleryImageDefinitionName $imageDef).id[-1]
     }
 
     # Get details for deployment params
@@ -104,13 +105,15 @@ try
         }
     }
     else {
+        # Set context to host pool subscription
+        Set-AzContext -SubscriptionId $SubscriptionId
         $hostpoolVm = Get-AzVM -ResourceGroupName $SessionHostsResourceGroup -Name $VmName
         
         # Set context to aib subscription
         Set-AzContext -SubscriptionId $aibSubscription
         
         $Params = @{
-            ImageId = ((Get-AzGalleryImageVersion -ResourceGroupName $galleryRg -GalleryName $computeGallery -GalleryImageDefinitionName $imageDef)).id[-1]
+            ImageVersionResourceId = ((Get-AzGalleryImageVersion -ResourceGroupName $galleryRg -GalleryName $computeGallery -GalleryImageDefinitionName $imageDef)).id[-1]
             SessionHostCount = $SessionHostsCount
             Timestamp = $TimeStamp
         }
@@ -160,6 +163,8 @@ try
         Update-AzWvdScalingPlan `
         -ResourceGroupName $scalingParams.ResourceGroupName `
         -Name $scalingParams.Name `
+        -TimeZone $scalingParams.TimeZone `
+        -Schedule $scalingParams.Schedule `
         -HostPoolReference @(
         $hpreference
         )
@@ -198,7 +203,7 @@ try
     }
 
     # Wait 15 minutes for all users to sign out
-    Start-Sleep -Seconds 900
+    Start-Sleep -Seconds 60
 
     # Force logout any leftover sessions
     foreach($Session in $Sessions)
