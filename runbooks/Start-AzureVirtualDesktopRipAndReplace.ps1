@@ -101,7 +101,6 @@ try
             ImageVersion = 'latest'
             SessionHostCount = $SessionHostsCount
             Timestamp = $TimeStamp
-            ImageSource = 'marketplace'
         }
     }
     else {
