@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.26.54.24096",
-      "templateHash": "5575512099285251182"
+      "templateHash": "5450613255622404008"
     }
   },
   "parameters": {
@@ -378,7 +378,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.26.54.24096",
-              "templateHash": "12884640064619925940"
+              "templateHash": "13304563069402950098"
             }
           },
           "parameters": {
@@ -443,7 +443,7 @@
               "name": "[format('{0}/{1}', if(parameters('newAutomationAccount'), parameters('automationAccountName'), parameters('automationAccountName')), parameters('runbookNames')[copyIndex()].name)]",
               "location": "[parameters('location')]",
               "properties": {
-                "runbookType": "PowerShell",
+                "runbookType": "PowerShell7",
                 "logProgress": true,
                 "logVerbose": true,
                 "publishContentLink": {
