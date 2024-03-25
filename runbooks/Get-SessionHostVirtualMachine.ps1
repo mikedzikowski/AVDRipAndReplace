@@ -1,14 +1,14 @@
 [CmdletBinding()]
 param (
     [parameter(mandatory = $true)]$HostpoolName,
-    [parameter(mandatory = $true)]$Environment
+    [parameter(mandatory = $true)]$Environment,
+    [parameter(mandatory = $true)]$subscriptionId
 )
-
 
 # Connect using a Managed Service Identity
 try
 {
-    $AzureContext = (Connect-AzAccount -Identity -Environment $Environment).context
+    $AzureContext = (Connect-AzAccount -Identity -Environment $Environment -SubscriptionId $subscriptionId).context
 }
 catch
 {
@@ -16,7 +16,6 @@ catch
     exit
 }
 
-Import-Module Az.DesktopVirtualization
 
 $AzureContext = Set-AzContext -SubscriptionName $AzureContext.Subscription -DefaultProfile $AzureContext
 

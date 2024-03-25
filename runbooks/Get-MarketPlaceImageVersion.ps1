@@ -10,7 +10,7 @@ param (
 # Connect using a Managed Service Identity
 try
 {
-    $AzureContext = (Connect-AzAccount -Identity -Environment $Environment).context
+    $AzureContext = (Connect-AzAccount -Identity -Environment $Environment -SubscriptionId $aibSubscription).context
 }
 catch
 {

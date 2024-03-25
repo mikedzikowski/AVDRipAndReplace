@@ -74,6 +74,7 @@ resource  workflows_GetImageVersion_name_resource  'Microsoft.Logic/workflows@20
                   runbookName: runbookNewHostPoolRipAndReplace
                   Environment: cloud
                   HostpoolName: hostPoolName
+                  SubscriptionId: subscriptionId
                 }
               }
             }
@@ -368,6 +369,7 @@ resource  workflows_GetImageVersion_name_resource  'Microsoft.Logic/workflows@20
                 parameters: {
                   environment: cloud
                   hostpoolName: hostPoolName
+                  SubscriptionId: subscriptionId
                 }
               }
             }

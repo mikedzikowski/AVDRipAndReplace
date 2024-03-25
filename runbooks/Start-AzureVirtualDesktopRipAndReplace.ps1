@@ -44,6 +44,8 @@ catch
     exit
 }
 
+$AzureContext = Set-AzContext -SubscriptionName $AzureContext.Subscription -DefaultProfile $AzureContext
+
 try
 {
     # Get the host pool's info
