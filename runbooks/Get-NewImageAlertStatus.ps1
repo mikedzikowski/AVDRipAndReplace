@@ -1,17 +1,20 @@
 [CmdletBinding()]
 param (
-    [parameter(mandatory = $true)]$Environment
+    [parameter(mandatory = $true)]$Environment,
+    [parameter(mandatory = $true)]$subscriptionId
 )
 # Connect using a Managed Service Identity
 try
 {
-    $AzureContext = (Connect-AzAccount -Identity -Environment $Environment).context
+    $AzureContext = (Connect-AzAccount -Identity -Environment $Environment -SubscriptionId $subscriptionId).context
 }
 catch
 {
     Write-Output "There is no system-assigned user identity. Aborting.";
     exit
 }
+
+$AzureContext = Set-AzContext -SubscriptionName $AzureContext.Subscription -DefaultProfile $AzureContext
 
 # Sleeping to ensure data is ingested into workspace
 while ($null -eq (($alert = Get-AzAlert | Where-Object {$_.Name -like "New Image Found for AVD Environment*" -and $_.State -eq "New"} | Sort-Object -Property StartDateTime | Select-Object -Last 1 ))) {

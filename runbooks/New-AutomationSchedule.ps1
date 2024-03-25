@@ -15,10 +15,10 @@ param (
     [parameter(mandatory = $true)]$ImageSource
 )
 
-#Connect using a Managed Service Identity
+# Connect using a Managed Service Identity
 try
 {
-    $AzureContext = (Connect-AzAccount -Identity -Environment $Environment).context
+    $AzureContext = (Connect-AzAccount -Identity -Environment $Environment -SubscriptionId $subscriptionId).context
 }
 catch
 {
