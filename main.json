@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.26.54.24096",
-      "templateHash": "5450613255622404008"
+      "templateHash": "1931642972392916125"
     }
   },
   "parameters": {
@@ -1092,7 +1092,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.26.54.24096",
-              "templateHash": "10833084485556838875"
+              "templateHash": "9541043100720257588"
             }
           },
           "parameters": {
@@ -1227,7 +1227,8 @@
                               "ResourceGroupName": "[parameters('automationAccountResourceGroup')]",
                               "runbookName": "[parameters('runbookNewHostPoolRipAndReplace')]",
                               "Environment": "[parameters('cloud')]",
-                              "HostpoolName": "[parameters('hostPoolName')]"
+                              "HostpoolName": "[parameters('hostPoolName')]",
+                              "SubscriptionId": "[parameters('subscriptionId')]"
                             }
                           }
                         },
@@ -1516,7 +1517,8 @@
                           "properties": {
                             "parameters": {
                               "environment": "[parameters('cloud')]",
-                              "hostpoolName": "[parameters('hostPoolName')]"
+                              "hostpoolName": "[parameters('hostPoolName')]",
+                              "SubscriptionId": "[parameters('subscriptionId')]"
                             }
                           }
                         },
@@ -1742,7 +1744,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.26.54.24096",
-              "templateHash": "12604534483900379251"
+              "templateHash": "15613307257467963602"
             }
           },
           "parameters": {
@@ -1883,7 +1885,8 @@
                               "ResourceGroupName": "[parameters('automationAccountResourceGroup')]",
                               "runbookName": "[parameters('runbookNewHostPoolRipAndReplace')]",
                               "Environment": "[parameters('cloud')]",
-                              "HostpoolName": "[parameters('hostPoolName')]"
+                              "HostpoolName": "[parameters('hostPoolName')]",
+                              "SubscriptionId": "[parameters('subscriptionId')]"
                             }
                           }
                         },
@@ -2044,7 +2047,8 @@
                               "ResourceGroupName": "@body('Parse_Session_Host_VM_and_RG')?['productionVmRg']",
                               "VMName": "@body('Parse_Session_Host_VM_and_RG')?['productionVm']",
                               "Environment": "[parameters('cloud')]",
-                              "ImageSource": "[parameters('imageSource')]"
+                              "ImageSource": "[parameters('imageSource')]",
+                              "SubscriptionId": "[parameters('subscriptionId')]"
                             }
                           }
                         },
@@ -2130,7 +2134,8 @@
                           "properties": {
                             "parameters": {
                               "hostpoolName": "[parameters('hostPoolName')]",
-                              "Environment": "[parameters('cloud')]"
+                              "Environment": "[parameters('cloud')]",
+                              "SubscriptionId": "[parameters('subscriptionId')]"
                             }
                           }
                         },
