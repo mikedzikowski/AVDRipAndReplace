@@ -35,7 +35,7 @@ resource runbookDeployment 'Microsoft.Automation/automationAccounts/runbooks@201
   parent: aa
   location: location
   properties: {
-    runbookType: 'PowerShell'
+    runbookType: 'PowerShell7'
     logProgress: true
     logVerbose: true
     publishContentLink: {
