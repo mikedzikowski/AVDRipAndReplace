@@ -16,6 +16,8 @@ catch
     exit
 }
 
+Import-Module Az.DesktopVirtualization
+
 $AzureContext = Set-AzContext -SubscriptionName $AzureContext.Subscription -DefaultProfile $AzureContext
 
 # Getting the hostpool first
