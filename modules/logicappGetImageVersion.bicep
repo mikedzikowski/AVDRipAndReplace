@@ -72,10 +72,10 @@ resource workflows_GetImageVersion_name_resource 'Microsoft.Logic/workflows@2017
               properties: {
                 parameters: {
                   AutomationAccountName: automationAccountName
-                  ResourceGroupName: automationAccountResourceGroup
-                  runbookName: runbookNewHostPoolRipAndReplace
                   Environment: cloud
                   HostpoolName: hostPoolName
+                  ResourceGroupName: automationAccountResourceGroup
+                  runbookName: runbookNewHostPoolRipAndReplace
                   SubscriptionId: subscriptionId
                 }
               }
@@ -107,18 +107,18 @@ resource workflows_GetImageVersion_name_resource 'Microsoft.Logic/workflows@2017
                       properties: {
                         parameters: {
                           AutomationAccountName: automationAccountName
-                          ResourceGroupName: automationAccountResourceGroup
-                          ScheduleName: '${hostPoolName}-ScheduleForRipAndReplace'
-                          StartTime: startTime
                           DayOfWeek: dayOfWeek
                           DayOfWeekOccurrence: dayOfWeekOccurrence
                           environment: cloud
-                          runbookName: runbookNewHostPoolRipAndReplace
                           HostPoolName: hostPoolName
-                          TenantId: tenantId
-                          TemplateSpecId: templateSpecId
-                          SubscriptionId: subscriptionId
                           ImageSource: imageSource
+                          ResourceGroupName: automationAccountResourceGroup
+                          runbookName: runbookNewHostPoolRipAndReplace
+                          ScheduleName: '${hostPoolName}-ScheduleForRipAndReplace'
+                          StartTime: startTime
+                          SubscriptionId: subscriptionId
+                          TemplateSpecId: templateSpecId
+                          TenantId: tenantId
                         }
                       }
                     }
