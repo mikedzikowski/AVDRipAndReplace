@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.26.54.24096",
-      "templateHash": "1931642972392916125"
+      "templateHash": "2444371566660671927"
     }
   },
   "parameters": {
@@ -1744,7 +1744,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.26.54.24096",
-              "templateHash": "15613307257467963602"
+              "templateHash": "12403394981601220989"
             }
           },
           "parameters": {
@@ -1882,10 +1882,10 @@
                           "properties": {
                             "parameters": {
                               "AutomationAccountName": "[parameters('automationAccountName')]",
-                              "ResourceGroupName": "[parameters('automationAccountResourceGroup')]",
-                              "runbookName": "[parameters('runbookNewHostPoolRipAndReplace')]",
                               "Environment": "[parameters('cloud')]",
                               "HostpoolName": "[parameters('hostPoolName')]",
+                              "ResourceGroupName": "[parameters('automationAccountResourceGroup')]",
+                              "runbookName": "[parameters('runbookNewHostPoolRipAndReplace')]",
                               "SubscriptionId": "[parameters('subscriptionId')]"
                             }
                           }
@@ -1916,18 +1916,18 @@
                                   "properties": {
                                     "parameters": {
                                       "AutomationAccountName": "[parameters('automationAccountName')]",
-                                      "ResourceGroupName": "[parameters('automationAccountResourceGroup')]",
-                                      "ScheduleName": "[format('{0}-ScheduleForRipAndReplace', parameters('hostPoolName'))]",
-                                      "StartTime": "[parameters('startTime')]",
                                       "DayOfWeek": "[parameters('dayOfWeek')]",
                                       "DayOfWeekOccurrence": "[parameters('dayOfWeekOccurrence')]",
                                       "environment": "[parameters('cloud')]",
-                                      "runbookName": "[parameters('runbookNewHostPoolRipAndReplace')]",
                                       "HostPoolName": "[parameters('hostPoolName')]",
-                                      "TenantId": "[parameters('tenantId')]",
-                                      "TemplateSpecId": "[parameters('templateSpecId')]",
+                                      "ImageSource": "[parameters('imageSource')]",
+                                      "ResourceGroupName": "[parameters('automationAccountResourceGroup')]",
+                                      "runbookName": "[parameters('runbookNewHostPoolRipAndReplace')]",
+                                      "ScheduleName": "[format('{0}-ScheduleForRipAndReplace', parameters('hostPoolName'))]",
+                                      "StartTime": "[parameters('startTime')]",
                                       "SubscriptionId": "[parameters('subscriptionId')]",
-                                      "ImageSource": "[parameters('imageSource')]"
+                                      "TemplateSpecId": "[parameters('templateSpecId')]",
+                                      "TenantId": "[parameters('tenantId')]"
                                     }
                                   }
                                 },
