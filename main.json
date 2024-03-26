@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.26.54.24096",
-      "templateHash": "2444371566660671927"
+      "templateHash": "17080572144085325803"
     }
   },
   "parameters": {
@@ -2814,11 +2814,37 @@
         },
         "mode": "Incremental",
         "parameters": {
-          "location": {
-            "value": "[parameters('location')]"
+          "automationAccountConnectId": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('automationAccountConnection-deployment-{0}', parameters('deploymentNameSuffix'))), '2022-09-01').outputs.automationConnectId.value]"
+          },
+          "automationAccountConnectionName": {
+            "value": "[variables('automationAccountConnectionName')]"
+          },
+          "automationAccountLocation": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('automationAccountSubscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix'))), '2022-09-01').outputs.aaLocation.value]"
+          },
+          "automationAccountName": {
+            "value": "[variables('automationAccountNameValue')]"
+          },
+          "automationAccountResourceGroup": {
+            "value": "[parameters('existingAutomationAccountRg')]"
+          },
+          "blobConnectId": "[if(variables('blobWithConnector'), createObject('value', reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('blobConnection-deployment-{0}', parameters('deploymentNameSuffix'))), '2022-09-01').outputs.blobConnectionId.value), createObject('value', 'None'))]",
+          "blobConnectionName": {
+            "value": "[variables('blobConnectionName')]"
+          },
+          "checkBothCreatedAndModifiedDateTime": {
+            "value": "[variables('checkBothCreatedAndModifiedDateTime')]"
           },
           "cloud": {
             "value": "[variables('cloud')]"
+          },
+          "connectionType": {
+            "value": "[variables('connectionType')]"
+          },
+          "container": "[if(variables('blobWithConnector'), createObject('value', parameters('container')), createObject('value', 'None'))]",
+          "contentVersion": {
+            "value": "[variables('contentVersion')]"
           },
           "dayOfWeek": {
             "value": "[parameters('dayOfWeek')]"
@@ -2829,11 +2855,40 @@
           "emailContact": {
             "value": "[parameters('emailContact')]"
           },
+          "hostPoolName": {
+            "value": "[parameters('hostPoolName')]"
+          },
+          "identityType": {
+            "value": "[variables('identityType')]"
+          },
+          "imageSource": {
+            "value": "[parameters('imageSource')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "maxFileCount": {
+            "value": "[variables('maxFileCount')]"
+          },
+          "office365ConnectionId": "[if(variables('blobWithConnector'), createObject('value', reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('o365Connection-deployment-{0}', parameters('deploymentNameSuffix'))), '2022-09-01').outputs.office365ConnectionId.value), createObject('value', 'None'))]",
           "officeConnectionName": {
             "value": "[variables('officeConnectionName')]"
           },
+          "runbookNewHostPoolRipAndReplace": {
+            "value": "[variables('runbookNewHostPoolRipAndReplace')]"
+          },
+          "schema": {
+            "value": "[variables('schema')]"
+          },
           "startTime": {
             "value": "[parameters('startTime')]"
+          },
+          "state": {
+            "value": "[variables('state')]"
+          },
+          "storageAccountName": "[if(variables('blobWithConnector'), createObject('value', parameters('exisitingStorageAccount')), createObject('value', 'None'))]",
+          "subscriptionId": {
+            "value": "[variables('subscriptionId')]"
           },
           "templateSpecId": {
             "value": "[parameters('templateSpecId')]"
@@ -2841,72 +2896,17 @@
           "tenantId": {
             "value": "[variables('tenantId')]"
           },
-          "waitForRunBook": {
-            "value": "[variables('waitForRunBook')]"
-          },
-          "workflows_GetBlobUpdate_name": {
-            "value": "[variables('workflows_GetBlobUpdate_name')]"
-          },
-          "automationAccountConnectionName": {
-            "value": "[variables('automationAccountConnectionName')]"
-          },
-          "automationAccountName": {
-            "value": "[variables('automationAccountNameValue')]"
-          },
-          "automationAccountResourceGroup": {
-            "value": "[parameters('existingAutomationAccountRg')]"
-          },
-          "automationAccountLocation": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('automationAccountSubscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('aa-deployment-{0}', parameters('deploymentNameSuffix'))), '2022-09-01').outputs.aaLocation.value]"
-          },
-          "blobConnectionName": {
-            "value": "[variables('blobConnectionName')]"
-          },
-          "identityType": {
-            "value": "[variables('identityType')]"
-          },
-          "state": {
-            "value": "[variables('state')]"
-          },
-          "schema": {
-            "value": "[variables('schema')]"
-          },
-          "contentVersion": {
-            "value": "[variables('contentVersion')]"
-          },
-          "connectionType": {
-            "value": "[variables('connectionType')]"
-          },
           "triggerFrequency": {
             "value": "[parameters('triggerFrequency')]"
           },
           "triggerInterval": {
             "value": "[parameters('triggerInterval')]"
           },
-          "storageAccountName": "[if(variables('blobWithConnector'), createObject('value', parameters('exisitingStorageAccount')), createObject('value', 'None'))]",
-          "container": "[if(variables('blobWithConnector'), createObject('value', parameters('container')), createObject('value', 'None'))]",
-          "hostPoolName": {
-            "value": "[parameters('hostPoolName')]"
+          "waitForRunBook": {
+            "value": "[variables('waitForRunBook')]"
           },
-          "checkBothCreatedAndModifiedDateTime": {
-            "value": "[variables('checkBothCreatedAndModifiedDateTime')]"
-          },
-          "maxFileCount": {
-            "value": "[variables('maxFileCount')]"
-          },
-          "subscriptionId": {
-            "value": "[variables('subscriptionId')]"
-          },
-          "runbookNewHostPoolRipAndReplace": {
-            "value": "[variables('runbookNewHostPoolRipAndReplace')]"
-          },
-          "office365ConnectionId": "[if(variables('blobWithConnector'), createObject('value', reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('o365Connection-deployment-{0}', parameters('deploymentNameSuffix'))), '2022-09-01').outputs.office365ConnectionId.value), createObject('value', 'None'))]",
-          "automationAccountConnectId": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('automationAccountConnection-deployment-{0}', parameters('deploymentNameSuffix'))), '2022-09-01').outputs.automationConnectId.value]"
-          },
-          "blobConnectId": "[if(variables('blobWithConnector'), createObject('value', reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('subscriptionId'), parameters('existingAutomationAccountRg')), 'Microsoft.Resources/deployments', format('blobConnection-deployment-{0}', parameters('deploymentNameSuffix'))), '2022-09-01').outputs.blobConnectionId.value), createObject('value', 'None'))]",
-          "imageSource": {
-            "value": "[parameters('imageSource')]"
+          "workflows_GetBlobUpdate_name": {
+            "value": "[variables('workflows_GetBlobUpdate_name')]"
           }
         },
         "template": {

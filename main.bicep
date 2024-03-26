@@ -493,40 +493,40 @@ module getBlobUpdateLogicApps 'modules/logicAppGetBlobUpdate.bicep' = if (blobWi
   name: 'getBlobUpdateLogicApps-deployment-${deploymentNameSuffix}'
   scope: resourceGroup(subscriptionId, existingAutomationAccountRg)
   params: {
-    location: location
+    automationAccountConnectId: automationAccountConnection.outputs.automationConnectId
+    automationAccountConnectionName: automationAccountConnectionName
+    automationAccountLocation: automationAccount.outputs.aaLocation
+    automationAccountName: automationAccountNameValue
+    automationAccountResourceGroup: existingAutomationAccountRg
+    blobConnectId: blobWithConnector ? blobConnection.outputs.blobConnectionId : 'None'
+    blobConnectionName: blobConnectionName
+    checkBothCreatedAndModifiedDateTime: checkBothCreatedAndModifiedDateTime
     cloud: cloud
+    connectionType: connectionType
+    container: blobWithConnector ? container : 'None'
+    contentVersion: contentVersion
     dayOfWeek:dayOfWeek
     dayOfWeekOccurrence: dayOfWeekOccurrence
     emailContact:emailContact
+    hostPoolName: hostPoolName
+    identityType: identityType
+    imageSource: imageSource
+    location: location
+    maxFileCount: maxFileCount
+    office365ConnectionId: blobWithConnector ? o365Connection.outputs.office365ConnectionId : 'None'
     officeConnectionName: officeConnectionName
+    runbookNewHostPoolRipAndReplace: runbookNewHostPoolRipAndReplace
+    schema: schema
     startTime: startTime
+    state: state
+    storageAccountName: blobWithConnector ? exisitingStorageAccount: 'None'
+    subscriptionId: subscriptionId
     templateSpecId: templateSpecId
     tenantId: tenantId
-    waitForRunBook: waitForRunBook
-    workflows_GetBlobUpdate_name: workflows_GetBlobUpdate_name
-    automationAccountConnectionName: automationAccountConnectionName
-    automationAccountName: automationAccountNameValue
-    automationAccountResourceGroup: existingAutomationAccountRg
-    automationAccountLocation: automationAccount.outputs.aaLocation
-    blobConnectionName: blobConnectionName
-    identityType: identityType
-    state: state
-    schema: schema
-    contentVersion: contentVersion
-    connectionType: connectionType
     triggerFrequency: triggerFrequency
     triggerInterval: triggerInterval
-    storageAccountName: blobWithConnector ? exisitingStorageAccount: 'None'
-    container: blobWithConnector ? container : 'None'
-    hostPoolName: hostPoolName
-    checkBothCreatedAndModifiedDateTime: checkBothCreatedAndModifiedDateTime
-    maxFileCount: maxFileCount
-    subscriptionId: subscriptionId
-    runbookNewHostPoolRipAndReplace: runbookNewHostPoolRipAndReplace
-    office365ConnectionId: blobWithConnector ? o365Connection.outputs.office365ConnectionId : 'None'
-    automationAccountConnectId: automationAccountConnection.outputs.automationConnectId
-    blobConnectId: blobWithConnector ? blobConnection.outputs.blobConnectionId : 'None'
-    imageSource: imageSource
+    waitForRunBook: waitForRunBook
+    workflows_GetBlobUpdate_name: workflows_GetBlobUpdate_name
   }
   dependsOn: [
     blobConnection

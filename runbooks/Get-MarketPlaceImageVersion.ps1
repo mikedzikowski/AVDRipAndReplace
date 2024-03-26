@@ -4,13 +4,14 @@ param (
 	[parameter(mandatory = $false)]$ResourceGroupName,
     [parameter(mandatory = $true)]$Environment,
     [parameter(mandatory = $false)]$ImageSource,
-    [parameter(mandatory = $false)]$aibSubscription
+    [parameter(mandatory = $false)]$aibSubscription,
+    [parameter(mandatory = $true)]$subscriptionId
 )
 
 # Connect using a Managed Service Identity
 try
 {
-    $AzureContext = (Connect-AzAccount -Identity -Environment $Environment -SubscriptionId $aibSubscription).context
+    $AzureContext = (Connect-AzAccount -Identity -Environment $Environment -SubscriptionId $subscriptionId).context
 }
 catch
 {
